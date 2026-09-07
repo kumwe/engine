@@ -1,0 +1,20 @@
+{
+  "schema": "kumwe-test-ownership/v1",
+  "package": "kumwe/engine",
+  "api_manifest": "resources/abi-symbols.txt",
+  "suite": {"inventory_command": ["ctest", "--test-dir", "build", "--show-only=json-v1"]},
+  "exports": {
+    "kumwe_engine_v1_buffer_release": {"behavior":["behavior-boundary","plain-c-ownership"],"boundary":["behavior-boundary"]},
+    "kumwe_engine_v1_buffer_view": {"behavior":["behavior-boundary","plain-c-ownership"],"boundary":["behavior-boundary"]},
+    "kumwe_engine_v1_capabilities": {"behavior":["plain-c-ownership"],"boundary":["behavior-boundary"]},
+    "kumwe_engine_v1_decimal_batch": {"behavior":["behavior-boundary","conversion-corpus"],"boundary":["behavior-boundary","conversion-corpus"]}
+  },
+  "conformance": {"status":"owned","rationale":"The Conversion-owned exact corpus is replayed byte-for-byte through C++ and the public C ABI; native transport and lifecycle invariants are tested here.","tests":["conversion-corpus"],"corpora":["corpus/decimal/decimal-v1.tsv"]},
+  "architecture": ["tools/check-architecture.sh","tools/check-symbols.sh"],
+  "host": {
+    "repository":"kumwe/app",
+    "baseline":"960ce8ec00cf724a7cae03e5ba09c4852c9ab54e",
+    "transfers":[],
+    "retained_responsibilities":["App retains existing execution tests until verified Computation cutover, then only composition, authorization, storage, provisioning/recovery, acceptance and end-to-end performance tests.","The later kumwe/kumwe-engine binding owns PHP/Zend marshalling, lifecycle, module-load and cross-layer corpus tests."]
+  }
+}

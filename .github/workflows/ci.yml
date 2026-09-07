@@ -1,0 +1,72 @@
+name: Native quality
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: native-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  native:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            cc: gcc
+            cxx: g++
+          - os: ubuntu-24.04
+            cc: clang
+            cxx: clang++
+          - os: macos-14
+            cc: clang
+            cxx: clang++
+    runs-on: ${{ matrix.os }}
+    env:
+      CC: ${{ matrix.cc }}
+      CXX: ${{ matrix.cxx }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DKUMWE_ENGINE_BENCHMARKS=ON
+      - run: cmake --build build --parallel 4
+      - run: ctest --test-dir build --output-on-failure
+      - run: node tools/check-manifests.mjs build
+      - run: bash tools/check-consumer.sh
+      - run: build/engine-benchmark > benchmark.jsonl
+      - run: node tools/benchmark-metadata.mjs > benchmark-metadata.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: diagnostic-${{ matrix.os }}-${{ matrix.cc }}
+          path: |
+            benchmark.jsonl
+            benchmark-metadata.json
+  sanitizers-fuzz:
+    runs-on: ubuntu-24.04
+    env:
+      CC: clang
+      CXX: clang++
+      ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+      UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+    steps:
+      - uses: actions/checkout@v4
+      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DKUMWE_ENGINE_SANITIZERS=ON -DKUMWE_ENGINE_FUZZ=ON
+      - run: cmake --build build --parallel 4
+      - run: ctest --test-dir build --output-on-failure
+      - run: node tools/fuzz-seeds.mjs
+      - run: build/engine-fuzz artifacts/fuzz-seeds -max_total_time=30 -max_len=1048577 -rss_limit_mb=1024
+  archive-and-faults:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash tools/check-archive.sh
+      - run: bash tools/check-fault-seeds.sh
+      - run: node tools/source-sbom.mjs > artifacts/source.spdx.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: development-source-${{ github.sha }}
+          path: |
+            artifacts/kumwe-engine-source.tar.gz
+            artifacts/SHA256SUMS
+            artifacts/source.spdx.json
