@@ -83,5 +83,14 @@ const capabilities = JSON.parse(read('resources/capabilities.json'));
 assert.equal(capabilities.corpus_sha256, decimal.corpus_sha256);
 assert.equal(capabilities.semantic_source, decimal.semantic_source);
 assert.equal(capabilities.semantic_release_verified, false);
-assert.deepEqual(capabilities.capabilities, ['decimal-batch-draft/1']);
+assert.deepEqual(capabilities.capabilities, ['decimal-batch-draft/1', ...contracts.modules.slice(1).map(module => module.profile)]);
+for (const module of contracts.modules) {
+  assert.equal(createHash('sha256').update(readFileSync(module.corpus)).digest('hex'), module.corpus_sha256);
+  assert.equal(module.release_verified, false);
+}
+const runtime = JSON.parse(execFileSync(resolve(process.argv[2] ?? 'build', 'kumwe-engine-conformance'), [], {encoding:'utf8'}));
+assert.match(runtime.computation.build_digest, /^[a-f0-9]{64}$/);
+assert.equal(runtime.completion_claim, false);
+assert.equal(runtime.semantic_release_verified, false);
+assert.deepEqual(runtime.computation.contracts, capabilities.computation.contracts);
 console.log(`${abi.length} ABI exports own behavior/boundary tests; exact corpus and nine negative ownership fixtures passed`);

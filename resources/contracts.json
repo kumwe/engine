@@ -1,6 +1,6 @@
 {
   "schema": "kumwe-engine-contract-matrix/v1",
-  "state": "draft_e0_e1_decimal_slice",
+  "state": "draft_runtime_kernels",
   "completion_claim": false,
   "abi_frozen": false,
   "modules": [
@@ -22,8 +22,12 @@
         "kumwe/business-definition",
         "kumwe/computation"
       ],
-      "status": "not_implemented",
-      "required": "Owner formula/condition/invariant envelope, ordered findings, corpus and verified releases"
+      "status": "draft_implemented",
+      "required": "Owner formula/condition/invariant envelope, ordered findings, corpus and verified releases",
+      "profile": "formula-draft/1",
+      "corpus": "corpus/definition/formula-v1.json",
+      "corpus_sha256": "11033679b018fdc9a192e954ef11089444a00a1d89c6279d3c192be9252cf42f",
+      "release_verified": false
     },
     {
       "module": "document_batch",
@@ -32,8 +36,17 @@
         "kumwe/record-values",
         "kumwe/record-model"
       ],
-      "status": "not_implemented",
-      "required": "Whole-document preparation, dependency ordering, normalized values and verified corpora"
+      "status": "draft_normalized_scalar_subset",
+      "required": "Whole-document preparation, dependency ordering, normalized values and verified corpora",
+      "profile": "normalized-document-draft/1",
+      "corpus": "corpus/document/validation-v1.json",
+      "corpus_sha256": "fce91bfe3c9614ec3862b50c0defc10a9b69ed021671f8382d774d8cb0a20668",
+      "release_verified": false,
+      "not_implemented": [
+        "Host codec-aware value normalization and preparation",
+        "Pattern/email/url/UUID/exact-value validators outside the admitted scalar profile",
+        "App runtime cutover"
+      ]
     },
     {
       "module": "report",
@@ -41,16 +54,28 @@
         "kumwe/reporting",
         "kumwe/record-query"
       ],
-      "status": "not_implemented",
-      "required": "Bounded computation-only report contract and verified corpus"
+      "status": "draft_materialization_subset",
+      "required": "Bounded computation-only report contract and verified corpus",
+      "profile": "report-materialization-draft/1",
+      "corpus": "corpus/reporting/materialization-v1.json",
+      "corpus_sha256": "e235b1b465106fecc0c5857f75104db85acb4cbf770a429559ac05088222d426",
+      "release_verified": false,
+      "not_implemented": [
+        "Converted-value formula result normalization",
+        "Host authorization, retrieval, projection, rendering and delivery (excluded)"
+      ]
     },
     {
       "module": "canonical_streaming",
       "owners": [
         "kumwe/canonical-json"
       ],
-      "status": "not_implemented",
-      "required": "Exact verified canonical profile and corpus, after formula/document milestone"
+      "status": "draft_implemented",
+      "required": "Exact verified canonical profile and corpus, after formula/document milestone",
+      "profile": "kumwe-canonical-json/generic-v1",
+      "corpus": "corpus/canonical/generic-v1.json",
+      "corpus_sha256": "84d21b12e7a2bfd752356d9a6e664bcb332e209d19017e7634e7485a4fa4e250",
+      "release_verified": false
     }
   ]
 }
