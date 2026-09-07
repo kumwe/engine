@@ -3,7 +3,7 @@
 Every implemented native behavior, boundary and conformance test belongs in Engine. `tests/ownership.json`
 maps every exported C function to real discovered CTest IDs. The validator compares header exports,
 symbol manifest and test inventory, requires behavior/boundary ownership, verifies the exact corpus
-digest and rejects six intentionally weakened declarations. Adding an ABI export without coverage
+digest and rejects nine intentionally weakened declarations. Adding an ABI export without coverage
 cannot pass CI. Future kernels must extend their own tests and semantic corpus before advertising a
 capability. Downstream suites do not substitute for missing native package tests.
 
@@ -29,3 +29,8 @@ memory-safety evidence. Owned, null, consumed and valid concurrently read buffer
 Conversion owns the semantic corpus itself; Engine owns native replay and ABI behavior. The extension
 will retain cross-layer conformance and marshalling/lifecycle tests. App retains composition, security,
 storage, provisioning/recovery, acceptance and whole-path performance. This draft removes no App tests.
+
+The Linux test-only shared export probe omits `-z,defs` in sanitizer builds because Clang links the
+ASan runtime into the final executable; release probes retain it. This follows the
+[Clang AddressSanitizer usage documentation](https://clang.llvm.org/docs/AddressSanitizer.html#usage).
+No sanitizer diagnostic is suppressed.

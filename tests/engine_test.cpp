@@ -76,6 +76,9 @@ void abi_boundaries() {
     test::response output;
     check(kumwe_engine_v1_decimal_batch(&input, &output.buffer) == 0, "valid batch");
     check(output.bytes() == test::result("2.5000"), "golden wire output");
+    const auto* existing_owner = output.buffer;
+    check(kumwe_engine_v1_decimal_batch(&input, &output.buffer) == 1, "nonempty output slot refused");
+    check(output.buffer == existing_owner && output.bytes() == test::result("2.5000"), "preexisting owner preserved");
     kumwe_engine_v1_buffer_release(&output.buffer);
     kumwe_engine_v1_buffer_release(&output.buffer);
     check(output.buffer == nullptr, "consumed owner");
@@ -94,6 +97,10 @@ void abi_boundaries() {
     }
     auto exact = test::request(1, 16, 512); test::row(exact, 0, 10, 2, 0, 0, 0, "1.25");
     invoke(exact, 0);
+    auto padded = test::request(1, 1048576, 4867); test::row(padded, 2, 65, 32, 65, 33, 0, "1", "0");
+    invoke(padded, 6);
+    padded = test::request(1, 1048576, 4868); test::row(padded, 2, 65, 32, 65, 33, 0, "1", "0");
+    invoke(padded, 0);
     auto batch = test::request(2); test::row(batch, 0, 10, 2, 0, 0, 0, "1.25"); test::row(batch, 0, 10, 2, 0, 0, 0, "bad");
     invoke(batch, 1);
     check(kumwe_engine_v1_decimal_batch(nullptr, &output.buffer) == 1, "null request");

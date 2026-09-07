@@ -37,9 +37,15 @@ summed scale. No ad hoc policy, rates, units or money provider enters the batch.
 Success bytes are `KER1`, little-endian u32 row count, then for every input row in order a u32
 byte length plus ASCII result. Decimal results keep exact scale. Compare returns `-1`, `0` or `1`.
 The output byte budget includes framing. Any row failure refuses the entire batch. Budgets use
-conservative deterministic work units: each row costs 512 plus left-length times right-length;
-work is charged before parsing/arithmetic. This is a bounded decimal work budget, not a VM
-instruction model or a wall-clock deadline. There is no advertised cancellation capability yet.
+conservative deterministic work units: each row costs 512 plus 4356 for multiplication (the maximum 66-by-66 normalized
+coefficient workspace);
+work is charged before parsing/arithmetic. These logical work units conservatively charge digit-loop capacity, not actual CPU
+instructions. This is a bounded decimal work budget, not a VM instruction model or a wall-clock deadline. There is no advertised cancellation capability yet.
+
+Output handle slots must initially be null; conforming calls always leave null on refusal.
+A nonempty output slot violates that precondition and is refused unchanged, so the existing
+owner remains releasable. Output view data/size clear on failure only after a supported struct
+size has been validated; undersized records are never accessed past the size field.
 
 Buffers are Engine-owned immutable opaque handles; callers must never allocate/copy/free their
 layout. `buffer_view` returns a borrowed view valid until release. The owner passes its pointer

@@ -5,7 +5,8 @@ Semantic owner: `kumwe/conversion`. Behavior source: Conversion `v0.1.2`, commit
 release-verified under the v2 protocol.
 
 `decimal-v1.tsv` is an unchanged copy of the 108-vector package-owned draft corpus at
-`resources/conformance/decimal-v1.tsv` in the concurrent Conversion test-ownership PR.
+`resources/conformance/decimal-v1.tsv` in [Conversion PR 5](https://github.com/kumwe/conversion/pull/5),
+exact corpus source commit `ef3f2bae09ddab839497b2d296141581d70ba059`.
 SHA-256: `635db251898707828e24f12b1abb672273552f5f633186a725cc9f50ac08140c`.
 This corpus is not present in the v0.1.2 release; it captures that implementation's behavior
 for a forthcoming reviewed release. No claim of an immutable released corpus is made.
