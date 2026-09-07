@@ -1,0 +1,53 @@
+{
+    "schema": "kumwe-zend-build/v1",
+    "php_version": "8.5.10",
+    "php_version_id": 80510,
+    "zend_module_api": 20250925,
+    "thread_model": "NTS",
+    "os": "Linux",
+    "os_release": "6.17.0-1022-azure",
+    "architecture": "x86_64",
+    "host": "x86_64-pc-linux-gnu",
+    "libc": "glibc 2.39",
+    "compiler": {
+        "c": {
+            "command": "cc",
+            "version": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0"
+        },
+        "cxx": {
+            "command": "/usr/bin/c++",
+            "version": "c++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0"
+        }
+    },
+    "linker": {
+        "command": "/usr/bin/ld -m elf_x86_64",
+        "version": "GNU ld (GNU Binutils for Ubuntu) 2.42"
+    },
+    "extension_flags": {
+        "cflags": "-g -O2",
+        "cppflags": " -DHAVE_CONFIG_H",
+        "ldflags": "",
+        "extra_cflags": "-std=c11 -Wall -Wextra -fstack-protector-strong"
+    },
+    "engine_flags": {
+        "build_type": "Release",
+        "engine": {
+            "C_DEFINES": "",
+            "C_FLAGS": "-O3 -DNDEBUG -std=c11 -fPIC -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -fstack-protector-strong",
+            "CXX_DEFINES": "",
+            "CXX_FLAGS": "-O3 -DNDEBUG -std=c++20 -fPIC -fvisibility=hidden -fvisibility-inlines-hidden -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -fstack-protector-strong"
+        },
+        "pcre2": {
+            "C_DEFINES": "-DHAVE_CONFIG_H -DHAVE_INTTYPES_H -DHAVE_MEMMOVE -DHAVE_STDINT_H -DHAVE_STDLIB_H -DHAVE_STRERROR -DHAVE_STRING_H -DPCRE2_CODE_UNIT_WIDTH=8 -DPCRE2_STATIC -DSUPPORT_JIT -DSUPPORT_PCRE2_8 -DSUPPORT_UNICODE",
+            "C_FLAGS": "-O3 -DNDEBUG -std=c11 -fPIC -fvisibility=hidden -fstack-protector-strong"
+        }
+    },
+    "php_configure_options": "--with-config-file-path=/etc/php/8.5/cli --with-config-file-scan-dir=/etc/php/8.5/cli/conf.d --prefix=/usr --libexecdir=/usr/lib/php --datadir=/usr/share/php/8.5 --mandir=/usr/share/man --enable-cli --disable-cgi --disable-phpdbg --enable-pcntl --with-libedit=shared,/usr --enable-bcmath=shared --with-bz2=shared,/usr --enable-calendar=shared --enable-ctype=shared --with-curl=shared --with-enchant=shared --enable-exif=shared --enable-fileinfo=shared --enable-filter --with-ffi=shared --enable-ftp=shared --with-openssl-dir=/usr --with-gettext=shared,/usr --with-gmp=shared --enable-intl=shared --with-iconv=shared --with-libedit=shared --with-openssl --enable-pdo=shared --with-pdo-dblib=shared,/usr --with-pdo-firebird=shared,/usr --enable-phar=shared --enable-posix=shared --enable-session --enable-shmop=shared --enable-sockets=shared --enable-sysvmsg=shared --enable-sysvsem=shared --enable-sysvshm=shared --with-tidy=shared,/usr --enable-tokenizer=shared --with-xsl=shared --with-zip=shared --enable-dba=shared --with-db4=/usr --without-gdbm --with-qdbm=/usr --with-lmdb=/usr --enable-inifile --enable-flatfile --enable-gd=shared,/usr --with-external-gd --with-mhash=/usr --with-ldap=shared,/usr --with-ldap-sasl --enable-mbstring=shared --enable-mbregex --enable-mysqlnd=shared --enable-mysqlnd-compression-support --with-zlib=/usr --with-mysqli=shared,mysqlnd --with-pdo-mysql=shared,mysqlnd --with-mysql-sock=/var/run/mysqld/mysqld.sock --with-unixODBC=shared,/usr --with-pdo-odbc=shared,unixODBC,/usr --with-pgsql=shared,/usr --with-pdo-pgsql=shared,/usr --with-snmp=shared,/usr --enable-soap=shared --with-libxml --with-sodium --with-password-argon2 --with-sqlite3=shared --with-pdo-sqlite=shared --enable-dom=shared --enable-simplexml=shared --enable-xml=shared --enable-xmlreader=shared --enable-xmlwriter=shared --enable-opcache --enable-huge-code-pages --build=x86_64-linux-gnu --host=x86_64-linux-gnu --config-cache --cache-file=/tmp/config.cache --with-libdir=lib/x86_64-linux-gnu --libdir=/usr/lib/php --program-suffix=8.5 --sysconfdir=/etc --localstatedir=/var --disable-rpath --disable-static --with-pic --with-layout=GNU --without-pear --with-external-pcre --with-system-tzdata build_alias=x86_64-linux-gnu host_alias=x86_64-linux-gnu CFLAGS=-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/__w/php-builder/php-builder=. -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -DOPENSSL_SUPPRESS_DEPRECATED CXXFLAGS=-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/__w/php-builder/php-builder=. -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -DOPENSSL_SUPPRESS_DEPRECATED",
+    "debug": false,
+    "sanitizers": [],
+    "distribution": "self-contained-source",
+    "abi_major": 1,
+    "abi_minor": 0,
+    "abi_manifest_sha256": "f11d4b501dc344a56d5a51c18a364d65c9add46e0b807c0e41804e4ad19ab6d1",
+    "extension_source_sha256": "8d62220a356183eda81e9d2515aa40fcb0c963dfe6e6f610c392273880b004cb"
+}

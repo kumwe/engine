@@ -1,0 +1,1028 @@
+{
+  "baseline_complete": false,
+  "baseline_sha256": "f94631b6071beca30b25192b16163fc24d211aeca9f2ff90779b9f6c5fc055c5",
+  "checks": [
+    {
+      "bootstrap_95_interval": [
+        0.9216204452182565,
+        0.9658063670902659
+      ],
+      "evaluated": true,
+      "key": [
+        "decimal/1/valid/warm",
+        "php"
+      ],
+      "median_ratio": 0.9507277383383578,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        2.071020699500357,
+        2.3523792357606346
+      ],
+      "evaluated": true,
+      "key": [
+        "decimal/1/valid/warm",
+        "native"
+      ],
+      "median_ratio": 2.2810021629416006,
+      "regression": true
+    },
+    {
+      "bootstrap_95_interval": [
+        1.019818916116765,
+        1.452161470100919
+      ],
+      "evaluated": true,
+      "key": [
+        "decimal/1/hostile/warm",
+        "php"
+      ],
+      "median_ratio": 1.2902170536252335,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        1.8914607573078979,
+        3.2663094605096323
+      ],
+      "evaluated": true,
+      "key": [
+        "decimal/1/hostile/warm",
+        "native"
+      ],
+      "median_ratio": 2.1103872005278133,
+      "regression": true
+    },
+    {
+      "bootstrap_95_interval": [
+        1.2280069360630097,
+        1.6678685995407163
+      ],
+      "evaluated": true,
+      "key": [
+        "decimal/32/valid/warm",
+        "php"
+      ],
+      "median_ratio": 1.4710322896439003,
+      "regression": true
+    },
+    {
+      "bootstrap_95_interval": [
+        2.3530568254494635,
+        3.6351942406954634
+      ],
+      "evaluated": true,
+      "key": [
+        "decimal/32/valid/warm",
+        "native"
+      ],
+      "median_ratio": 2.7762894597133174,
+      "regression": true
+    },
+    {
+      "bootstrap_95_interval": [
+        1.2198630007618063,
+        1.6785131387153176
+      ],
+      "evaluated": true,
+      "key": [
+        "decimal/32/hostile/warm",
+        "php"
+      ],
+      "median_ratio": 1.454455240400868,
+      "regression": true
+    },
+    {
+      "bootstrap_95_interval": [
+        2.416089479595657,
+        4.696636618259703
+      ],
+      "evaluated": true,
+      "key": [
+        "decimal/32/hostile/warm",
+        "native"
+      ],
+      "median_ratio": 3.9428404030935083,
+      "regression": true
+    },
+    {
+      "bootstrap_95_interval": [
+        1.7211404747442653,
+        2.6529086827970456
+      ],
+      "evaluated": true,
+      "key": [
+        "decimal/256/valid/warm",
+        "php"
+      ],
+      "median_ratio": 2.258369924581267,
+      "regression": true
+    },
+    {
+      "bootstrap_95_interval": [
+        1.9606609446907026,
+        2.3992989680196697
+      ],
+      "evaluated": true,
+      "key": [
+        "decimal/256/valid/warm",
+        "native"
+      ],
+      "median_ratio": 2.1683288279429753,
+      "regression": true
+    },
+    {
+      "bootstrap_95_interval": [
+        1.4629220712750246,
+        2.2481175045512827
+      ],
+      "evaluated": true,
+      "key": [
+        "decimal/256/hostile/warm",
+        "php"
+      ],
+      "median_ratio": 1.6960781794667557,
+      "regression": true
+    },
+    {
+      "bootstrap_95_interval": [
+        2.044314376151788,
+        2.699150338130744
+      ],
+      "evaluated": true,
+      "key": [
+        "decimal/256/hostile/warm",
+        "native"
+      ],
+      "median_ratio": 2.240880657426714,
+      "regression": true
+    },
+    {
+      "bootstrap_95_interval": [
+        1.0663371342774617,
+        1.5635811981662733
+      ],
+      "evaluated": true,
+      "key": [
+        "decimal/4096/valid/warm",
+        "php"
+      ],
+      "median_ratio": 1.2778437086015757,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.5595396389109073,
+        0.8329537831681608
+      ],
+      "evaluated": true,
+      "key": [
+        "decimal/4096/valid/warm",
+        "native"
+      ],
+      "median_ratio": 0.6103362911622275,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        1.0828665860540105,
+        1.4276023799115314
+      ],
+      "evaluated": true,
+      "key": [
+        "decimal/4096/hostile/warm",
+        "php"
+      ],
+      "median_ratio": 1.2777144038482127,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.7233801376112249,
+        1.3971563155628588
+      ],
+      "evaluated": true,
+      "key": [
+        "decimal/4096/hostile/warm",
+        "native"
+      ],
+      "median_ratio": 1.1656779364764291,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.9577195331930362,
+        1.6896822283248332
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/1/valid/warm",
+        "php"
+      ],
+      "median_ratio": 1.028798411122145,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.664421475458019,
+        0.7937146035598706
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/1/valid/warm",
+        "native"
+      ],
+      "median_ratio": 0.6854640980735551,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        1.0073696660904377,
+        2.18031337641751
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/1/valid/cold",
+        "php"
+      ],
+      "median_ratio": 1.0499024509206194,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.8979986812542737,
+        1.1356439399261018
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/1/valid/cold",
+        "native"
+      ],
+      "median_ratio": 1.028348944188882,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.9456581103222282,
+        1.0251913709116214
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/1/hostile/warm",
+        "php"
+      ],
+      "median_ratio": 0.9639939066611273,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        2.6363901214647485,
+        4.279369357229484
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/1/hostile/warm",
+        "native"
+      ],
+      "median_ratio": 3.5724474374950286,
+      "regression": true
+    },
+    {
+      "bootstrap_95_interval": [
+        1.4250465286785856,
+        3.4028848545138026
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/1/hostile/cold",
+        "php"
+      ],
+      "median_ratio": 2.6722761059990603,
+      "regression": true
+    },
+    {
+      "bootstrap_95_interval": [
+        1.3987094519539196,
+        3.333329125429206
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/1/hostile/cold",
+        "native"
+      ],
+      "median_ratio": 1.9077961816918947,
+      "regression": true
+    },
+    {
+      "bootstrap_95_interval": [
+        0.6911067152012593,
+        1.6918994897706445
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/32/valid/warm",
+        "php"
+      ],
+      "median_ratio": 1.1918073027777847,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        1.0079620421117128,
+        1.281106734062882
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/32/valid/warm",
+        "native"
+      ],
+      "median_ratio": 1.150784886894895,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        1.9313821874946568,
+        2.492309557363883
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/32/valid/cold",
+        "php"
+      ],
+      "median_ratio": 2.203517449089553,
+      "regression": true
+    },
+    {
+      "bootstrap_95_interval": [
+        0.6688550310031408,
+        0.9526207802739526
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/32/valid/cold",
+        "native"
+      ],
+      "median_ratio": 0.7917210869766512,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        1.0216236438458661,
+        5.22812030075188
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/32/hostile/warm",
+        "php"
+      ],
+      "median_ratio": 1.048044441108025,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        1.1046535445222296,
+        1.5307853910795086
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/32/hostile/warm",
+        "native"
+      ],
+      "median_ratio": 1.3348845504162377,
+      "regression": true
+    },
+    {
+      "bootstrap_95_interval": [
+        0.5948653275657027,
+        1.7915404914345043
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/32/hostile/cold",
+        "php"
+      ],
+      "median_ratio": 0.867176014773509,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.7558131040720616,
+        1.2811248722665032
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/32/hostile/cold",
+        "native"
+      ],
+      "median_ratio": 0.9590630416048096,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        1.0688187613318625,
+        1.3224150695898562
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/256/valid/warm",
+        "php"
+      ],
+      "median_ratio": 1.1721971238363835,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.6480157975318841,
+        1.0665792045629132
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/256/valid/warm",
+        "native"
+      ],
+      "median_ratio": 0.7738384935970781,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.6328523054322963,
+        0.7524652772259018
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/256/valid/cold",
+        "php"
+      ],
+      "median_ratio": 0.6647496823606294,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.6516625100093967,
+        0.8510660073935341
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/256/valid/cold",
+        "native"
+      ],
+      "median_ratio": 0.7546498816041755,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.5649615035794917,
+        2.304271316589346
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/256/hostile/warm",
+        "php"
+      ],
+      "median_ratio": 1.23304003954523,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        1.0038487277573052,
+        1.4303537749864728
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/256/hostile/warm",
+        "native"
+      ],
+      "median_ratio": 1.163512994888012,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        2.094267432607724,
+        4.229912511846783
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/256/hostile/cold",
+        "php"
+      ],
+      "median_ratio": 2.8534738300949782,
+      "regression": true
+    },
+    {
+      "bootstrap_95_interval": [
+        1.1493943452066058,
+        1.6791894714852726
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/256/hostile/cold",
+        "native"
+      ],
+      "median_ratio": 1.295232944681892,
+      "regression": true
+    },
+    {
+      "bootstrap_95_interval": [
+        0.8620958275826417,
+        1.609544690943732
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/4096/valid/warm",
+        "php"
+      ],
+      "median_ratio": 1.233807194447744,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.48481842747344167,
+        0.7776050245739161
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/4096/valid/warm",
+        "native"
+      ],
+      "median_ratio": 0.6398845707251076,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.6153339347559282,
+        0.9097642917634561
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/4096/valid/cold",
+        "php"
+      ],
+      "median_ratio": 0.7384910485377033,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.5707397294660617,
+        0.9854049713258315
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/4096/valid/cold",
+        "native"
+      ],
+      "median_ratio": 0.7772248719693612,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.5438772944430476,
+        0.9709093628477415
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/4096/hostile/warm",
+        "php"
+      ],
+      "median_ratio": 0.8871314863526116,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.569298020664117,
+        0.8774037687068559
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/4096/hostile/warm",
+        "native"
+      ],
+      "median_ratio": 0.6945325167294512,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.8890494403027197,
+        1.3700714312387638
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/4096/hostile/cold",
+        "php"
+      ],
+      "median_ratio": 1.0575992000842016,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        1.03677944746789,
+        1.1510905486930034
+      ],
+      "evaluated": true,
+      "key": [
+        "formula/4096/hostile/cold",
+        "native"
+      ],
+      "median_ratio": 1.0940130662543268,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.9614228136395624,
+        1.0559492980782337
+      ],
+      "evaluated": true,
+      "key": [
+        "document/1/valid/warm",
+        "php"
+      ],
+      "median_ratio": 1.031756848848303,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.7321834773998448,
+        0.9506255371979754
+      ],
+      "evaluated": true,
+      "key": [
+        "document/1/valid/warm",
+        "native"
+      ],
+      "median_ratio": 0.8799361465404647,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.6389526314268373,
+        1.0207379960385219
+      ],
+      "evaluated": true,
+      "key": [
+        "document/1/valid/cold",
+        "php"
+      ],
+      "median_ratio": 0.810507932385047,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.48710626290199976,
+        0.7638530634726651
+      ],
+      "evaluated": true,
+      "key": [
+        "document/1/valid/cold",
+        "native"
+      ],
+      "median_ratio": 0.586572524803942,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        1.0292914416625756,
+        2.331201486826282
+      ],
+      "evaluated": true,
+      "key": [
+        "document/1/hostile/warm",
+        "php"
+      ],
+      "median_ratio": 1.5046637211585665,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.41217319852093837,
+        1.1911233335113294
+      ],
+      "evaluated": true,
+      "key": [
+        "document/1/hostile/warm",
+        "native"
+      ],
+      "median_ratio": 0.5839422943891733,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.8570620936587204,
+        1.635848297070605
+      ],
+      "evaluated": true,
+      "key": [
+        "document/1/hostile/cold",
+        "php"
+      ],
+      "median_ratio": 1.2634277402241807,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        1.0613024839250282,
+        1.8353074318250808
+      ],
+      "evaluated": true,
+      "key": [
+        "document/1/hostile/cold",
+        "native"
+      ],
+      "median_ratio": 1.5140631503835404,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        2.24297624724647,
+        2.692647179961601
+      ],
+      "evaluated": true,
+      "key": [
+        "document/32/valid/warm",
+        "php"
+      ],
+      "median_ratio": 2.44106246325737,
+      "regression": true
+    },
+    {
+      "bootstrap_95_interval": [
+        0.9508255002006356,
+        1.1560283232475954
+      ],
+      "evaluated": true,
+      "key": [
+        "document/32/valid/warm",
+        "native"
+      ],
+      "median_ratio": 1.0840943493704438,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.5101563769265838,
+        0.6634320663783331
+      ],
+      "evaluated": true,
+      "key": [
+        "document/32/valid/cold",
+        "php"
+      ],
+      "median_ratio": 0.599238913927359,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.5533846710738799,
+        1.002811958254402
+      ],
+      "evaluated": true,
+      "key": [
+        "document/32/valid/cold",
+        "native"
+      ],
+      "median_ratio": 0.7455477023041259,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        1.1064147605882313,
+        1.673135083530034
+      ],
+      "evaluated": true,
+      "key": [
+        "document/32/hostile/warm",
+        "php"
+      ],
+      "median_ratio": 1.335868034646483,
+      "regression": true
+    },
+    {
+      "bootstrap_95_interval": [
+        0.9993461113947356,
+        1.2004283611391013
+      ],
+      "evaluated": true,
+      "key": [
+        "document/32/hostile/warm",
+        "native"
+      ],
+      "median_ratio": 1.0891159964343557,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.7933939741333474,
+        1.0189161246801242
+      ],
+      "evaluated": true,
+      "key": [
+        "document/32/hostile/cold",
+        "php"
+      ],
+      "median_ratio": 0.8904367906673741,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.6061354170725018,
+        0.7407608356948299
+      ],
+      "evaluated": true,
+      "key": [
+        "document/32/hostile/cold",
+        "native"
+      ],
+      "median_ratio": 0.6634217045040026,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        1.35293455804497,
+        2.123941914968688
+      ],
+      "evaluated": true,
+      "key": [
+        "document/256/valid/warm",
+        "php"
+      ],
+      "median_ratio": 1.7021106946193734,
+      "regression": true
+    },
+    {
+      "bootstrap_95_interval": [
+        0.5261897972562133,
+        0.9159102270439744
+      ],
+      "evaluated": true,
+      "key": [
+        "document/256/valid/warm",
+        "native"
+      ],
+      "median_ratio": 0.646694973028319,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.5394421990495266,
+        1.0467910451916982
+      ],
+      "evaluated": true,
+      "key": [
+        "document/256/valid/cold",
+        "php"
+      ],
+      "median_ratio": 0.6203867631308247,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.6044624321326264,
+        0.8465671473886677
+      ],
+      "evaluated": true,
+      "key": [
+        "document/256/valid/cold",
+        "native"
+      ],
+      "median_ratio": 0.7091399745939415,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.635799469151791,
+        1.6165921015415194
+      ],
+      "evaluated": true,
+      "key": [
+        "document/256/hostile/warm",
+        "php"
+      ],
+      "median_ratio": 0.8590327966385121,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.371257867279182,
+        0.5887481913570455
+      ],
+      "evaluated": true,
+      "key": [
+        "document/256/hostile/warm",
+        "native"
+      ],
+      "median_ratio": 0.4652127388754159,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        1.0156283006835312,
+        2.4267059548326393
+      ],
+      "evaluated": true,
+      "key": [
+        "document/256/hostile/cold",
+        "php"
+      ],
+      "median_ratio": 1.872104555139875,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.4936688311139113,
+        0.8016297178821307
+      ],
+      "evaluated": true,
+      "key": [
+        "document/256/hostile/cold",
+        "native"
+      ],
+      "median_ratio": 0.6160327538510312,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.8497017697308197,
+        1.107263847802224
+      ],
+      "evaluated": true,
+      "key": [
+        "document/4096/valid/warm",
+        "php"
+      ],
+      "median_ratio": 0.9830663576402127,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.40084618707372865,
+        0.4820622590478542
+      ],
+      "evaluated": true,
+      "key": [
+        "document/4096/valid/warm",
+        "native"
+      ],
+      "median_ratio": 0.4339025273285375,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.811144520752964,
+        1.0468586555037513
+      ],
+      "evaluated": true,
+      "key": [
+        "document/4096/valid/cold",
+        "php"
+      ],
+      "median_ratio": 0.9499571396222627,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.41650453312443664,
+        0.49624909593317085
+      ],
+      "evaluated": true,
+      "key": [
+        "document/4096/valid/cold",
+        "native"
+      ],
+      "median_ratio": 0.4578692078018115,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.8769308173186962,
+        1.0216953077354163
+      ],
+      "evaluated": true,
+      "key": [
+        "document/4096/hostile/warm",
+        "php"
+      ],
+      "median_ratio": 0.9519484283838843,
+      "regression": false
+    },
+    {
+      "bootstrap_95_interval": [
+        0.5205883955809927,
+        0.6299247080251692
+      ],
+      "evaluated": true,
+      "key": [
+        "document/4096/hostile/warm",
+        "native"
+      ],
+      "median_ratio": 0.5757456904503794,
+      "regression": false
+    }
+  ],
+  "compared_cases": 78,
+  "current_cases_without_baseline": 98,
+  "current_sha256": "3da76715bcb1d330dc9f93943c0b9a40d390f1cfc01f0f9d75785ef0b62c0cea",
+  "format": "kumwe-retained-baseline-comparison/1",
+  "metadata_admission_passed": true,
+  "regression_gate": "failed",
+  "regression_threshold": 0.1,
+  "scope": "Every retained workload/backend case; this is not a full historical matrix or capacity regression gate."
+}

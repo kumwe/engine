@@ -1,0 +1,138 @@
+{
+  "engine": "kumwe/engine",
+  "version": "0.0.0-dev",
+  "abi_major": 1,
+  "abi_status": "unstable-development",
+  "capabilities": [
+    "decimal-batch-draft/1",
+    "formula-draft/1",
+    "normalized-document-draft/1",
+    "normalized-preparation-draft/1",
+    "report-materialization-draft/1",
+    "kumwe-canonical-json/generic-v1"
+  ],
+  "semantic_owner": "kumwe/conversion",
+  "semantic_source": "5ccea7f7dc4ebd11bc27b11da8573da42807c196",
+  "semantic_release_verified": false,
+  "completion_claim": false,
+  "corpus_sha256": "635db251898707828e24f12b1abb672273552f5f633186a725cc9f50ac08140c",
+  "computation": {
+    "wire_version": 1,
+    "engine_version": "0.0.0",
+    "abi_major": 1,
+    "api_version": "0.0.0",
+    "build_digest": "2dffbd128c069148fe6447b59f3b53282637541273e03433165c70f5edc3a9d8",
+    "features": [
+      {
+        "name": "canonical",
+        "version": 1
+      },
+      {
+        "name": "compile",
+        "version": 1
+      },
+      {
+        "name": "document.batch",
+        "version": 1
+      },
+      {
+        "name": "formula",
+        "version": 1
+      },
+      {
+        "name": "report.materialization",
+        "version": 1
+      }
+    ],
+    "contracts": [
+      {
+        "wire_version": 1,
+        "owner": "kumwe/business-definition",
+        "profile": "formula-draft/1",
+        "version": "0.0.0",
+        "corpus_digest": "11033679b018fdc9a192e954ef11089444a00a1d89c6279d3c192be9252cf42f"
+      },
+      {
+        "wire_version": 1,
+        "owner": "kumwe/record-model",
+        "profile": "normalized-document-draft/1",
+        "version": "0.0.0",
+        "corpus_digest": "84b6c2e55ae591c921536aa755cbb5a9a40a7a19847fe47415e55dce2614c177"
+      },
+      {
+        "wire_version": 1,
+        "owner": "kumwe/record-model",
+        "profile": "normalized-preparation-draft/1",
+        "version": "0.0.0",
+        "corpus_digest": "4eb1543929fcf5470eb8cae882127556cd57c02518109545483d8780266b561a"
+      },
+      {
+        "wire_version": 1,
+        "owner": "kumwe/reporting",
+        "profile": "report-materialization-draft/1",
+        "version": "0.0.0",
+        "corpus_digest": "975116dc897a0bfdee4a08f9065eb10ccfec06a32f4eb93a48015b08af408c01"
+      },
+      {
+        "wire_version": 1,
+        "owner": "kumwe/canonical-json",
+        "profile": "kumwe-canonical-json/generic-v1",
+        "version": "0.0.0",
+        "corpus_digest": "84d21b12e7a2bfd752356d9a6e664bcb332e209d19017e7634e7485a4fa4e250"
+      }
+    ]
+  },
+  "corpora": [
+    {
+      "path": "corpus/decimal/decimal-v1.tsv",
+      "sha256": "635db251898707828e24f12b1abb672273552f5f633186a725cc9f50ac08140c"
+    },
+    {
+      "path": "corpus/canonical/generic-v1.json",
+      "sha256": "84d21b12e7a2bfd752356d9a6e664bcb332e209d19017e7634e7485a4fa4e250"
+    },
+    {
+      "path": "corpus/definition/formula-v1.json",
+      "sha256": "11033679b018fdc9a192e954ef11089444a00a1d89c6279d3c192be9252cf42f"
+    },
+    {
+      "path": "corpus/document/computed-normalization-v1.json",
+      "sha256": "6949c2763e05a1b76ea4f6c29cc7c2df57eb25d80ee625078a1d16545a8b41f4"
+    },
+    {
+      "path": "corpus/document/document-profile-v1.json",
+      "sha256": "84b6c2e55ae591c921536aa755cbb5a9a40a7a19847fe47415e55dce2614c177"
+    },
+    {
+      "path": "corpus/document/normalized-values-v1.json",
+      "sha256": "752f41632d2ad38d74c5c61db5ff5f373b9427596d7766449b84398ddb15bce2"
+    },
+    {
+      "path": "corpus/document/preparation-v1.json",
+      "sha256": "4eb1543929fcf5470eb8cae882127556cd57c02518109545483d8780266b561a"
+    },
+    {
+      "path": "corpus/document/unicode-normalization-oracle-v1.json",
+      "sha256": "8a1c1dce8686d09ca5e53d7b1971620e887237c6019a1189549bd873ec6a87da"
+    },
+    {
+      "path": "corpus/document/validation-v1.json",
+      "sha256": "fce91bfe3c9614ec3862b50c0defc10a9b69ed021671f8382d774d8cb0a20668"
+    },
+    {
+      "path": "corpus/document/validator-edges-v1.json",
+      "sha256": "65cde051396085a01e9723a120460c8e00519eb63acff80d7425533983f011b0"
+    },
+    {
+      "path": "corpus/document/validator-extension-v1.json",
+      "sha256": "dbc005bd77fdd764c873bdde57261bc6cb79a8463164fb83e0da8cbe7603161c"
+    },
+    {
+      "path": "corpus/reporting/materialization-v1.json",
+      "sha256": "975116dc897a0bfdee4a08f9065eb10ccfec06a32f4eb93a48015b08af408c01"
+    }
+  ],
+  "abi_minor": 0,
+  "abi_manifest_sha256": "f11d4b501dc344a56d5a51c18a364d65c9add46e0b807c0e41804e4ad19ab6d1"
+}
+
