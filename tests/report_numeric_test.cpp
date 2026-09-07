@@ -4,6 +4,19 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
+#include <locale>
+
+namespace {
+class comma_punctuation final : public std::numpunct<char> {
+    char do_decimal_point() const override { return ','; }
+    char do_thousands_sep() const override { return '.'; }
+    std::string do_grouping() const override { return "\3"; }
+};
+struct locale_owner final {
+    std::locale previous = std::locale::global(std::locale(std::locale::classic(), new comma_punctuation));
+    ~locale_owner() { std::locale::global(previous); }
+};
+}
 
 int main(int argc, char** argv) {
     using namespace kumwe::engine;
@@ -26,6 +39,14 @@ int main(int argc, char** argv) {
             ++count;
         }
         test::require(count >= 3000,"full numeric comparison cross-product replayed");
+        {
+            locale_owner changed;
+            for (const auto& pair : corpus.at("vectors").as<value::list>()) {
+                test::require(value_compat::php_string_compare(pair.at("left").as<std::string>(),
+                    pair.at("right").as<std::string>()) == pair.at("expected").as<std::int64_t>(),
+                    "PHP numeric conversion is independent of global punctuation and grouping");
+            }
+        }
         std::cout << count << " frozen PHP numeric string comparisons passed\n";
     } catch (const std::exception& failure) { std::cerr << failure.what() << '\n'; return 1; }
 }

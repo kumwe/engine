@@ -3,7 +3,9 @@
 #include <cmath>
 #include <cstdint>
 #include <limits>
+#include <locale>
 #include <optional>
+#include <sstream>
 
 namespace kumwe::engine::value_compat {
 namespace {
@@ -16,6 +18,17 @@ struct numeric final {
 };
 bool space(char c) { return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\v' || c == '\f'; }
 bool digit(char c) { return c >= '0' && c <= '9'; }
+bool binary64(std::string_view source, double& output) {
+    // Floating from_chars is absent from the supported AppleClang 15 libc++.
+    // The grammar is checked before this conversion; an explicit classic
+    // locale keeps the portable conversion independent of the caller's locale.
+    std::istringstream stream{std::string(source)};
+    stream.imbue(std::locale::classic());
+    stream >> output;
+    // libc++ marks ERANGE underflow as failbit while preserving strtod's
+    // correctly rounded subnormal. Keep that value, including signed zero.
+    return !stream.fail() || std::abs(output) <= std::numeric_limits<double>::min();
+}
 std::optional<numeric> parse(std::string_view source) {
     while (!source.empty() && space(source.front())) source.remove_prefix(1);
     while (!source.empty() && space(source.back())) source.remove_suffix(1);
@@ -56,16 +69,14 @@ std::optional<numeric> parse(std::string_view source) {
         const auto parsed = std::from_chars(source.data(),source.data()+source.size(),result.whole);
         if (parsed.ec == std::errc{} && parsed.ptr == source.data()+source.size()) {
             result.integer = true;
-            (void)std::from_chars(source.data(),source.data()+source.size(),result.approximate,std::chars_format::general);
+            (void)binary64(source, result.approximate);
             return result;
         }
         result.integer_overflow = true;
     }
-    const auto parsed = std::from_chars(source.data(),source.data()+source.size(),result.approximate,std::chars_format::general);
-    if (parsed.ec == std::errc{} && parsed.ptr == source.data()+source.size()) return result;
-    if (parsed.ec != std::errc::result_out_of_range) return std::nullopt;
-    // Out-of-range conversion leaves the destination unchanged. Distinguish
-    // underflow from overflow by the first nonzero significand digit's order.
+    if (binary64(source, result.approximate)) return result;
+    // A valid numeric spelling can fail conversion only outside the binary64
+    // range. Distinguish underflow from overflow by the first nonzero digit's order.
     std::size_t index = 0;
     bool nonzero = false;
     for (std::size_t i = start; i < source.size() && source[i] != 'e' && source[i] != 'E'; ++i) {

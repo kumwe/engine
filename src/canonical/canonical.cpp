@@ -80,8 +80,11 @@ std::string float_text(binary64 source) {
 }
 struct normalized final {
     const value* source;
-    std::vector<std::pair<std::string, normalized>> entries;
+    // vector permits an incomplete element type; pair<string, normalized> does
+    // not on every supported C++20 standard library.
+    std::vector<normalized> entries;
     bool list = false;
+    std::string key;
 };
 struct admission final {
     limits bounds;
@@ -94,7 +97,7 @@ struct admission final {
         if (depth > bounds.max_depth) reject("canonical.depth-limit");
         if (nodes == bounds.max_nodes) reject("canonical.node-limit");
         ++nodes;
-        normalized result{&source, {}, false};
+        normalized result{&source, {}, false, {}};
         if (const auto* members = std::get_if<value::array>(&source.data)) {
             if (members->size() > bounds.max_nodes - nodes) reject("canonical.node-limit");
             // Admit every immediate key before creating sort indices or copying key bytes.
@@ -129,7 +132,9 @@ struct admission final {
             for (const auto& item : ordered) {
                 const auto* integer = std::get_if<std::int64_t>(item.key);
                 if (integer == nullptr || *integer != static_cast<std::int64_t>(index)) result.list = false;
-                result.entries.emplace_back(item.text, visit(*item.source, depth + 1));
+                auto child = visit(*item.source, depth + 1);
+                child.key = item.text;
+                result.entries.push_back(std::move(child));
                 ++index;
             }
             return result;
@@ -198,10 +203,10 @@ struct sink final {
         if (std::holds_alternative<value::array>(source)) {
             token(input.list ? "[" : "{");
             bool first = true;
-            for (const auto& [key, child] : input.entries) {
+            for (const auto& child : input.entries) {
                 if (!first) token(",");
                 first = false;
-                if (!input.list) { quoted(key); token(":"); }
+                if (!input.list) { quoted(child.key); token(":"); }
                 emit(child);
             }
             token(input.list ? "]" : "}");

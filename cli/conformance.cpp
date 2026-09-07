@@ -1,11 +1,85 @@
 #include "support.hpp"
 #include "decimal/decimal.hpp"
+#include "canonical/sha256.hpp"
+#include "value/json.hpp"
 #include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <vector>
 namespace {
+constexpr std::size_t maximum_input_bytes = 67108864;
+struct plan_owner final {
+    kumwe_engine_v1_plan* handle = nullptr;
+    ~plan_owner() { kumwe_engine_v1_plan_release(&handle); }
+};
+std::string read_input(const char* path) {
+    std::ifstream file;
+    std::istream* stream = &std::cin;
+    if (std::string_view(path) != "-") {
+        file.open(path, std::ios::binary);
+        test::require(file.is_open(), "cannot open input");
+        stream = &file;
+    }
+    std::string bytes;
+    char chunk[8192];
+    while (stream->read(chunk, sizeof(chunk)) || stream->gcount() > 0) {
+        const auto count = static_cast<std::size_t>(stream->gcount());
+        test::require(count <= maximum_input_bytes - bytes.size(), "input exceeds diagnostic byte limit");
+        bytes.append(chunk, count);
+    }
+    test::require(!stream->bad() && stream->eof(), "cannot read input");
+    return bytes;
+}
+int emit(kumwe_engine_v1_status status, const test::response& output) {
+    if (status == KUMWE_ENGINE_V1_OK) std::cout << output.bytes() << '\n';
+    else std::cout << "{\"status\":" << status << "}\n";
+    test::require(std::cout.good(), "cannot write output");
+    return static_cast<int>(status);
+}
+kumwe_engine_v1_status capabilities(test::response& output) {
+    std::string request = "KEC1"; test::integer(request, 1, 4); test::integer(request, 0, 4);
+    const auto input = test::view(request);
+    return kumwe_engine_v1_capabilities(&input, &output.buffer);
+}
+int verify_bundle(const char* path) {
+    using namespace kumwe::engine;
+    using value = json::value;
+    test::response output;
+    const auto status = capabilities(output);
+    if (status != KUMWE_ENGINE_V1_OK) return emit(status, output);
+    const auto manifest = json::parse(output.bytes());
+    const std::vector<std::pair<std::string, std::string>> corpora = {
+        {"decimal/decimal-v1.tsv", manifest.at("corpus_sha256").as<std::string>()},
+        {"definition/formula-v1.json", "formula-draft/1"},
+        {"document/validation-v1.json", "normalized-document-draft/1"},
+        {"reporting/materialization-v1.json", "report-materialization-draft/1"},
+        {"canonical/generic-v1.json", "kumwe-canonical-json/generic-v1"}
+    };
+    value::list checked;
+    for (const auto& [relative, profile] : corpora) {
+        std::string expected = profile;
+        if (!relative.starts_with("decimal/")) {
+            expected.clear();
+            for (const auto& contract : manifest.at("computation").at("contracts").as<value::list>()) {
+                if (contract.at("profile").as<std::string>() == profile) expected = contract.at("corpus_digest").as<std::string>();
+            }
+            test::require(!expected.empty(), "missing runtime corpus identity");
+        }
+        const auto file = std::string(path) + "/" + relative;
+        const auto bytes = read_input(file.c_str());
+        canonical::sha256 digest; digest.update(bytes);
+        if (digest.finish() != expected) {
+            std::cout << "{\"status\":4}\n";
+            return static_cast<int>(KUMWE_ENGINE_V1_INCOMPATIBLE_CORPUS);
+        }
+        checked.emplace_back(value::object{{"path", value(relative)}, {"sha256", value(expected)}});
+    }
+    std::cout << json::encode(value(value::object{{"corpora", value(std::move(checked))},
+        {"status", value(std::int64_t{0})}})) << '\n';
+    test::require(std::cout.good(), "cannot write output");
+    return 0;
+}
 std::string unhex(std::string_view input) {
     if (input == "-") return {};
     test::require(input.size() % 2 == 0, "odd corpus hex");
@@ -80,13 +154,36 @@ void replay(const std::vector<std::string>& fields) {
 }
 int main(int argc, char** argv) {
     try {
-        if (argc == 1) {
-            std::string request = "KEC1"; test::integer(request, 1, 4); test::integer(request, 0, 4);
-            auto input = test::view(request); test::response output;
-            test::require(kumwe_engine_v1_capabilities(&input, &output.buffer) == 0, "capabilities");
-            std::cout << output.bytes(); return 0;
+        if (argc == 1 || (argc == 2 && std::string_view(argv[1]) == "--capabilities")) {
+            test::response output;
+            return emit(capabilities(output), output);
         }
-        test::require(argc == 2, "usage: kumwe-engine-conformance [decimal-v1.tsv]");
+        const std::string_view operation = argv[1];
+        if (argc == 2 && operation == "--help") {
+            std::cout << "kumwe-engine-conformance [decimal-v1.tsv | --capabilities | --verify-bundle corpus-directory | --compile request.json | --execute compile.json batch.json | --canonical request.json]\n"
+                         "Use - for one JSON input read from standard input. Native refusals emit a JSON status and the same exit code.\n";
+            return 0;
+        }
+        if (argc == 3 && operation == "--verify-bundle") return verify_bundle(argv[2]);
+        if (argc == 3 && operation == "--canonical") {
+            const auto bytes = read_input(argv[2]); const auto input = test::view(bytes); test::response output;
+            return emit(kumwe_engine_v1_canonical(&input, &output.buffer), output);
+        }
+        if ((argc == 3 && operation == "--compile") || (argc == 4 && operation == "--execute")) {
+            test::require(argc != 4 || std::string_view(argv[2]) != "-" || std::string_view(argv[3]) != "-",
+                "only one input can use standard input");
+            const auto bytes = read_input(argv[2]); const auto input = test::view(bytes); plan_owner plan;
+            auto status = kumwe_engine_v1_compile(&input, &plan.handle);
+            test::response output;
+            if (status != KUMWE_ENGINE_V1_OK) return emit(status, output);
+            if (operation == "--compile") status = kumwe_engine_v1_plan_describe(plan.handle, &output.buffer);
+            else {
+                const auto batch = read_input(argv[3]); const auto batch_input = test::view(batch);
+                status = kumwe_engine_v1_execute(plan.handle, &batch_input, nullptr, &output.buffer);
+            }
+            return emit(status, output);
+        }
+        test::require(argc == 2 && !operation.starts_with("--"), "invalid arguments; use --help");
         std::ifstream input(argv[1]); test::require(input.good(), "cannot open corpus");
         std::string line; unsigned count = 0;
         while (std::getline(input, line)) {

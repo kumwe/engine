@@ -86,6 +86,13 @@ if(BUILD_TESTING)
   target_link_libraries(engine-tests PRIVATE Kumwe::Engine)
   add_test(NAME behavior-boundary COMMAND engine-tests)
   add_test(NAME conversion-corpus COMMAND kumwe-engine-conformance "${CMAKE_CURRENT_SOURCE_DIR}/corpus/decimal/decimal-v1.tsv")
+  add_test(NAME diagnostic-cli COMMAND "${CMAKE_COMMAND}"
+    "-DCLI=$<TARGET_FILE:kumwe-engine-conformance>"
+    "-DTEST_DIRECTORY=${CMAKE_CURRENT_BINARY_DIR}/cli-tests"
+    "-DCORPUS_DIRECTORY=${CMAKE_CURRENT_SOURCE_DIR}/corpus"
+    "-DFORMULA_CORPUS=${ENGINE_FORMULA_CORPUS}"
+    "-DCANONICAL_CORPUS=${ENGINE_CANONICAL_CORPUS}"
+    -P "${CMAKE_CURRENT_SOURCE_DIR}/tests/cli_test.cmake")
   add_executable(c-consumer tests/consumer/main.c)
   target_link_libraries(c-consumer PRIVATE Kumwe::Engine)
   set_target_properties(c-consumer PROPERTIES LINKER_LANGUAGE CXX)
@@ -121,6 +128,7 @@ if(KUMWE_ENGINE_BENCHMARKS)
   target_link_libraries(engine-benchmark PRIVATE Kumwe::Engine)
 endif()
 install(TARGETS kumwe_engine EXPORT KumweEngineTargets ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS kumwe-engine-conformance RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(EXPORT KumweEngineTargets NAMESPACE Kumwe:: DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/KumweEngine)
 configure_package_config_file(cmake/KumweEngineConfig.cmake.in "${CMAKE_CURRENT_BINARY_DIR}/KumweEngineConfig.cmake" INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/KumweEngine)

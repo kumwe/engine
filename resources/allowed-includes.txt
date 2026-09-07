@@ -20,6 +20,7 @@ formula.hpp
 json.hpp
 kumwe/engine/engine.h
 limits
+locale
 map
 new
 optional
@@ -29,6 +30,7 @@ plan/plan.hpp
 report.hpp
 reporting/report.hpp
 set
+sstream
 stdexcept
 stdint.h
 string

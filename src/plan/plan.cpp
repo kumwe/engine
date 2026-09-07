@@ -87,6 +87,7 @@ plan plan::compile(std::string_view request) {
 }
 std::string plan::describe() const { return json::encode(descriptor_, 16777216); }
 std::string plan::execute(std::string_view request, const std::atomic<bool>* cancellation) const {
+    const auto started = std::chrono::steady_clock::now();
     const auto envelope = json::parse(request);
     shape(envelope, {"wire_version", "documents", "limits"});
     version(envelope.at("wire_version"));
@@ -99,7 +100,6 @@ std::string plan::execute(std::string_view request, const std::atomic<bool>* can
     const auto max_findings = integer(limits.at("max_findings"), 1, 65536);
     auto budget = integer(limits.at("max_instructions"), 1, 1000000000);
     const auto max_ms = integer(limits.at("max_milliseconds"), 1, 600000);
-    const auto started = std::chrono::steady_clock::now();
     auto checkpoint = [&]() {
         if (cancellation != nullptr && cancellation->load(std::memory_order_relaxed)) reject(KUMWE_ENGINE_V1_CANCELLED);
         const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - started).count();
@@ -161,6 +161,8 @@ std::string plan::execute(std::string_view request, const std::atomic<bool>* can
         results.push_back(std::move(item));
     }
     checkpoint();
-    return json::encode(value(object{{"wire_version", value(std::int64_t{1})}, {"results", value(std::move(results))}}), max_output);
+    auto output = json::encode(value(object{{"wire_version", value(std::int64_t{1})}, {"results", value(std::move(results))}}), max_output);
+    checkpoint();
+    return output;
 }
 }
