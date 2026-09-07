@@ -14,8 +14,12 @@ using list = value::list;
 const value null;
 const value& member(const value& v, std::string_view k) { const auto* p = v.find(k); return p ? *p : null; }
 bool scalar(const value& v) { return v.is<std::nullptr_t>() || v.is<bool>() || v.is<std::int64_t>() || v.is<std::string>(); }
-bool tagged(const value& v) { return member(v, "type") == value("normalized-value"); }
-bool exact(const value& v) { return member(v, "type") == value("exact-decimal"); }
+bool type_is(const value& v, std::string_view name) {
+    const auto* type = v.find("type");
+    return type != nullptr && type->is<std::string>() && type->as<std::string>() == name;
+}
+bool tagged(const value& v) { return type_is(v, "normalized-value"); }
+bool exact(const value& v) { return type_is(v, "exact-decimal"); }
 bool fields(const value& v, std::initializer_list<std::string_view> names) {
     if (!v.is<object>() || v.as<object>().size() != names.size()) return false;
     return std::all_of(names.begin(), names.end(), [&](std::string_view name) { return v.find(name) != nullptr; });

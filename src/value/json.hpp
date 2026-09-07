@@ -32,5 +32,7 @@ struct value final {
 value parse(std::string_view source, std::size_t max_bytes = 67108864,
             std::size_t max_nodes = 200000, std::size_t max_depth = 128);
 std::string encode(const value& source, std::size_t max_bytes = 67108864);
+// Same traversal, escaping, UTF-8 admission and byte limit, without materializing output.
+std::size_t encoded_size(const value& source, std::size_t max_bytes = 67108864);
 bool valid_utf8(std::string_view source) noexcept;
 }

@@ -53,6 +53,8 @@ int main() {
         auto view = test::view(request);
         test::response result;
         test::require(kumwe_engine_v1_execute(plan.handle, &view, nullptr, &result.buffer) == 0, "coarse ordered batch");
+        test::require(result.bytes() == R"({"results":[{"correlation":"row.1","findings":[],"result":{"findings":[],"value":7},"result_json":"{\"findings\":[],\"value\":7}"},{"correlation":"row.2","findings":[],"result":{"findings":[],"value":11},"result_json":"{\"findings\":[],\"value\":11}"}],"wire_version":1})",
+            "streamed complete envelope preserves canonical payload bytes");
         const auto expected = json::parse(R"({"wire_version":1,"results":[
             {"correlation":"row.1","result":{"value":7,"findings":[]}},
             {"correlation":"row.2","result":{"value":11,"findings":[]}}]})");
@@ -97,6 +99,19 @@ int main() {
             auto data = json::encode(bounded); auto limit_view = test::view(data); test::response refused;
             test::require(kumwe_engine_v1_execute(plan.handle, &limit_view, nullptr, &refused.buffer) == 6
                 && refused.buffer == nullptr, "caller budgets atomically enforced");
+        }
+        {
+            constexpr std::string_view empty_bytes = R"({"results":[],"wire_version":1})";
+            auto empty = execution;
+            std::get<value::object>(empty.data)["documents"] = value(value::list{});
+            auto& limits = std::get<value::object>(std::get<value::object>(empty.data).at("limits").data);
+            for (unsigned short_by = 0; short_by < 2; ++short_by) {
+                limits["max_output_bytes"] = value(static_cast<std::int64_t>(empty_bytes.size() - short_by));
+                const auto data = json::encode(empty); const auto input = test::view(data); test::response output;
+                const auto status = kumwe_engine_v1_execute(plan.handle, &input, nullptr, &output.buffer);
+                test::require(short_by == 0 ? status == 0 && output.bytes() == empty_bytes
+                    : status == 6 && output.buffer == nullptr, "empty streamed envelope exact output budget remains atomic");
+            }
         }
         {
             auto bounded = execution;

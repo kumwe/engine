@@ -190,12 +190,12 @@ value plan::execute(const value& request, const value& lines, std::uint64_t& bud
             invalid(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
     };
     const auto value_bytes = [&](const value& item) {
-        return json::encode(document::output_value(item), output_limit).size();
+        return json::encoded_size(document::output_value(item), output_limit);
     };
     const auto store_value = [&](const std::string& name, const value& item) {
         auto projected = retained_values;
         if (const auto* previous = values.find(name)) projected -= value_bytes(*previous);
-        else projected += json::encode(value(name), output_limit).size() + 1 + (values.as<object>().empty() ? 0 : 1);
+        else projected += json::encoded_size(value(name), output_limit) + 1 + (values.as<object>().empty() ? 0 : 1);
         projected += value_bytes(item);
         fits(projected, retained_findings);
         std::get<object>(values.data).insert_or_assign(name, item);
@@ -206,7 +206,7 @@ value plan::execute(const value& request, const value& lines, std::uint64_t& bud
     const document::finding_sink finding = [&](const std::string& field, const std::string& reason) {
         if (context.initial_findings.size() >= finding_limit) invalid(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
         value next(object{{"field", value(field)}, {"code", value(reason)}});
-        const auto projected = retained_findings + json::encode(next, output_limit).size()
+        const auto projected = retained_findings + json::encoded_size(next, output_limit)
             + (context.initial_findings.empty() ? 0 : 1);
         fits(retained_values, projected);
         context.initial_findings.emplace_back(std::move(next));
@@ -271,6 +271,6 @@ value plan::execute(const value& request, const value& lines, std::uint64_t& bud
             put(name, admitted(entry.at("normalized"), code));
         }
     }
-    return validation_.execute(values, lines, budget, finding_limit, output_limit, &context);
+    return validation_.execute_owned(std::move(values), lines, budget, finding_limit, output_limit, &context);
 }
 }

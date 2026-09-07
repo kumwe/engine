@@ -128,36 +128,54 @@ public:
     }
     bool complete() { spaces(); return bytes.empty(); }
 };
+template<bool Materialize>
 class writer final {
     std::string bytes;
     std::size_t limit;
-    void append(std::string_view token) { if (token.size() > limit - bytes.size()) exhausted(); bytes += token; }
+    std::size_t counted = 0;
+    void append(std::string_view token) {
+        if (token.size() > limit - size()) exhausted();
+        if constexpr (Materialize) bytes += token;
+        else counted += token.size();
+    }
     void string(std::string_view input) {
         if (!valid_utf8(input)) invalid();
         append("\"");
         constexpr char hex[] = "0123456789abcdef";
+        std::size_t start = 0;
         for (std::size_t i = 0; i < input.size(); ++i) {
             const auto c = static_cast<unsigned char>(input[i]);
+            auto escape = [&](std::string_view text, std::size_t consumed = 1) {
+                append(input.substr(start, i - start));
+                append(text);
+                i += consumed - 1;
+                start = i + 1;
+            };
             switch (c) {
-            case '"': append("\\\""); break;
-            case '\\': append("\\\\"); break;
-            case '\b': append("\\b"); break;
-            case '\f': append("\\f"); break;
-            case '\n': append("\\n"); break;
-            case '\r': append("\\r"); break;
-            case '\t': append("\\t"); break;
+            case '"': escape("\\\""); break;
+            case '\\': escape("\\\\"); break;
+            case '\b': escape("\\b"); break;
+            case '\f': escape("\\f"); break;
+            case '\n': escape("\\n"); break;
+            case '\r': escape("\\r"); break;
+            case '\t': escape("\\t"); break;
             default:
-                if (c < 32) { const char escaped[] = {'\\','u','0','0',hex[c >> 4U],hex[c & 15U]}; append(std::string_view(escaped, 6)); }
+                if (c < 32) { const char escaped[] = {'\\','u','0','0',hex[c >> 4U],hex[c & 15U]}; escape(std::string_view(escaped, 6)); }
                 else if (c == 0xe2 && i + 2 < input.size() && static_cast<unsigned char>(input[i + 1]) == 0x80 &&
                          (static_cast<unsigned char>(input[i + 2]) == 0xa8 || static_cast<unsigned char>(input[i + 2]) == 0xa9)) {
-                    append(static_cast<unsigned char>(input[i + 2]) == 0xa8 ? "\\u2028" : "\\u2029"); i += 2;
-                } else append(input.substr(i, 1));
+                    escape(static_cast<unsigned char>(input[i + 2]) == 0xa8 ? "\\u2028" : "\\u2029", 3);
+                }
             }
         }
+        append(input.substr(start));
         append("\"");
     }
 public:
     explicit writer(std::size_t max) : limit(max) {}
+    std::size_t size() const noexcept {
+        if constexpr (Materialize) return bytes.size();
+        else return counted;
+    }
     void add(const value& item) {
         if (item.is<std::nullptr_t>()) append("null");
         else if (item.is<bool>()) append(item.as<bool>() ? "true" : "false");
@@ -186,7 +204,8 @@ value parse(std::string_view source, std::size_t max_bytes, std::size_t max_node
     reader input(source, max_nodes, max_depth);
     auto result = input.next(); if (!input.complete()) invalid(); return result;
 }
-std::string encode(const value& source, std::size_t max_bytes) { writer output(max_bytes); output.add(source); return output.finish(); }
+std::string encode(const value& source, std::size_t max_bytes) { writer<true> output(max_bytes); output.add(source); return output.finish(); }
+std::size_t encoded_size(const value& source, std::size_t max_bytes) { writer<false> output(max_bytes); output.add(source); return output.size(); }
 bool valid_utf8(std::string_view source) noexcept {
     for (std::size_t i = 0; i < source.size();) {
         const auto first = static_cast<unsigned char>(source[i++]);

@@ -60,7 +60,11 @@ plan plan::compile(const value& program) {
         next.nullable = flag(member(item, "nullable"), true);
         if (next.required && next.nullable) invalid();
         const auto& formula = member(item, "formula");
-        if (!formula.is<std::nullptr_t>()) next.computation.push_back(vm::formula::compile(formula));
+        if (!formula.is<std::nullptr_t>()) {
+            next.computation.push_back(vm::formula::compile(formula));
+            const auto& dependencies = next.computation.front().dependencies();
+            result.projected_fields_.insert(dependencies.begin(), dependencies.end());
+        }
         auto validators = member(item, "validators");
         if (validators.is<std::nullptr_t>()) validators = value(list{});
         if (!validators.is<list>() || validators.as<list>().size() > 32) invalid();
@@ -85,6 +89,8 @@ plan plan::compile(const value& program) {
         if (!seen.emplace(name).second) invalid();
         auto condition = vm::formula::compile(member(item, "condition"));
         if (condition.document().at("type") != value("boolean")) invalid();
+        const auto& dependencies = condition.dependencies();
+        result.projected_fields_.insert(dependencies.begin(), dependencies.end());
         canonical_invariants.emplace_back(object{{"handle", value(name)}, {"condition", condition.document()}});
         result.invariants_.push_back(invariant{name, std::move(condition)});
     }
@@ -94,6 +100,15 @@ plan plan::compile(const value& program) {
 }
 value plan::execute(const value& fields, const value& lines, std::uint64_t& budget,
                     std::size_t finding_limit, std::size_t output_limit, const execution_context* context) const {
+    return execute_impl(fields, lines, budget, finding_limit, output_limit, context, nullptr);
+}
+value plan::execute_owned(value&& fields, const value& lines, std::uint64_t& budget,
+                    std::size_t finding_limit, std::size_t output_limit, const execution_context* context) const {
+    return execute_impl(fields, lines, budget, finding_limit, output_limit, context, &fields);
+}
+value plan::execute_impl(const value& fields, const value& lines, std::uint64_t& budget,
+                    std::size_t finding_limit, std::size_t output_limit, const execution_context* context,
+                    value* owned_fields) const {
     if (!fields.is<object>() || !(lines.is<object>() || lines.is<std::nullptr_t>()))
         throw refusal(KUMWE_ENGINE_V1_INVALID_INPUT);
     std::vector<const value*> instance_values;
@@ -118,21 +133,27 @@ value plan::execute(const value& fields, const value& lines, std::uint64_t& budg
             || projected_findings > output_limit - envelope_bytes - projected_values)
             throw refusal(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
     };
-    auto store_value = [&](const std::string& key, const value& candidate) {
-        const auto encoded_size = json::encode(output_value(candidate), output_limit).size();
+    auto store_value = [&](const std::string& key, const value& candidate, bool already_owned = false) {
+        const auto encoded_size = json::encoded_size(output_value(candidate), output_limit);
         auto projected = retained_values;
-        if (const auto* previous = values.find(key)) projected -= json::encode(output_value(*previous), output_limit).size();
-        else projected += json::encode(value(key), output_limit).size() + 1 + (values.as<object>().empty() ? 0 : 1);
+        if (const auto* previous = values.find(key)) projected -= json::encoded_size(output_value(*previous), output_limit);
+        else projected += json::encoded_size(value(key), output_limit) + 1 + (retained_values == 2 ? 0 : 1);
         projected += encoded_size;
         fits(projected, retained_findings);
-        auto expression = expression_value(candidate);
-        std::get<object>(values.data).insert_or_assign(key, candidate);
-        std::get<object>(projected_values.data).insert_or_assign(key, std::move(expression));
+        const bool needs_projection = projected_fields_.contains(key);
+        value expression;
+        if (needs_projection) expression = expression_value(candidate);
+        if (!already_owned) std::get<object>(values.data).insert_or_assign(key, candidate);
+        if (needs_projection)
+            std::get<object>(projected_values.data).insert_or_assign(key, std::move(expression));
         retained_values = projected;
     };
     for (const auto& [key, item] : fields.as<object>()) {
-        store_value(key, item);
+        store_value(key, item, owned_fields != nullptr);
     }
+    // Admission and each retained-output check ran before this transfer. Borrowed
+    // callers still receive the incremental-copy behavior above.
+    if (owned_fields != nullptr) values = std::move(*owned_fields);
     value normalized_lines = lines;
     if (lines.is<object>()) for (auto& [key, collection] : std::get<object>(normalized_lines.data)) {
         (void)key;
@@ -149,7 +170,7 @@ value plan::execute(const value& fields, const value& lines, std::uint64_t& budg
     finding_sink finding = [&](const std::string& field, const std::string& code) {
         if (findings.size() >= finding_limit) throw refusal(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
         value next(object{{"field", value(field)}, {"code", value(code)}});
-        const auto projected = retained_findings + json::encode(next, output_limit).size() + (findings.empty() ? 0 : 1);
+        const auto projected = retained_findings + json::encoded_size(next, output_limit) + (findings.empty() ? 0 : 1);
         fits(retained_values, projected);
         findings.emplace_back(std::move(next));
         retained_findings = projected;
@@ -211,10 +232,14 @@ value plan::execute(const value& fields, const value& lines, std::uint64_t& budg
             if (satisfied != value(true)) finding(invariant.handle, "invariant." + invariant.handle);
         } catch (const vm::error&) { finding(invariant.handle, "invariant_invalid"); }
     }
-    object canonical_values;
-    for (const auto& [key, item] : values.as<object>()) canonical_values.emplace(key, output_value(item));
-    value result(object{{"values", value(std::move(canonical_values))}, {"findings", value(std::move(findings))}});
-    (void)json::encode(result, output_limit);
+    // Domain values remain intact through validation. Canonicalize the owned map
+    // in place only after every consumer of domain type and identity has finished.
+    for (auto& [key, item] : std::get<object>(values.data)) { (void)key; item = output_value(item); }
+    object result_fields;
+    result_fields.emplace("values", std::move(values));
+    result_fields.emplace("findings", value(std::move(findings)));
+    value result(std::move(result_fields));
+    (void)json::encoded_size(result, output_limit);
     return result;
 }
 }

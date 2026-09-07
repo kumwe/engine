@@ -200,7 +200,7 @@ value normalize_computed_value(value output, const value& definition, std::uint6
     }
     // Domain tags are internal provenance. The document output budget measures
     // the emitted scalar; its containing object is charged by document::plan.
-    (void)json::encode(output.is<object>() ? output.at("value") : output, output_limit);
+    (void)json::encoded_size(output.is<object>() ? output.at("value") : output, output_limit);
     return output;
 }
 }
