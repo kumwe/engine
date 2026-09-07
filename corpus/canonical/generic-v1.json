@@ -1,0 +1,1424 @@
+{
+  "schema": "kumwe-canonical-json-corpus/v1",
+  "profile": "kumwe-canonical-json/generic-v1",
+  "cases": [
+    {
+      "id": "null",
+      "input": {
+        "type": "null"
+      },
+      "expected": {
+        "output": "null",
+        "sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+      }
+    },
+    {
+      "id": "false",
+      "input": {
+        "type": "bool",
+        "value": false
+      },
+      "expected": {
+        "output": "false",
+        "sha256": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa"
+      }
+    },
+    {
+      "id": "true",
+      "input": {
+        "type": "bool",
+        "value": true
+      },
+      "expected": {
+        "output": "true",
+        "sha256": "b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b"
+      }
+    },
+    {
+      "id": "integer-0",
+      "input": {
+        "type": "int",
+        "decimal": "0"
+      },
+      "expected": {
+        "output": "0",
+        "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+      }
+    },
+    {
+      "id": "integer-1",
+      "input": {
+        "type": "int",
+        "decimal": "1"
+      },
+      "expected": {
+        "output": "1",
+        "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+      }
+    },
+    {
+      "id": "integer--1",
+      "input": {
+        "type": "int",
+        "decimal": "-1"
+      },
+      "expected": {
+        "output": "-1",
+        "sha256": "1bad6b8cf97131fceab8543e81f7757195fbb1d36b376ee994ad1cf17699c464"
+      }
+    },
+    {
+      "id": "integer-9223372036854775807",
+      "input": {
+        "type": "int",
+        "decimal": "9223372036854775807"
+      },
+      "expected": {
+        "output": "9223372036854775807",
+        "sha256": "b34a1c30a715f6bf8b7243afa7fab883ce3612b7231716bdcbbdc1982e1aed29"
+      }
+    },
+    {
+      "id": "integer--9223372036854775808",
+      "input": {
+        "type": "int",
+        "decimal": "-9223372036854775808"
+      },
+      "expected": {
+        "output": "-9223372036854775808",
+        "sha256": "85386477f3af47e4a0b308ee3b3a688df16e8b2228105dd7d4dcd42a9807cb78"
+      }
+    },
+    {
+      "id": "integer-9007199254740993",
+      "input": {
+        "type": "int",
+        "decimal": "9007199254740993"
+      },
+      "expected": {
+        "output": "9007199254740993",
+        "sha256": "a1c367c29158357e62a3ff5d3e800fb7698a22396439dbc0a9d4929322afd35d"
+      }
+    },
+    {
+      "id": "float-one",
+      "input": {
+        "type": "float",
+        "hex": "3ff0000000000000"
+      },
+      "expected": {
+        "output": "1.0",
+        "sha256": "d0ff5974b6aa52cf562bea5921840c032a860a91a3512f7fe8f768f6bbe005f6"
+      }
+    },
+    {
+      "id": "float-zero",
+      "input": {
+        "type": "float",
+        "hex": "0000000000000000"
+      },
+      "expected": {
+        "output": "0.0",
+        "sha256": "8aed642bf5118b9d3c859bd4be35ecac75b6e873cce34e7b6f554b06f75550d7"
+      }
+    },
+    {
+      "id": "float-negative-zero",
+      "input": {
+        "type": "float",
+        "hex": "8000000000000000"
+      },
+      "expected": {
+        "output": "-0.0",
+        "sha256": "c26617c7ccbcaa6631b45d851b8cf56e21d2ca624bdb1193afdbd4b560702cec"
+      }
+    },
+    {
+      "id": "float-decimal",
+      "input": {
+        "type": "float",
+        "hex": "3fb999999999999a"
+      },
+      "expected": {
+        "output": "0.1",
+        "sha256": "14be4b45f18e0d8c67b4f719b5144eee88497e413709d11d85b096d8e2346310"
+      }
+    },
+    {
+      "id": "float-fixed-small",
+      "input": {
+        "type": "float",
+        "hex": "3f1a36e2eb1c432d"
+      },
+      "expected": {
+        "output": "0.0001",
+        "sha256": "e539aebac7fd2ed8aba8854fedeaa65436962f8ee1c82341b394698f085b6496"
+      }
+    },
+    {
+      "id": "float-exponent-small",
+      "input": {
+        "type": "float",
+        "hex": "3ee4f8b588e368f1"
+      },
+      "expected": {
+        "output": "1.0e-5",
+        "sha256": "3bbd7a13cb868a719e193364052a7dcd669da64c250b05c7be4c291d57a9c745"
+      }
+    },
+    {
+      "id": "float-fixed-large",
+      "input": {
+        "type": "float",
+        "hex": "4341c37937e08000"
+      },
+      "expected": {
+        "output": "10000000000000000.0",
+        "sha256": "3673f535e79cdeb6e25d4398661e14ffcf717dde4e82dd30cff2298023127cc1"
+      }
+    },
+    {
+      "id": "float-exponent-large",
+      "input": {
+        "type": "float",
+        "hex": "4376345785d8a000"
+      },
+      "expected": {
+        "output": "1.0e+17",
+        "sha256": "46c41c3b0b0df9f522701ca87aa8c33fb3a5901b9d02164fa2d7b14d38ef9b51"
+      }
+    },
+    {
+      "id": "float-min-normal",
+      "input": {
+        "type": "float",
+        "hex": "0010000000000000"
+      },
+      "expected": {
+        "output": "2.2250738585072014e-308",
+        "sha256": "8d51a73768cb59d15302f6b0a4c7147a04b0cce9df743b5bf50e31ab87b2d807"
+      }
+    },
+    {
+      "id": "float-max-finite",
+      "input": {
+        "type": "float",
+        "hex": "7fefffffffffffff"
+      },
+      "expected": {
+        "output": "1.7976931348623157e+308",
+        "sha256": "c2784e1abd6317452708f3fbf9641c16b959561bc621a1d408c23a20aa2cb585"
+      }
+    },
+    {
+      "id": "float-min-subnormal",
+      "input": {
+        "type": "float",
+        "hex": "0000000000000001"
+      },
+      "expected": {
+        "output": "5.0e-324",
+        "sha256": "c5a1c1cc25110bf3657a3dd6c1a3a088d062041b703c62717011b8dca6b8f084"
+      }
+    },
+    {
+      "id": "float-large-exact",
+      "input": {
+        "type": "float",
+        "hex": "4340000000000000"
+      },
+      "expected": {
+        "output": "9007199254740992.0",
+        "sha256": "0ad10bbdda8db20784fb3edc08722b255b8da67f2a12bb58ec32994ba4a3596e"
+      }
+    },
+    {
+      "id": "empty-string",
+      "input": {
+        "type": "string",
+        "base64": ""
+      },
+      "expected": {
+        "output": "\"\"",
+        "sha256": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+      }
+    },
+    {
+      "id": "numeric-string",
+      "input": {
+        "type": "string",
+        "base64": "MDEuMDA="
+      },
+      "expected": {
+        "output": "\"01.00\"",
+        "sha256": "c5a3009834d0cd339a3a409365fa99f6e032bbbf9905014dd67f721fecc6edb4"
+      }
+    },
+    {
+      "id": "slash-unicode",
+      "input": {
+        "type": "string",
+        "base64": "TmFtaWJpYS/DqS/wn5iA"
+      },
+      "expected": {
+        "output": "\"Namibia/é/😀\"",
+        "sha256": "e2a06b0a2f68167e2ea490799f2d01ad19a7d120af48f4d8d0ae5a8392f80ee4"
+      }
+    },
+    {
+      "id": "escapes",
+      "input": {
+        "type": "string",
+        "base64": "IlwIDAoNCQAf"
+      },
+      "expected": {
+        "output": "\"\\\"\\\\\\b\\f\\n\\r\\t\\u0000\\u001f\"",
+        "sha256": "13008b76e2d18d6ea5a38b455933b4b00ce549220596094c9dfe0aff18ad559a"
+      }
+    },
+    {
+      "id": "line-separators",
+      "input": {
+        "type": "string",
+        "base64": "4oCo4oCp"
+      },
+      "expected": {
+        "output": "\"\\u2028\\u2029\"",
+        "sha256": "b36c0076c7e28a52a8a9cb89306b164f887df89d715680d7b1ca8a858a8f3d33"
+      }
+    },
+    {
+      "id": "combining-is-not-normalized",
+      "input": {
+        "type": "string",
+        "base64": "ZcyB"
+      },
+      "expected": {
+        "output": "\"é\"",
+        "sha256": "3d68ce21f2899a475713cdbe7562ba9bdb6b1dfde8af1f221bdff4a0935b53b2"
+      }
+    },
+    {
+      "id": "empty-array",
+      "input": {
+        "type": "array",
+        "entries": []
+      },
+      "expected": {
+        "output": "[]",
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "id": "list-order",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "int",
+              "decimal": "0"
+            },
+            "value": {
+              "type": "int",
+              "decimal": "3"
+            }
+          },
+          {
+            "key": {
+              "type": "int",
+              "decimal": "1"
+            },
+            "value": {
+              "type": "int",
+              "decimal": "1"
+            }
+          }
+        ]
+      },
+      "expected": {
+        "output": "[3,1]",
+        "sha256": "51ad5c36f38fc1f146295801f5d2db92ebddab58bf285e6b9ae54b50b843374f"
+      }
+    },
+    {
+      "id": "nested-source-vector",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "string",
+              "base64": "eg=="
+            },
+            "value": {
+              "type": "int",
+              "decimal": "2"
+            }
+          },
+          {
+            "key": {
+              "type": "string",
+              "base64": "bmVzdGVk"
+            },
+            "value": {
+              "type": "array",
+              "entries": [
+                {
+                  "key": {
+                    "type": "string",
+                    "base64": "Yg=="
+                  },
+                  "value": {
+                    "type": "bool",
+                    "value": true
+                  }
+                },
+                {
+                  "key": {
+                    "type": "string",
+                    "base64": "YQ=="
+                  },
+                  "value": {
+                    "type": "array",
+                    "entries": [
+                      {
+                        "key": {
+                          "type": "int",
+                          "decimal": "0"
+                        },
+                        "value": {
+                          "type": "int",
+                          "decimal": "3"
+                        }
+                      },
+                      {
+                        "key": {
+                          "type": "int",
+                          "decimal": "1"
+                        },
+                        "value": {
+                          "type": "int",
+                          "decimal": "1"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "expected": {
+        "output": "{\"nested\":{\"a\":[3,1],\"b\":true},\"z\":2}",
+        "sha256": "25c9dac1dcb27c544e7e70d721843d5bea5ef305c606364726397f79eba5f7f2"
+      }
+    },
+    {
+      "id": "map-byte-order",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "string",
+              "base64": "w6k="
+            },
+            "value": {
+              "type": "null"
+            }
+          },
+          {
+            "key": {
+              "type": "string",
+              "base64": "YQ=="
+            },
+            "value": {
+              "type": "int",
+              "decimal": "2"
+            }
+          },
+          {
+            "key": {
+              "type": "string",
+              "base64": "Wg=="
+            },
+            "value": {
+              "type": "int",
+              "decimal": "1"
+            }
+          }
+        ]
+      },
+      "expected": {
+        "output": "{\"Z\":1,\"a\":2,\"é\":null}",
+        "sha256": "79d10fb93a7bc3fe863ed48a8e18878bf33ebd5c6c790a7b52a6f1e59b75a7b9"
+      }
+    },
+    {
+      "id": "numeric-key-order",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "int",
+              "decimal": "2"
+            },
+            "value": {
+              "type": "string",
+              "base64": "dHdv"
+            }
+          },
+          {
+            "key": {
+              "type": "int",
+              "decimal": "10"
+            },
+            "value": {
+              "type": "string",
+              "base64": "dGVu"
+            }
+          },
+          {
+            "key": {
+              "type": "int",
+              "decimal": "-1"
+            },
+            "value": {
+              "type": "string",
+              "base64": "bmVnYXRpdmU="
+            }
+          }
+        ]
+      },
+      "expected": {
+        "output": "{\"-1\":\"negative\",\"10\":\"ten\",\"2\":\"two\"}",
+        "sha256": "4bda1f2a6274c20ad83f8a66530ecbc3666e7df4c25e6eb0e41a565f3dcb3890"
+      }
+    },
+    {
+      "id": "map-reclassifies-list",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "int",
+              "decimal": "1"
+            },
+            "value": {
+              "type": "string",
+              "base64": "b25l"
+            }
+          },
+          {
+            "key": {
+              "type": "int",
+              "decimal": "0"
+            },
+            "value": {
+              "type": "string",
+              "base64": "emVybw=="
+            }
+          }
+        ]
+      },
+      "expected": {
+        "output": "[\"zero\",\"one\"]",
+        "sha256": "4c80b4a57a85f3a4df69de05126fc48c570e89467bd68ad435e6a58d70d4c3b2"
+      }
+    },
+    {
+      "id": "mixed-keys",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "string",
+              "base64": "MDE="
+            },
+            "value": {
+              "type": "int",
+              "decimal": "1"
+            }
+          },
+          {
+            "key": {
+              "type": "int",
+              "decimal": "0"
+            },
+            "value": {
+              "type": "int",
+              "decimal": "0"
+            }
+          },
+          {
+            "key": {
+              "type": "string",
+              "base64": ""
+            },
+            "value": {
+              "type": "int",
+              "decimal": "2"
+            }
+          }
+        ]
+      },
+      "expected": {
+        "output": "{\"\":2,\"0\":0,\"01\":1}",
+        "sha256": "cb9db7efb9c735c2c8d15355e3470441d01dc65b5c477d3e8dd3dd5d4a1c006e"
+      }
+    },
+    {
+      "id": "noncoercing-keys",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "string",
+              "base64": "LTA="
+            },
+            "value": {
+              "type": "null"
+            }
+          },
+          {
+            "key": {
+              "type": "string",
+              "base64": "KzE="
+            },
+            "value": {
+              "type": "null"
+            }
+          },
+          {
+            "key": {
+              "type": "string",
+              "base64": "OTIyMzM3MjAzNjg1NDc3NTgwOA=="
+            },
+            "value": {
+              "type": "null"
+            }
+          },
+          {
+            "key": {
+              "type": "string",
+              "base64": "MDA="
+            },
+            "value": {
+              "type": "null"
+            }
+          }
+        ]
+      },
+      "expected": {
+        "output": "{\"+1\":null,\"-0\":null,\"00\":null,\"9223372036854775808\":null}",
+        "sha256": "13f1278640428ee9a44845e4296a896dc2dee733626aeedb4e2b8fae964acd1f"
+      }
+    },
+    {
+      "id": "escaped-key",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "string",
+              "base64": "YQoi"
+            },
+            "value": {
+              "type": "string",
+              "base64": "Lw=="
+            }
+          }
+        ]
+      },
+      "expected": {
+        "output": "{\"a\\n\\\"\":\"/\"}",
+        "sha256": "676abf8123e70cce8f33925f70be6fe507543db3d441a6356d05b51ea2b13a19"
+      }
+    },
+    {
+      "id": "infinity",
+      "input": {
+        "type": "float",
+        "hex": "7ff0000000000000"
+      },
+      "expected": {
+        "finding": "canonical.non-finite-number"
+      }
+    },
+    {
+      "id": "negative-infinity",
+      "input": {
+        "type": "float",
+        "hex": "fff0000000000000"
+      },
+      "expected": {
+        "finding": "canonical.non-finite-number"
+      }
+    },
+    {
+      "id": "nan",
+      "input": {
+        "type": "float",
+        "hex": "7ff8000000000000"
+      },
+      "expected": {
+        "finding": "canonical.non-finite-number"
+      }
+    },
+    {
+      "id": "object",
+      "input": {
+        "type": "unsupported"
+      },
+      "expected": {
+        "finding": "canonical.unsupported-type"
+      }
+    },
+    {
+      "id": "invalid-lead",
+      "input": {
+        "type": "string",
+        "base64": "/w=="
+      },
+      "expected": {
+        "finding": "canonical.invalid-utf8"
+      }
+    },
+    {
+      "id": "overlong",
+      "input": {
+        "type": "string",
+        "base64": "wK8="
+      },
+      "expected": {
+        "finding": "canonical.invalid-utf8"
+      }
+    },
+    {
+      "id": "surrogate",
+      "input": {
+        "type": "string",
+        "base64": "7aCA"
+      },
+      "expected": {
+        "finding": "canonical.invalid-utf8"
+      }
+    },
+    {
+      "id": "truncated",
+      "input": {
+        "type": "string",
+        "base64": "4oI="
+      },
+      "expected": {
+        "finding": "canonical.invalid-utf8"
+      }
+    },
+    {
+      "id": "invalid-map-key",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "string",
+              "base64": "/w=="
+            },
+            "value": {
+              "type": "null"
+            }
+          }
+        ]
+      },
+      "expected": {
+        "finding": "canonical.invalid-utf8"
+      }
+    },
+    {
+      "id": "depth-zero-empty",
+      "input": {
+        "type": "array",
+        "entries": []
+      },
+      "limits": {
+        "maxDepth": 0
+      },
+      "expected": {
+        "output": "[]",
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "id": "depth-zero-child",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "int",
+              "decimal": "0"
+            },
+            "value": {
+              "type": "null"
+            }
+          }
+        ]
+      },
+      "limits": {
+        "maxDepth": 0
+      },
+      "expected": {
+        "finding": "canonical.depth-limit"
+      }
+    },
+    {
+      "id": "depth-exact",
+      "input": {
+        "type": "nested-list",
+        "depth": 3,
+        "leaf": {
+          "type": "null"
+        }
+      },
+      "limits": {
+        "maxDepth": 3
+      },
+      "expected": {
+        "output": "[[[null]]]",
+        "sha256": "7344d12f1ffb3c2c76146283877fc54814b96674403ac8f29705f650d9bb99fd"
+      }
+    },
+    {
+      "id": "depth-over",
+      "input": {
+        "type": "nested-list",
+        "depth": 4,
+        "leaf": {
+          "type": "null"
+        }
+      },
+      "limits": {
+        "maxDepth": 3
+      },
+      "expected": {
+        "finding": "canonical.depth-limit"
+      }
+    },
+    {
+      "id": "default-depth-over",
+      "input": {
+        "type": "nested-list",
+        "depth": 65,
+        "leaf": {
+          "type": "null"
+        }
+      },
+      "expected": {
+        "finding": "canonical.depth-limit"
+      }
+    },
+    {
+      "id": "nodes-exact",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "int",
+              "decimal": "0"
+            },
+            "value": {
+              "type": "null"
+            }
+          },
+          {
+            "key": {
+              "type": "int",
+              "decimal": "1"
+            },
+            "value": {
+              "type": "null"
+            }
+          }
+        ]
+      },
+      "limits": {
+        "maxNodes": 3
+      },
+      "expected": {
+        "output": "[null,null]",
+        "sha256": "95cb9b4f84ceff132cc7a875d8c192bf4997016a939ee64141c1fd628c0e8738"
+      }
+    },
+    {
+      "id": "nodes-over",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "int",
+              "decimal": "0"
+            },
+            "value": {
+              "type": "null"
+            }
+          },
+          {
+            "key": {
+              "type": "int",
+              "decimal": "1"
+            },
+            "value": {
+              "type": "null"
+            }
+          }
+        ]
+      },
+      "limits": {
+        "maxNodes": 2
+      },
+      "expected": {
+        "finding": "canonical.node-limit"
+      }
+    },
+    {
+      "id": "default-nodes-over",
+      "input": {
+        "type": "repeat-list",
+        "count": 100000,
+        "value": {
+          "type": "null"
+        }
+      },
+      "expected": {
+        "finding": "canonical.node-limit"
+      }
+    },
+    {
+      "id": "bytes-exact",
+      "input": {
+        "type": "string",
+        "base64": "w6k="
+      },
+      "limits": {
+        "maxOutputBytes": 4
+      },
+      "expected": {
+        "output": "\"é\"",
+        "sha256": "f2886017e9c7abacf804b54d64787dce2b611c9544ba21f3affdd126a6e50086"
+      }
+    },
+    {
+      "id": "bytes-over",
+      "input": {
+        "type": "string",
+        "base64": "w6k="
+      },
+      "limits": {
+        "maxOutputBytes": 3
+      },
+      "expected": {
+        "finding": "canonical.output-limit"
+      }
+    },
+    {
+      "id": "escaped-bytes-exact",
+      "input": {
+        "type": "string",
+        "base64": "AA=="
+      },
+      "limits": {
+        "maxOutputBytes": 8
+      },
+      "expected": {
+        "output": "\"\\u0000\"",
+        "sha256": "700174b26850d224c7a156cb6a45cea08031eab640fcfc1eaf7f770ab9aeaa66"
+      }
+    },
+    {
+      "id": "escaped-bytes-over",
+      "input": {
+        "type": "string",
+        "base64": "AA=="
+      },
+      "limits": {
+        "maxOutputBytes": 7
+      },
+      "expected": {
+        "finding": "canonical.output-limit"
+      }
+    },
+    {
+      "id": "default-output-over",
+      "input": {
+        "type": "repeat-string",
+        "count": 8388607,
+        "base64": "YQ=="
+      },
+      "expected": {
+        "finding": "canonical.output-limit"
+      }
+    },
+    {
+      "id": "structural-before-utf8",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "int",
+              "decimal": "0"
+            },
+            "value": {
+              "type": "string",
+              "base64": "/w=="
+            }
+          },
+          {
+            "key": {
+              "type": "int",
+              "decimal": "1"
+            },
+            "value": {
+              "type": "float",
+              "hex": "7ff0000000000000"
+            }
+          }
+        ]
+      },
+      "expected": {
+        "finding": "canonical.non-finite-number"
+      }
+    },
+    {
+      "id": "sorted-structural-error",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "string",
+              "base64": "eg=="
+            },
+            "value": {
+              "type": "unsupported"
+            }
+          },
+          {
+            "key": {
+              "type": "string",
+              "base64": "YQ=="
+            },
+            "value": {
+              "type": "float",
+              "hex": "7ff0000000000000"
+            }
+          }
+        ]
+      },
+      "expected": {
+        "finding": "canonical.non-finite-number"
+      }
+    },
+    {
+      "id": "list-structural-error",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "int",
+              "decimal": "0"
+            },
+            "value": {
+              "type": "unsupported"
+            }
+          },
+          {
+            "key": {
+              "type": "int",
+              "decimal": "1"
+            },
+            "value": {
+              "type": "float",
+              "hex": "7ff0000000000000"
+            }
+          }
+        ]
+      },
+      "expected": {
+        "finding": "canonical.unsupported-type"
+      }
+    },
+    {
+      "id": "depth-before-type",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "int",
+              "decimal": "0"
+            },
+            "value": {
+              "type": "unsupported"
+            }
+          }
+        ]
+      },
+      "limits": {
+        "maxDepth": 0
+      },
+      "expected": {
+        "finding": "canonical.depth-limit"
+      }
+    },
+    {
+      "id": "node-before-type",
+      "input": {
+        "type": "unsupported"
+      },
+      "limits": {
+        "maxNodes": 1
+      },
+      "expected": {
+        "finding": "canonical.unsupported-type"
+      }
+    },
+    {
+      "id": "output-before-later-utf8",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "int",
+              "decimal": "0"
+            },
+            "value": {
+              "type": "string",
+              "base64": "YWJj"
+            }
+          },
+          {
+            "key": {
+              "type": "int",
+              "decimal": "1"
+            },
+            "value": {
+              "type": "string",
+              "base64": "/w=="
+            }
+          }
+        ]
+      },
+      "limits": {
+        "maxOutputBytes": 2
+      },
+      "expected": {
+        "finding": "canonical.output-limit"
+      }
+    },
+    {
+      "id": "utf8-before-same-string-output",
+      "input": {
+        "type": "string",
+        "base64": "/w=="
+      },
+      "limits": {
+        "maxOutputBytes": 1
+      },
+      "expected": {
+        "finding": "canonical.invalid-utf8"
+      }
+    },
+    {
+      "id": "input-over-malformed-string",
+      "input": {
+        "type": "string",
+        "base64": "//8="
+      },
+      "limits": {
+        "maxInputBytes": 1
+      },
+      "expected": {
+        "finding": "canonical.input-limit"
+      }
+    },
+    {
+      "id": "input-over-malformed-key",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "string",
+              "base64": "//8="
+            },
+            "value": {
+              "type": "null"
+            }
+          }
+        ]
+      },
+      "limits": {
+        "maxInputBytes": 1
+      },
+      "expected": {
+        "finding": "canonical.input-limit"
+      }
+    },
+    {
+      "id": "input-before-unsupported-child",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "string",
+              "base64": "YWJj"
+            },
+            "value": {
+              "type": "unsupported"
+            }
+          }
+        ]
+      },
+      "limits": {
+        "maxInputBytes": 2
+      },
+      "expected": {
+        "finding": "canonical.input-limit"
+      }
+    },
+    {
+      "id": "width-before-unsupported-child",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "string",
+              "base64": "YQ=="
+            },
+            "value": {
+              "type": "unsupported"
+            }
+          },
+          {
+            "key": {
+              "type": "string",
+              "base64": "Yg=="
+            },
+            "value": {
+              "type": "null"
+            }
+          }
+        ]
+      },
+      "limits": {
+        "maxNodes": 2
+      },
+      "expected": {
+        "finding": "canonical.node-limit"
+      }
+    },
+    {
+      "id": "input-cumulative-values",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "int",
+              "decimal": "0"
+            },
+            "value": {
+              "type": "string",
+              "base64": "YWJj"
+            }
+          },
+          {
+            "key": {
+              "type": "int",
+              "decimal": "1"
+            },
+            "value": {
+              "type": "string",
+              "base64": "ZGVm"
+            }
+          }
+        ]
+      },
+      "limits": {
+        "maxInputBytes": 21
+      },
+      "expected": {
+        "finding": "canonical.input-limit"
+      }
+    },
+    {
+      "id": "input-before-nonfinite",
+      "input": {
+        "type": "float",
+        "hex": "7ff0000000000000"
+      },
+      "limits": {
+        "maxInputBytes": 7
+      },
+      "expected": {
+        "finding": "canonical.input-limit"
+      }
+    },
+    {
+      "id": "input-exact",
+      "input": {
+        "type": "string",
+        "base64": "YWJj"
+      },
+      "limits": {
+        "maxInputBytes": 3
+      },
+      "expected": {
+        "output": "\"abc\"",
+        "sha256": "6cc43f858fbb763301637b5af970e2a46b46f461f27e5a0f41e009c59b827b25"
+      }
+    },
+    {
+      "id": "utf8-not-utf16-key-order",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "string",
+              "base64": "8JCAgA=="
+            },
+            "value": {
+              "type": "null"
+            }
+          },
+          {
+            "key": {
+              "type": "string",
+              "base64": "7oCA"
+            },
+            "value": {
+              "type": "null"
+            }
+          }
+        ]
+      },
+      "expected": {
+        "output": "{\"\":null,\"𐀀\":null}",
+        "sha256": "38e71dc7b0f53bce58eac3e070417bde2daeee1b301f4d31ab5099d98f5877f3"
+      }
+    },
+    {
+      "id": "unicode-maximum",
+      "input": {
+        "type": "string",
+        "base64": "9I+/vw=="
+      },
+      "expected": {
+        "output": "\"􏿿\"",
+        "sha256": "216551a7df34e082dd063693c09f0b567df0351251da1fd71057b83fe66003c6"
+      }
+    },
+    {
+      "id": "unicode-out-of-range",
+      "input": {
+        "type": "string",
+        "base64": "9JCAgA=="
+      },
+      "expected": {
+        "finding": "canonical.invalid-utf8"
+      }
+    },
+    {
+      "id": "lone-continuation",
+      "input": {
+        "type": "string",
+        "base64": "gA=="
+      },
+      "expected": {
+        "finding": "canonical.invalid-utf8"
+      }
+    },
+    {
+      "id": "callable-name-is-data",
+      "input": {
+        "type": "string",
+        "base64": "c3RybGVu"
+      },
+      "expected": {
+        "output": "\"strlen\"",
+        "sha256": "9197ba36eebf7004995e4d869e583a6aff30c649abdbf2a021a60fa3277249fe"
+      }
+    },
+    {
+      "id": "callable-shape-is-data",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "int",
+              "decimal": "0"
+            },
+            "value": {
+              "type": "string",
+              "base64": "RXhhbXBsZQ=="
+            }
+          },
+          {
+            "key": {
+              "type": "int",
+              "decimal": "1"
+            },
+            "value": {
+              "type": "string",
+              "base64": "bWV0aG9k"
+            }
+          }
+        ]
+      },
+      "expected": {
+        "output": "[\"Example\",\"method\"]",
+        "sha256": "504cf2f944c95a63c5f29b6f2e3d03acee4654074fa24abfa02b7a86bb3bd859"
+      }
+    },
+    {
+      "id": "width-before-child-depth",
+      "input": {
+        "type": "array",
+        "entries": [
+          {
+            "key": {
+              "type": "int",
+              "decimal": "0"
+            },
+            "value": {
+              "type": "null"
+            }
+          }
+        ]
+      },
+      "limits": {
+        "maxDepth": 0,
+        "maxNodes": 1
+      },
+      "expected": {
+        "finding": "canonical.node-limit"
+      }
+    }
+  ]
+}

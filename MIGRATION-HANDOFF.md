@@ -26,7 +26,7 @@ target:
   repository: "https://github.com/kumwe/engine"
   artifact_identity: "CMake Kumwe::Engine"
   canonical_namespace_or_abi: "kumwe::engine / kumwe_engine_v1_"
-  branch: "agent/native-decimal-foundation"
+  branch: "agent/native-kernels-v2"
   pull_request: "https://github.com/kumwe/engine/pull/1"
 ownership:
   responsibility: "Standalone deterministic native execution; this E0/E1 slice implements exact decimal batching only."
@@ -40,19 +40,19 @@ ownership:
   public_manifests:
     -
       path: "resources/abi-symbols.txt"
-      sha256: "11f36f18e2bba2916a08f8a5a0923ace56ce85cadcbc8d52242fba7eef0a6c42"
+      sha256: "62cf59b8d6feb369f0d801b59b69796ea569570177e02b903c0bec6b01e04d21"
     -
       path: "resources/capabilities.json"
-      sha256: "043e2b6f445da3304d70ad9088c62b4989b0449754e5c01098e1904a3835bdd7"
+      sha256: "84ab3e2cce2aa2519f9804b269d1fb36db8646cae0e0ee3539442771335b44fd"
     -
       path: "resources/contracts.json"
-      sha256: "442bd3f62ae93ea6664cc5351e7887f75bd9483cb9fc4b050258ac3b01878204"
+      sha256: "e2c8b257e0f2f4cc52f3c76d3a9892b6759d67a050a7dd4ed99701e9e7fe366f"
     -
       path: "tests/ownership.json"
-      sha256: "64a4b5427df7052dde10af793711130461f971910bd8545c13e950ae6c1e599a"
+      sha256: "39ae37fa8e07b3f213f900f5cd0553c25814b4b45434d4bcd0ff14364f36705f"
     -
       path: "include/kumwe/engine/engine.h"
-      sha256: "3660ca9f2e6ce3bf4f21f631ad80032d6b74af83ab0facf244798602e895b15a"
+      sha256: "ec031a4636a87ebc80e653513df1a8db228efc1d500c25c122702c69389280ee"
   intentionally_excluded:
     - "No App classes, dependency adoption or test removal."
     - "No VM, document, report, canonical, cache, compiler, cancellation or PHP-binding implementation is advertised."
@@ -214,3 +214,11 @@ blockers:
 
 This reviewable E0/E1 decimal slice is not a release candidate or App adoption.
 The five-module architecture, exact test ownership and downstream release barriers remain mandatory.
+
+## Runtime candidate NRM-2026-042
+
+The candidate implements immutable formula plans, normalized scalar document computation and ordered findings,
+normalized report materialization, and GenericV1 canonical encoding with streaming SHA256. The public ABI
+owns plans, output buffers and cooperative cancellation. Exact semantic corpora and architecture/lifetime gates
+remain mandatory. The contract matrix explicitly identifies unimplemented document codec/validator and report
+converted-formula profiles; this candidate is not a completed acceleration release or an App cutover.

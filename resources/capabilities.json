@@ -1,1 +1,77 @@
-{"engine":"kumwe/engine","version":"0.0.0-dev","abi_major":1,"abi_status":"unstable-development","capabilities":["decimal-batch-draft/1"],"semantic_owner":"kumwe/conversion","semantic_source":"5ccea7f7dc4ebd11bc27b11da8573da42807c196","semantic_release_verified":false,"completion_claim":false,"corpus_sha256":"635db251898707828e24f12b1abb672273552f5f633186a725cc9f50ac08140c"}
+{
+  "engine": "kumwe/engine",
+  "version": "0.0.0-dev",
+  "abi_major": 1,
+  "abi_status": "unstable-development",
+  "capabilities": [
+    "decimal-batch-draft/1",
+    "formula-draft/1",
+    "normalized-document-draft/1",
+    "report-materialization-draft/1",
+    "kumwe-canonical-json/generic-v1"
+  ],
+  "semantic_owner": "kumwe/conversion",
+  "semantic_source": "5ccea7f7dc4ebd11bc27b11da8573da42807c196",
+  "semantic_release_verified": false,
+  "completion_claim": false,
+  "corpus_sha256": "635db251898707828e24f12b1abb672273552f5f633186a725cc9f50ac08140c",
+  "computation": {
+    "wire_version": 1,
+    "engine_version": "0.0.0",
+    "abi_major": 1,
+    "api_version": "0.0.0",
+    "build_digest": "@ENGINE_BUILD_DIGEST@",
+    "features": [
+      {
+        "name": "canonical",
+        "version": 1
+      },
+      {
+        "name": "compile",
+        "version": 1
+      },
+      {
+        "name": "document.batch",
+        "version": 1
+      },
+      {
+        "name": "formula",
+        "version": 1
+      },
+      {
+        "name": "report.materialization",
+        "version": 1
+      }
+    ],
+    "contracts": [
+      {
+        "wire_version": 1,
+        "owner": "kumwe/business-definition",
+        "profile": "formula-draft/1",
+        "version": "0.0.0",
+        "corpus_digest": "11033679b018fdc9a192e954ef11089444a00a1d89c6279d3c192be9252cf42f"
+      },
+      {
+        "wire_version": 1,
+        "owner": "kumwe/record-model",
+        "profile": "normalized-document-draft/1",
+        "version": "0.0.0",
+        "corpus_digest": "fce91bfe3c9614ec3862b50c0defc10a9b69ed021671f8382d774d8cb0a20668"
+      },
+      {
+        "wire_version": 1,
+        "owner": "kumwe/reporting",
+        "profile": "report-materialization-draft/1",
+        "version": "0.0.0",
+        "corpus_digest": "e235b1b465106fecc0c5857f75104db85acb4cbf770a429559ac05088222d426"
+      },
+      {
+        "wire_version": 1,
+        "owner": "kumwe/canonical-json",
+        "profile": "kumwe-canonical-json/generic-v1",
+        "version": "0.0.0",
+        "corpus_digest": "84d21b12e7a2bfd752356d9a6e664bcb332e209d19017e7634e7485a4fa4e250"
+      }
+    ]
+  }
+}

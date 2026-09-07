@@ -1,0 +1,907 @@
+{
+    "schema": "kumwe-report-materialization-corpus/v1",
+    "source_app": "24ecf956423c18933e824b43cea1bfb9127a79a9",
+    "oracle": "src/BusinessReporting/Application/ReportService.php::materialize (unchanged source, reflection test only)",
+    "fixtures": [
+        {
+            "id": "empty_ungrouped",
+            "plan": {
+                "identifier": "acme.report",
+                "version": 1,
+                "title": "Report",
+                "source_definition": "acme.record",
+                "required_capability": "acme.report.read",
+                "administrator_visible": true,
+                "portal_visible": false,
+                "parameters": [],
+                "filters": [],
+                "columns": [
+                    {
+                        "alias": "group",
+                        "label": "Group",
+                        "source": "group",
+                        "type": "string"
+                    },
+                    {
+                        "alias": "amount",
+                        "label": "Amount",
+                        "source": "amount",
+                        "type": "decimal"
+                    }
+                ],
+                "groups": [],
+                "aggregates": [
+                    {
+                        "alias": "count",
+                        "function": "count",
+                        "column": null
+                    },
+                    {
+                        "alias": "sum",
+                        "function": "sum",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "avg",
+                        "function": "avg",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "min",
+                        "function": "min",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "max",
+                        "function": "max",
+                        "column": "amount"
+                    }
+                ],
+                "formulas": [],
+                "sorts": [],
+                "drill_downs": [],
+                "synchronous_row_cap": 1000
+            },
+            "authorized_rows": [],
+            "expected": {
+                "rows": [
+                    {
+                        "count": 0,
+                        "sum": null,
+                        "avg": null,
+                        "min": null,
+                        "max": null
+                    }
+                ]
+            }
+        },
+        {
+            "id": "null_ungrouped",
+            "plan": {
+                "identifier": "acme.report",
+                "version": 1,
+                "title": "Report",
+                "source_definition": "acme.record",
+                "required_capability": "acme.report.read",
+                "administrator_visible": true,
+                "portal_visible": false,
+                "parameters": [],
+                "filters": [],
+                "columns": [
+                    {
+                        "alias": "group",
+                        "label": "Group",
+                        "source": "group",
+                        "type": "string"
+                    },
+                    {
+                        "alias": "amount",
+                        "label": "Amount",
+                        "source": "amount",
+                        "type": "decimal"
+                    }
+                ],
+                "groups": [],
+                "aggregates": [
+                    {
+                        "alias": "count",
+                        "function": "count",
+                        "column": null
+                    },
+                    {
+                        "alias": "sum",
+                        "function": "sum",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "avg",
+                        "function": "avg",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "min",
+                        "function": "min",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "max",
+                        "function": "max",
+                        "column": "amount"
+                    }
+                ],
+                "formulas": [],
+                "sorts": [],
+                "drill_downs": [],
+                "synchronous_row_cap": 1000
+            },
+            "authorized_rows": [
+                {
+                    "group": "a",
+                    "amount": null
+                }
+            ],
+            "expected": {
+                "rows": [
+                    {
+                        "count": 1,
+                        "sum": null,
+                        "avg": null,
+                        "min": null,
+                        "max": null
+                    }
+                ]
+            }
+        },
+        {
+            "id": "exact_large_sum",
+            "plan": {
+                "identifier": "acme.report",
+                "version": 1,
+                "title": "Report",
+                "source_definition": "acme.record",
+                "required_capability": "acme.report.read",
+                "administrator_visible": true,
+                "portal_visible": false,
+                "parameters": [],
+                "filters": [],
+                "columns": [
+                    {
+                        "alias": "group",
+                        "label": "Group",
+                        "source": "group",
+                        "type": "string"
+                    },
+                    {
+                        "alias": "amount",
+                        "label": "Amount",
+                        "source": "amount",
+                        "type": "decimal"
+                    }
+                ],
+                "groups": [],
+                "aggregates": [
+                    {
+                        "alias": "count",
+                        "function": "count",
+                        "column": null
+                    },
+                    {
+                        "alias": "sum",
+                        "function": "sum",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "avg",
+                        "function": "avg",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "min",
+                        "function": "min",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "max",
+                        "function": "max",
+                        "column": "amount"
+                    }
+                ],
+                "formulas": [],
+                "sorts": [],
+                "drill_downs": [],
+                "synchronous_row_cap": 1000
+            },
+            "authorized_rows": [
+                {
+                    "group": "a",
+                    "amount": "999999999999999999999999999.1"
+                },
+                {
+                    "group": "a",
+                    "amount": "0.9"
+                }
+            ],
+            "expected": {
+                "rows": [
+                    {
+                        "count": 2,
+                        "sum": "1000000000000000000000000000",
+                        "avg": "500000000000000000000000000",
+                        "min": "0.9",
+                        "max": "999999999999999999999999999.1"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "average_six_places",
+            "plan": {
+                "identifier": "acme.report",
+                "version": 1,
+                "title": "Report",
+                "source_definition": "acme.record",
+                "required_capability": "acme.report.read",
+                "administrator_visible": true,
+                "portal_visible": false,
+                "parameters": [],
+                "filters": [],
+                "columns": [
+                    {
+                        "alias": "group",
+                        "label": "Group",
+                        "source": "group",
+                        "type": "string"
+                    },
+                    {
+                        "alias": "amount",
+                        "label": "Amount",
+                        "source": "amount",
+                        "type": "decimal"
+                    }
+                ],
+                "groups": [],
+                "aggregates": [
+                    {
+                        "alias": "count",
+                        "function": "count",
+                        "column": null
+                    },
+                    {
+                        "alias": "sum",
+                        "function": "sum",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "avg",
+                        "function": "avg",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "min",
+                        "function": "min",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "max",
+                        "function": "max",
+                        "column": "amount"
+                    }
+                ],
+                "formulas": [],
+                "sorts": [],
+                "drill_downs": [],
+                "synchronous_row_cap": 1000
+            },
+            "authorized_rows": [
+                {
+                    "group": "a",
+                    "amount": "1"
+                },
+                {
+                    "group": "a",
+                    "amount": "0"
+                },
+                {
+                    "group": "a",
+                    "amount": "0"
+                }
+            ],
+            "expected": {
+                "rows": [
+                    {
+                        "count": 3,
+                        "sum": "1",
+                        "avg": "0.333333",
+                        "min": "0",
+                        "max": "1"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "negative_average",
+            "plan": {
+                "identifier": "acme.report",
+                "version": 1,
+                "title": "Report",
+                "source_definition": "acme.record",
+                "required_capability": "acme.report.read",
+                "administrator_visible": true,
+                "portal_visible": false,
+                "parameters": [],
+                "filters": [],
+                "columns": [
+                    {
+                        "alias": "group",
+                        "label": "Group",
+                        "source": "group",
+                        "type": "string"
+                    },
+                    {
+                        "alias": "amount",
+                        "label": "Amount",
+                        "source": "amount",
+                        "type": "decimal"
+                    }
+                ],
+                "groups": [],
+                "aggregates": [
+                    {
+                        "alias": "count",
+                        "function": "count",
+                        "column": null
+                    },
+                    {
+                        "alias": "sum",
+                        "function": "sum",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "avg",
+                        "function": "avg",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "min",
+                        "function": "min",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "max",
+                        "function": "max",
+                        "column": "amount"
+                    }
+                ],
+                "formulas": [],
+                "sorts": [],
+                "drill_downs": [],
+                "synchronous_row_cap": 1000
+            },
+            "authorized_rows": [
+                {
+                    "group": "a",
+                    "amount": "-1"
+                },
+                {
+                    "group": "a",
+                    "amount": "0"
+                },
+                {
+                    "group": "a",
+                    "amount": "0"
+                }
+            ],
+            "expected": {
+                "rows": [
+                    {
+                        "count": 3,
+                        "sum": "-1",
+                        "avg": "-0.333333",
+                        "min": "-1",
+                        "max": "0"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "group_insertion_order",
+            "plan": {
+                "identifier": "acme.report",
+                "version": 1,
+                "title": "Report",
+                "source_definition": "acme.record",
+                "required_capability": "acme.report.read",
+                "administrator_visible": true,
+                "portal_visible": false,
+                "parameters": [],
+                "filters": [],
+                "columns": [
+                    {
+                        "alias": "group",
+                        "label": "Group",
+                        "source": "group",
+                        "type": "string"
+                    },
+                    {
+                        "alias": "amount",
+                        "label": "Amount",
+                        "source": "amount",
+                        "type": "decimal"
+                    }
+                ],
+                "groups": [
+                    {
+                        "column": "group"
+                    }
+                ],
+                "aggregates": [
+                    {
+                        "alias": "count",
+                        "function": "count",
+                        "column": null
+                    },
+                    {
+                        "alias": "sum",
+                        "function": "sum",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "avg",
+                        "function": "avg",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "min",
+                        "function": "min",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "max",
+                        "function": "max",
+                        "column": "amount"
+                    }
+                ],
+                "formulas": [],
+                "sorts": [],
+                "drill_downs": [],
+                "synchronous_row_cap": 1000
+            },
+            "authorized_rows": [
+                {
+                    "group": "b",
+                    "amount": "2"
+                },
+                {
+                    "group": "a",
+                    "amount": "3"
+                },
+                {
+                    "group": "b",
+                    "amount": null
+                }
+            ],
+            "expected": {
+                "rows": [
+                    {
+                        "group": "b",
+                        "count": 2,
+                        "sum": "2",
+                        "avg": "2",
+                        "min": "2",
+                        "max": "2"
+                    },
+                    {
+                        "group": "a",
+                        "count": 1,
+                        "sum": "3",
+                        "avg": "3",
+                        "min": "3",
+                        "max": "3"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "empty_grouped",
+            "plan": {
+                "identifier": "acme.report",
+                "version": 1,
+                "title": "Report",
+                "source_definition": "acme.record",
+                "required_capability": "acme.report.read",
+                "administrator_visible": true,
+                "portal_visible": false,
+                "parameters": [],
+                "filters": [],
+                "columns": [
+                    {
+                        "alias": "group",
+                        "label": "Group",
+                        "source": "group",
+                        "type": "string"
+                    },
+                    {
+                        "alias": "amount",
+                        "label": "Amount",
+                        "source": "amount",
+                        "type": "decimal"
+                    }
+                ],
+                "groups": [
+                    {
+                        "column": "group"
+                    }
+                ],
+                "aggregates": [
+                    {
+                        "alias": "count",
+                        "function": "count",
+                        "column": null
+                    },
+                    {
+                        "alias": "sum",
+                        "function": "sum",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "avg",
+                        "function": "avg",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "min",
+                        "function": "min",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "max",
+                        "function": "max",
+                        "column": "amount"
+                    }
+                ],
+                "formulas": [],
+                "sorts": [],
+                "drill_downs": [],
+                "synchronous_row_cap": 1000
+            },
+            "authorized_rows": [],
+            "expected": {
+                "rows": []
+            }
+        },
+        {
+            "id": "numeric_stable_sort",
+            "plan": {
+                "identifier": "acme.report",
+                "version": 1,
+                "title": "Report",
+                "source_definition": "acme.record",
+                "required_capability": "acme.report.read",
+                "administrator_visible": true,
+                "portal_visible": false,
+                "parameters": [],
+                "filters": [],
+                "columns": [
+                    {
+                        "alias": "group",
+                        "label": "Group",
+                        "source": "group",
+                        "type": "string"
+                    },
+                    {
+                        "alias": "amount",
+                        "label": "Amount",
+                        "source": "amount",
+                        "type": "decimal"
+                    }
+                ],
+                "groups": [],
+                "aggregates": [],
+                "formulas": [],
+                "sorts": [
+                    {
+                        "output": "amount",
+                        "direction": "asc",
+                        "nulls_last": true
+                    }
+                ],
+                "drill_downs": [],
+                "synchronous_row_cap": 1000
+            },
+            "authorized_rows": [
+                {
+                    "group": "first",
+                    "amount": "1.0"
+                },
+                {
+                    "group": "last",
+                    "amount": "1.00"
+                },
+                {
+                    "group": "small",
+                    "amount": "-2"
+                }
+            ],
+            "expected": {
+                "rows": [
+                    {
+                        "group": "small",
+                        "amount": "-2"
+                    },
+                    {
+                        "group": "first",
+                        "amount": "1.0"
+                    },
+                    {
+                        "group": "last",
+                        "amount": "1.00"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "nulls_ascending",
+            "plan": {
+                "identifier": "acme.report",
+                "version": 1,
+                "title": "Report",
+                "source_definition": "acme.record",
+                "required_capability": "acme.report.read",
+                "administrator_visible": true,
+                "portal_visible": false,
+                "parameters": [],
+                "filters": [],
+                "columns": [
+                    {
+                        "alias": "group",
+                        "label": "Group",
+                        "source": "group",
+                        "type": "string"
+                    },
+                    {
+                        "alias": "amount",
+                        "label": "Amount",
+                        "source": "amount",
+                        "type": "decimal"
+                    }
+                ],
+                "groups": [],
+                "aggregates": [],
+                "formulas": [],
+                "sorts": [
+                    {
+                        "output": "amount",
+                        "direction": "asc",
+                        "nulls_last": true
+                    }
+                ],
+                "drill_downs": [],
+                "synchronous_row_cap": 1000
+            },
+            "authorized_rows": [
+                {
+                    "group": "null",
+                    "amount": null
+                },
+                {
+                    "group": "one",
+                    "amount": "1"
+                }
+            ],
+            "expected": {
+                "rows": [
+                    {
+                        "group": "one",
+                        "amount": "1"
+                    },
+                    {
+                        "group": "null",
+                        "amount": null
+                    }
+                ]
+            }
+        },
+        {
+            "id": "nulls_descending",
+            "plan": {
+                "identifier": "acme.report",
+                "version": 1,
+                "title": "Report",
+                "source_definition": "acme.record",
+                "required_capability": "acme.report.read",
+                "administrator_visible": true,
+                "portal_visible": false,
+                "parameters": [],
+                "filters": [],
+                "columns": [
+                    {
+                        "alias": "group",
+                        "label": "Group",
+                        "source": "group",
+                        "type": "string"
+                    },
+                    {
+                        "alias": "amount",
+                        "label": "Amount",
+                        "source": "amount",
+                        "type": "decimal"
+                    }
+                ],
+                "groups": [],
+                "aggregates": [],
+                "formulas": [],
+                "sorts": [
+                    {
+                        "output": "amount",
+                        "direction": "desc",
+                        "nulls_last": true
+                    }
+                ],
+                "drill_downs": [],
+                "synchronous_row_cap": 1000
+            },
+            "authorized_rows": [
+                {
+                    "group": "one",
+                    "amount": "1"
+                },
+                {
+                    "group": "null",
+                    "amount": null
+                }
+            ],
+            "expected": {
+                "rows": [
+                    {
+                        "group": "null",
+                        "amount": null
+                    },
+                    {
+                        "group": "one",
+                        "amount": "1"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "missing_aggregate_refused",
+            "plan": {
+                "identifier": "acme.report",
+                "version": 1,
+                "title": "Report",
+                "source_definition": "acme.record",
+                "required_capability": "acme.report.read",
+                "administrator_visible": true,
+                "portal_visible": false,
+                "parameters": [],
+                "filters": [],
+                "columns": [
+                    {
+                        "alias": "group",
+                        "label": "Group",
+                        "source": "group",
+                        "type": "string"
+                    },
+                    {
+                        "alias": "amount",
+                        "label": "Amount",
+                        "source": "amount",
+                        "type": "decimal"
+                    }
+                ],
+                "groups": [],
+                "aggregates": [
+                    {
+                        "alias": "count",
+                        "function": "count",
+                        "column": null
+                    },
+                    {
+                        "alias": "sum",
+                        "function": "sum",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "avg",
+                        "function": "avg",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "min",
+                        "function": "min",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "max",
+                        "function": "max",
+                        "column": "amount"
+                    }
+                ],
+                "formulas": [],
+                "sorts": [],
+                "drill_downs": [],
+                "synchronous_row_cap": 1000
+            },
+            "authorized_rows": [
+                {
+                    "group": "a"
+                }
+            ],
+            "expected": {
+                "refusal_class": "Kumwe\\App\\BusinessReporting\\Application\\ReportUnavailable"
+            }
+        },
+        {
+            "id": "missing_group_refused",
+            "plan": {
+                "identifier": "acme.report",
+                "version": 1,
+                "title": "Report",
+                "source_definition": "acme.record",
+                "required_capability": "acme.report.read",
+                "administrator_visible": true,
+                "portal_visible": false,
+                "parameters": [],
+                "filters": [],
+                "columns": [
+                    {
+                        "alias": "group",
+                        "label": "Group",
+                        "source": "group",
+                        "type": "string"
+                    },
+                    {
+                        "alias": "amount",
+                        "label": "Amount",
+                        "source": "amount",
+                        "type": "decimal"
+                    }
+                ],
+                "groups": [
+                    {
+                        "column": "group"
+                    }
+                ],
+                "aggregates": [
+                    {
+                        "alias": "count",
+                        "function": "count",
+                        "column": null
+                    },
+                    {
+                        "alias": "sum",
+                        "function": "sum",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "avg",
+                        "function": "avg",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "min",
+                        "function": "min",
+                        "column": "amount"
+                    },
+                    {
+                        "alias": "max",
+                        "function": "max",
+                        "column": "amount"
+                    }
+                ],
+                "formulas": [],
+                "sorts": [],
+                "drill_downs": [],
+                "synchronous_row_cap": 1000
+            },
+            "authorized_rows": [
+                {
+                    "amount": "1"
+                }
+            ],
+            "expected": {
+                "refusal_class": "Kumwe\\App\\BusinessReporting\\Application\\ReportUnavailable"
+            }
+        }
+    ]
+}

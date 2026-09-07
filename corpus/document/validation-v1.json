@@ -1,0 +1,1780 @@
+{
+    "schema": "kumwe-document-validation-corpus/v1",
+    "source_app": "24ecf956423c18933e824b43cea1bfb9127a79a9",
+    "oracle": "RecordRuleValidator::compute + validate (unchanged source; normalized scalar input; host RecordValueCodec only normalizes computed scalar outputs)",
+    "fixtures": [
+        {
+            "id": "dependency_order",
+            "definition": {
+                "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                "owner": {
+                    "type": "site",
+                    "identifier": "default"
+                },
+                "site": "default",
+                "handle": "site.default.record",
+                "singular_label": "Record",
+                "plural_label": "Records",
+                "status": "draft",
+                "definition_version": 0,
+                "storage_mode": "relational",
+                "identity_strategy": "uuid",
+                "scope": "site",
+                "audit_enabled": true,
+                "revisions_enabled": true,
+                "fields": [
+                    {
+                        "handle": "id",
+                        "label": "ID",
+                        "type": "core.uuid",
+                        "description": "",
+                        "required": true,
+                        "nullable": false,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": true,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    },
+                    {
+                        "handle": "total",
+                        "label": "total",
+                        "type": "core.computed",
+                        "description": "",
+                        "required": false,
+                        "nullable": true,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": true,
+                        "computed": true,
+                        "read_only": true,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": {
+                            "op": "add",
+                            "type": "integer",
+                            "args": [
+                                {
+                                    "op": "field",
+                                    "type": "integer",
+                                    "field": "subtotal"
+                                },
+                                {
+                                    "op": "literal",
+                                    "type": "integer",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "computation_mode": "stored"
+                    },
+                    {
+                        "handle": "subtotal",
+                        "label": "subtotal",
+                        "type": "core.computed",
+                        "description": "",
+                        "required": false,
+                        "nullable": true,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": true,
+                        "computed": true,
+                        "read_only": true,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": {
+                            "op": "add",
+                            "type": "integer",
+                            "args": [
+                                {
+                                    "op": "field",
+                                    "type": "integer",
+                                    "field": "amount"
+                                },
+                                {
+                                    "op": "literal",
+                                    "type": "integer",
+                                    "value": 2
+                                }
+                            ]
+                        },
+                        "computation_mode": "stored"
+                    },
+                    {
+                        "handle": "amount",
+                        "label": "amount",
+                        "type": "core.integer",
+                        "description": "",
+                        "required": false,
+                        "nullable": true,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": false,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    }
+                ],
+                "relationships": [],
+                "views": [],
+                "actions": [],
+                "workflow": null,
+                "compatibility_metadata": [],
+                "administrator_exposure": true,
+                "portal_exposure": false,
+                "public_exposure": false
+            },
+            "normalized_values": {
+                "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                "amount": 3
+            },
+            "owned_lines": null,
+            "expected": {
+                "values": {
+                    "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                    "amount": 3,
+                    "subtotal": 5,
+                    "total": 6
+                },
+                "findings": []
+            }
+        },
+        {
+            "id": "missing_formula_dependency",
+            "definition": {
+                "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                "owner": {
+                    "type": "site",
+                    "identifier": "default"
+                },
+                "site": "default",
+                "handle": "site.default.record",
+                "singular_label": "Record",
+                "plural_label": "Records",
+                "status": "draft",
+                "definition_version": 0,
+                "storage_mode": "relational",
+                "identity_strategy": "uuid",
+                "scope": "site",
+                "audit_enabled": true,
+                "revisions_enabled": true,
+                "fields": [
+                    {
+                        "handle": "id",
+                        "label": "ID",
+                        "type": "core.uuid",
+                        "description": "",
+                        "required": true,
+                        "nullable": false,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": true,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    },
+                    {
+                        "handle": "total",
+                        "label": "total",
+                        "type": "core.computed",
+                        "description": "",
+                        "required": false,
+                        "nullable": true,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": true,
+                        "computed": true,
+                        "read_only": true,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": {
+                            "op": "field",
+                            "type": "integer",
+                            "field": "amount"
+                        },
+                        "computation_mode": "stored"
+                    },
+                    {
+                        "handle": "amount",
+                        "label": "amount",
+                        "type": "core.integer",
+                        "description": "",
+                        "required": false,
+                        "nullable": true,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": false,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    }
+                ],
+                "relationships": [],
+                "views": [],
+                "actions": [],
+                "workflow": null,
+                "compatibility_metadata": [],
+                "administrator_exposure": true,
+                "portal_exposure": false,
+                "public_exposure": false
+            },
+            "normalized_values": {
+                "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b"
+            },
+            "owned_lines": null,
+            "expected": {
+                "values": {
+                    "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b"
+                },
+                "findings": [
+                    {
+                        "field": "total",
+                        "code": "formula_dependency"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "formula_overflow",
+            "definition": {
+                "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                "owner": {
+                    "type": "site",
+                    "identifier": "default"
+                },
+                "site": "default",
+                "handle": "site.default.record",
+                "singular_label": "Record",
+                "plural_label": "Records",
+                "status": "draft",
+                "definition_version": 0,
+                "storage_mode": "relational",
+                "identity_strategy": "uuid",
+                "scope": "site",
+                "audit_enabled": true,
+                "revisions_enabled": true,
+                "fields": [
+                    {
+                        "handle": "id",
+                        "label": "ID",
+                        "type": "core.uuid",
+                        "description": "",
+                        "required": true,
+                        "nullable": false,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": true,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    },
+                    {
+                        "handle": "total",
+                        "label": "total",
+                        "type": "core.computed",
+                        "description": "",
+                        "required": false,
+                        "nullable": true,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": true,
+                        "computed": true,
+                        "read_only": true,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": {
+                            "op": "add",
+                            "type": "integer",
+                            "args": [
+                                {
+                                    "op": "literal",
+                                    "type": "integer",
+                                    "value": 9223372036854775807
+                                },
+                                {
+                                    "op": "literal",
+                                    "type": "integer",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "computation_mode": "stored"
+                    }
+                ],
+                "relationships": [],
+                "views": [],
+                "actions": [],
+                "workflow": null,
+                "compatibility_metadata": [],
+                "administrator_exposure": true,
+                "portal_exposure": false,
+                "public_exposure": false
+            },
+            "normalized_values": {
+                "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b"
+            },
+            "owned_lines": null,
+            "expected": {
+                "values": {
+                    "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b"
+                },
+                "findings": [
+                    {
+                        "field": "total",
+                        "code": "formula_failed"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "required_and_null",
+            "definition": {
+                "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                "owner": {
+                    "type": "site",
+                    "identifier": "default"
+                },
+                "site": "default",
+                "handle": "site.default.record",
+                "singular_label": "Record",
+                "plural_label": "Records",
+                "status": "draft",
+                "definition_version": 0,
+                "storage_mode": "relational",
+                "identity_strategy": "uuid",
+                "scope": "site",
+                "audit_enabled": true,
+                "revisions_enabled": true,
+                "fields": [
+                    {
+                        "handle": "id",
+                        "label": "ID",
+                        "type": "core.uuid",
+                        "description": "",
+                        "required": true,
+                        "nullable": false,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": true,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    },
+                    {
+                        "handle": "required",
+                        "label": "required",
+                        "type": "core.integer",
+                        "description": "",
+                        "required": true,
+                        "nullable": false,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": false,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    },
+                    {
+                        "handle": "nonnullable",
+                        "label": "nonnullable",
+                        "type": "core.integer",
+                        "description": "",
+                        "required": false,
+                        "nullable": false,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": false,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    },
+                    {
+                        "handle": "optional",
+                        "label": "optional",
+                        "type": "core.integer",
+                        "description": "",
+                        "required": false,
+                        "nullable": true,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": false,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    }
+                ],
+                "relationships": [],
+                "views": [],
+                "actions": [],
+                "workflow": null,
+                "compatibility_metadata": [],
+                "administrator_exposure": true,
+                "portal_exposure": false,
+                "public_exposure": false
+            },
+            "normalized_values": {
+                "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                "required": null,
+                "nonnullable": null
+            },
+            "owned_lines": null,
+            "expected": {
+                "values": {
+                    "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                    "required": null,
+                    "nonnullable": null
+                },
+                "findings": [
+                    {
+                        "field": "required",
+                        "code": "required"
+                    },
+                    {
+                        "field": "nonnullable",
+                        "code": "not_nullable"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "validator_order",
+            "definition": {
+                "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                "owner": {
+                    "type": "site",
+                    "identifier": "default"
+                },
+                "site": "default",
+                "handle": "site.default.record",
+                "singular_label": "Record",
+                "plural_label": "Records",
+                "status": "draft",
+                "definition_version": 0,
+                "storage_mode": "relational",
+                "identity_strategy": "uuid",
+                "scope": "site",
+                "audit_enabled": true,
+                "revisions_enabled": true,
+                "fields": [
+                    {
+                        "handle": "id",
+                        "label": "ID",
+                        "type": "core.uuid",
+                        "description": "",
+                        "required": true,
+                        "nullable": false,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": true,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    },
+                    {
+                        "handle": "amount",
+                        "label": "amount",
+                        "type": "core.integer",
+                        "description": "",
+                        "required": false,
+                        "nullable": true,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [
+                            {
+                                "rule": "min",
+                                "value": 10
+                            },
+                            {
+                                "rule": "max",
+                                "value": -1
+                            }
+                        ],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": false,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    },
+                    {
+                        "handle": "count",
+                        "label": "count",
+                        "type": "core.integer",
+                        "description": "",
+                        "required": false,
+                        "nullable": true,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [
+                            {
+                                "rule": "integer"
+                            }
+                        ],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": false,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    }
+                ],
+                "relationships": [],
+                "views": [],
+                "actions": [],
+                "workflow": null,
+                "compatibility_metadata": [],
+                "administrator_exposure": true,
+                "portal_exposure": false,
+                "public_exposure": false
+            },
+            "normalized_values": {
+                "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                "amount": 5,
+                "count": 2
+            },
+            "owned_lines": null,
+            "expected": {
+                "values": {
+                    "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                    "amount": 5,
+                    "count": 2
+                },
+                "findings": [
+                    {
+                        "field": "amount",
+                        "code": "validator_invalid"
+                    },
+                    {
+                        "field": "amount",
+                        "code": "validator_invalid"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "validator_unsupported",
+            "definition": {
+                "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                "owner": {
+                    "type": "site",
+                    "identifier": "default"
+                },
+                "site": "default",
+                "handle": "site.default.record",
+                "singular_label": "Record",
+                "plural_label": "Records",
+                "status": "draft",
+                "definition_version": 0,
+                "storage_mode": "relational",
+                "identity_strategy": "uuid",
+                "scope": "site",
+                "audit_enabled": true,
+                "revisions_enabled": true,
+                "fields": [
+                    {
+                        "handle": "id",
+                        "label": "ID",
+                        "type": "core.uuid",
+                        "description": "",
+                        "required": true,
+                        "nullable": false,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": true,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    },
+                    {
+                        "handle": "amount",
+                        "label": "amount",
+                        "type": "core.integer",
+                        "description": "",
+                        "required": false,
+                        "nullable": true,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [
+                            {
+                                "rule": "unregistered"
+                            }
+                        ],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": false,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    }
+                ],
+                "relationships": [],
+                "views": [],
+                "actions": [],
+                "workflow": null,
+                "compatibility_metadata": [],
+                "administrator_exposure": true,
+                "portal_exposure": false,
+                "public_exposure": false
+            },
+            "normalized_values": {
+                "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                "amount": 1
+            },
+            "owned_lines": null,
+            "expected": {
+                "values": {
+                    "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                    "amount": 1
+                },
+                "findings": [
+                    {
+                        "field": "amount",
+                        "code": "validator_invalid"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "aggregate_equal",
+            "definition": {
+                "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                "owner": {
+                    "type": "site",
+                    "identifier": "default"
+                },
+                "site": "default",
+                "handle": "site.default.record",
+                "singular_label": "Record",
+                "plural_label": "Records",
+                "status": "draft",
+                "definition_version": 0,
+                "storage_mode": "relational",
+                "identity_strategy": "uuid",
+                "scope": "site",
+                "audit_enabled": true,
+                "revisions_enabled": true,
+                "fields": [
+                    {
+                        "handle": "id",
+                        "label": "ID",
+                        "type": "core.uuid",
+                        "description": "",
+                        "required": true,
+                        "nullable": false,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": true,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    },
+                    {
+                        "handle": "total",
+                        "label": "total",
+                        "type": "core.integer",
+                        "description": "",
+                        "required": false,
+                        "nullable": true,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": false,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    }
+                ],
+                "relationships": [
+                    {
+                        "handle": "lines",
+                        "label": "Lines",
+                        "kind": "owned_line_collection",
+                        "target": "site.default.record_line",
+                        "inverse": null,
+                        "required": false,
+                        "unique": false,
+                        "ordered": true,
+                        "on_delete": "cascade"
+                    }
+                ],
+                "views": [],
+                "actions": [],
+                "workflow": null,
+                "compatibility_metadata": [],
+                "administrator_exposure": true,
+                "portal_exposure": false,
+                "public_exposure": false,
+                "record_invariants": [
+                    {
+                        "handle": "total_matches",
+                        "message": "The total must match its lines.",
+                        "condition": {
+                            "op": "eq",
+                            "type": "boolean",
+                            "args": [
+                                {
+                                    "op": "field",
+                                    "type": "integer",
+                                    "field": "total"
+                                },
+                                {
+                                    "op": "line_aggregate",
+                                    "type": "integer",
+                                    "lines": "lines",
+                                    "aggregate": "sum",
+                                    "field": "amount"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "normalized_values": {
+                "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                "total": 3
+            },
+            "owned_lines": {
+                "lines": [
+                    {
+                        "amount": 1
+                    },
+                    {
+                        "amount": 2
+                    }
+                ]
+            },
+            "expected": {
+                "values": {
+                    "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                    "total": 3
+                },
+                "findings": []
+            }
+        },
+        {
+            "id": "aggregate_mismatch",
+            "definition": {
+                "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                "owner": {
+                    "type": "site",
+                    "identifier": "default"
+                },
+                "site": "default",
+                "handle": "site.default.record",
+                "singular_label": "Record",
+                "plural_label": "Records",
+                "status": "draft",
+                "definition_version": 0,
+                "storage_mode": "relational",
+                "identity_strategy": "uuid",
+                "scope": "site",
+                "audit_enabled": true,
+                "revisions_enabled": true,
+                "fields": [
+                    {
+                        "handle": "id",
+                        "label": "ID",
+                        "type": "core.uuid",
+                        "description": "",
+                        "required": true,
+                        "nullable": false,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": true,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    },
+                    {
+                        "handle": "total",
+                        "label": "total",
+                        "type": "core.integer",
+                        "description": "",
+                        "required": false,
+                        "nullable": true,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": false,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    }
+                ],
+                "relationships": [
+                    {
+                        "handle": "lines",
+                        "label": "Lines",
+                        "kind": "owned_line_collection",
+                        "target": "site.default.record_line",
+                        "inverse": null,
+                        "required": false,
+                        "unique": false,
+                        "ordered": true,
+                        "on_delete": "cascade"
+                    }
+                ],
+                "views": [],
+                "actions": [],
+                "workflow": null,
+                "compatibility_metadata": [],
+                "administrator_exposure": true,
+                "portal_exposure": false,
+                "public_exposure": false,
+                "record_invariants": [
+                    {
+                        "handle": "total_matches",
+                        "message": "The total must match its lines.",
+                        "condition": {
+                            "op": "eq",
+                            "type": "boolean",
+                            "args": [
+                                {
+                                    "op": "field",
+                                    "type": "integer",
+                                    "field": "total"
+                                },
+                                {
+                                    "op": "line_aggregate",
+                                    "type": "integer",
+                                    "lines": "lines",
+                                    "aggregate": "sum",
+                                    "field": "amount"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "normalized_values": {
+                "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                "total": 4
+            },
+            "owned_lines": {
+                "lines": [
+                    {
+                        "amount": 1
+                    },
+                    {
+                        "amount": 2
+                    }
+                ]
+            },
+            "expected": {
+                "values": {
+                    "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                    "total": 4
+                },
+                "findings": [
+                    {
+                        "field": "total_matches",
+                        "code": "invariant.total_matches"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "aggregate_missing",
+            "definition": {
+                "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                "owner": {
+                    "type": "site",
+                    "identifier": "default"
+                },
+                "site": "default",
+                "handle": "site.default.record",
+                "singular_label": "Record",
+                "plural_label": "Records",
+                "status": "draft",
+                "definition_version": 0,
+                "storage_mode": "relational",
+                "identity_strategy": "uuid",
+                "scope": "site",
+                "audit_enabled": true,
+                "revisions_enabled": true,
+                "fields": [
+                    {
+                        "handle": "id",
+                        "label": "ID",
+                        "type": "core.uuid",
+                        "description": "",
+                        "required": true,
+                        "nullable": false,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": true,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    },
+                    {
+                        "handle": "total",
+                        "label": "total",
+                        "type": "core.integer",
+                        "description": "",
+                        "required": false,
+                        "nullable": true,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": false,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    }
+                ],
+                "relationships": [
+                    {
+                        "handle": "lines",
+                        "label": "Lines",
+                        "kind": "owned_line_collection",
+                        "target": "site.default.record_line",
+                        "inverse": null,
+                        "required": false,
+                        "unique": false,
+                        "ordered": true,
+                        "on_delete": "cascade"
+                    }
+                ],
+                "views": [],
+                "actions": [],
+                "workflow": null,
+                "compatibility_metadata": [],
+                "administrator_exposure": true,
+                "portal_exposure": false,
+                "public_exposure": false,
+                "record_invariants": [
+                    {
+                        "handle": "total_matches",
+                        "message": "The total must match its lines.",
+                        "condition": {
+                            "op": "eq",
+                            "type": "boolean",
+                            "args": [
+                                {
+                                    "op": "field",
+                                    "type": "integer",
+                                    "field": "total"
+                                },
+                                {
+                                    "op": "line_aggregate",
+                                    "type": "integer",
+                                    "lines": "lines",
+                                    "aggregate": "sum",
+                                    "field": "amount"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "normalized_values": {
+                "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                "total": 3
+            },
+            "owned_lines": [],
+            "expected": {
+                "values": {
+                    "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                    "total": 3
+                },
+                "findings": [
+                    {
+                        "field": "total_matches",
+                        "code": "invariant_invalid"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "aggregate_suspended",
+            "definition": {
+                "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                "owner": {
+                    "type": "site",
+                    "identifier": "default"
+                },
+                "site": "default",
+                "handle": "site.default.record",
+                "singular_label": "Record",
+                "plural_label": "Records",
+                "status": "draft",
+                "definition_version": 0,
+                "storage_mode": "relational",
+                "identity_strategy": "uuid",
+                "scope": "site",
+                "audit_enabled": true,
+                "revisions_enabled": true,
+                "fields": [
+                    {
+                        "handle": "id",
+                        "label": "ID",
+                        "type": "core.uuid",
+                        "description": "",
+                        "required": true,
+                        "nullable": false,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": true,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    },
+                    {
+                        "handle": "total",
+                        "label": "total",
+                        "type": "core.integer",
+                        "description": "",
+                        "required": false,
+                        "nullable": true,
+                        "default": null,
+                        "length": null,
+                        "precision": null,
+                        "scale": null,
+                        "configuration": [],
+                        "normalizers": [],
+                        "validators": [],
+                        "unique": false,
+                        "indexed": false,
+                        "immutable_after_create": false,
+                        "server_only": false,
+                        "computed": false,
+                        "read_only": false,
+                        "create_visible": true,
+                        "update_visible": true,
+                        "read_visible": true,
+                        "searchable": false,
+                        "filterable": false,
+                        "sortable": false,
+                        "reportable": false,
+                        "exportable": false,
+                        "sensitivity": "internal",
+                        "localized": false,
+                        "help_text": "",
+                        "form_group": "general",
+                        "order": 0,
+                        "placements": [
+                            "detail",
+                            "form"
+                        ],
+                        "visibility_condition": null,
+                        "editability_condition": null,
+                        "formula": null
+                    }
+                ],
+                "relationships": [
+                    {
+                        "handle": "lines",
+                        "label": "Lines",
+                        "kind": "owned_line_collection",
+                        "target": "site.default.record_line",
+                        "inverse": null,
+                        "required": false,
+                        "unique": false,
+                        "ordered": true,
+                        "on_delete": "cascade"
+                    }
+                ],
+                "views": [],
+                "actions": [],
+                "workflow": null,
+                "compatibility_metadata": [],
+                "administrator_exposure": true,
+                "portal_exposure": false,
+                "public_exposure": false,
+                "record_invariants": [
+                    {
+                        "handle": "total_matches",
+                        "message": "The total must match its lines.",
+                        "condition": {
+                            "op": "eq",
+                            "type": "boolean",
+                            "args": [
+                                {
+                                    "op": "field",
+                                    "type": "integer",
+                                    "field": "total"
+                                },
+                                {
+                                    "op": "line_aggregate",
+                                    "type": "integer",
+                                    "lines": "lines",
+                                    "aggregate": "sum",
+                                    "field": "amount"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "normalized_values": {
+                "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                "total": 3
+            },
+            "owned_lines": null,
+            "expected": {
+                "values": {
+                    "id": "018f4f24-98d8-7ad4-8f3f-38c909178b6b",
+                    "total": 3
+                },
+                "findings": []
+            }
+        }
+    ]
+}
