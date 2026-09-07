@@ -45,6 +45,20 @@ int main(int argc, char** argv) {
             std::uint64_t owned_work = 1000000;
             test::require(compiled.execute_owned(std::move(owned_fields), lines, owned_work, 1000, 1000000) == actual
                 && owned_work == work, "owned and borrowed document paths preserve exact result and work charges");
+            const auto output_bytes = json::encode(actual).size();
+            for (const auto limit : {std::size_t{0}, std::size_t{1}, output_bytes - 1, output_bytes, output_bytes + 1}) {
+                std::uint64_t borrowed_budget = 1000000, owned_budget = 1000000;
+                std::uint32_t borrowed_status = 0, owned_status = 0;
+                value borrowed_result, owned_result;
+                try { borrowed_result = compiled.execute(item.at("normalized_values"), lines, borrowed_budget, 1000, limit); }
+                catch (const refusal& e) { borrowed_status = e.code; }
+                try { owned_result = compiled.execute_owned(value(item.at("normalized_values")), lines, owned_budget, 1000, limit); }
+                catch (const refusal& e) { owned_status = e.code; }
+                test::require(borrowed_status == owned_status && borrowed_budget == owned_budget,
+                    "frozen document exact-byte crossings preserve owned/borrowed status and work");
+                if (borrowed_status == 0) test::require(borrowed_result == actual && owned_result == actual
+                    && output_bytes <= limit, "successful retained-byte accounting matches serialized result");
+            }
             ++count;
         }
         test::require(count == (argc == 3 ? static_cast<std::size_t>(std::stoul(argv[2])) : 10), "all frozen document computation/validation vectors replayed");

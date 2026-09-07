@@ -3,6 +3,8 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include "../src/value/json.hpp"
+#include "../src/batch.hpp"
 namespace {
 struct fixed_plan final {
     kumwe_engine_v1_plan* handle = nullptr;
@@ -16,6 +18,25 @@ struct fixed_plan final {
 };
 }
 extern "C" int LLVMFuzzerTestOneInput(const std::uint8_t* data, std::size_t size) {
+    // Exercise the fused scanner on arbitrary bytes even when mutation cannot
+    // enter a valid compiled envelope. Admission and exact limits must match
+    // the materializing writer; successful quotes use its independent bytes.
+    if (size <= 1048577) {
+        using namespace kumwe::engine;
+        const json::value text(size == 0 ? std::string{} : std::string(reinterpret_cast<const char*>(data), size));
+        for (const auto limit : {std::size_t{0}, size, size * 6 + 2}) {
+            std::uint32_t written_status = 0, counted_status = 0, measured_status = 0;
+            std::string written;
+            std::size_t counted = 0;
+            json::encoded_value measured;
+            try { written = json::encode(text, limit); } catch (const refusal& e) { written_status = e.code; }
+            try { counted = json::encoded_size(text, limit); } catch (const refusal& e) { counted_status = e.code; }
+            try { measured = json::encode_with_quoted_size(text, limit); } catch (const refusal& e) { measured_status = e.code; }
+            if (written_status != counted_status || written_status != measured_status) std::abort();
+            if (written_status == 0 && (written.size() != counted || written != measured.bytes
+                || measured.quoted_size != json::encode(json::value(written)).size())) std::abort();
+        }
+    }
     kumwe_engine_v1_view input{sizeof(kumwe_engine_v1_view), 1, data, size};
     kumwe_engine_v1_buffer* buffer = nullptr;
     const auto status = kumwe_engine_v1_decimal_batch(&input, &buffer);

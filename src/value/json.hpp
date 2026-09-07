@@ -32,6 +32,10 @@ struct value final {
 value parse(std::string_view source, std::size_t max_bytes = 67108864,
             std::size_t max_nodes = 200000, std::size_t max_depth = 128);
 std::string encode(const value& source, std::size_t max_bytes = 67108864);
+// The quote size is collected during encoding, so an immutable encoded payload
+// need not be traversed again to charge its public JSON-string representation.
+struct encoded_value final { std::string bytes; std::size_t quoted_size; };
+encoded_value encode_with_quoted_size(const value& source, std::size_t max_bytes = 67108864);
 // Same traversal, escaping, UTF-8 admission and byte limit, without materializing output.
 std::size_t encoded_size(const value& source, std::size_t max_bytes = 67108864);
 bool valid_utf8(std::string_view source) noexcept;
