@@ -98,6 +98,17 @@ int main() {
             test::require(kumwe_engine_v1_execute(plan.handle, &limit_view, nullptr, &refused.buffer) == 6
                 && refused.buffer == nullptr, "caller budgets atomically enforced");
         }
+        {
+            auto bounded = execution;
+            auto& limits = std::get<value::object>(std::get<value::object>(bounded.data).at("limits").data);
+            limits["max_input_bytes"] = value(std::int64_t{67108864});
+            limits["max_milliseconds"] = value(std::int64_t{1});
+            auto data = json::encode(bounded);
+            data.append(33554432, ' ');
+            auto limited = test::view(data); test::response refused;
+            test::require(kumwe_engine_v1_execute(plan.handle, &limited, nullptr, &refused.buffer) == 6
+                && refused.buffer == nullptr, "execution deadline includes native envelope decoding");
+        }
         for (const auto* key : {"max_input_bytes", "max_output_bytes", "max_instructions"}) {
             auto bounded = compile;
             std::get<value::object>(bounded.data)["limits"] = execution.at("limits");
