@@ -17,6 +17,13 @@ function repositoryFile(path) {
 const abi = read('resources/abi-symbols.txt').trim().split('\n');
 const declared = [...read('include/kumwe/engine/engine.h').matchAll(/KUMWE_ENGINE_API (?:kumwe_engine_v1_status|void) (kumwe_engine_v1_\w+)\(/g)].map(item => item[1]).sort();
 assert.deepEqual(declared, abi, 'Every public function must have exactly one manifest owner');
+const statuses = [...read('include/kumwe/engine/engine.h').matchAll(/#define KUMWE_ENGINE_V1_(\w+) UINT32_C\((\d+)\)/g)].map(match => [match[1],Number(match[2])]);
+assert.deepEqual(statuses, [['OK',0],['INVALID_INPUT',1],['UNSUPPORTED_VERSION',2],['INCOMPATIBLE_CAPABILITY',3],['INCOMPATIBLE_CORPUS',4],['INVALID_PROGRAM',5],['EXHAUSTED_LIMIT',6],['CANCELLED',7],['INTERNAL_FAILURE',8]], 'Draft status registry must change deliberately');
+const handoff = read('MIGRATION-HANDOFF.md').match(/\n  public_manifests:\n([\s\S]*?)\n  intentionally_excluded:/)?.[1];
+assert.ok(handoff, 'Native handoff must bind the public manifests');
+const handoffEntries = [...handoff.matchAll(/path: \"([^\"]+)\"\n\s+sha256: \"([a-f0-9]{64})\"/g)];
+assert.deepEqual(handoffEntries.map(entry => entry[1]), ['resources/abi-symbols.txt','resources/capabilities.json','resources/contracts.json','tests/ownership.json','include/kumwe/engine/engine.h']);
+for (const [,path,digest] of handoffEntries) assert.equal(createHash('sha256').update(readFileSync(path)).digest('hex'),digest, `Stale handoff manifest ${path}`);
 const inventory = JSON.parse(execFileSync('ctest', ['--test-dir',process.argv[2] ?? 'build','--show-only=json-v1'], {encoding:'utf8'}));
 const names = new Set(inventory.tests.map(test => test.name));
 const nonempty = value => typeof value === 'string' && value.trim().length > 0;

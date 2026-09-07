@@ -1,14 +1,15 @@
-import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 const git = (...args) => execFileSync('git', args, {encoding:'utf8'}).trim();
 const commit = git('rev-parse', 'HEAD');
 const paths = execFileSync('git', ['ls-files', '-z'], {encoding:'utf8'}).split('\0').filter(Boolean).sort();
-const files = paths.map((file, index) => ({
+const files = paths.map((file, index) => {
+  const bytes = execFileSync('git',['show',`${commit}:${file}`]);
+  return ({
   SPDXID:`SPDXRef-File-${index}`, fileName:`./${file}`,
-  checksums:[{algorithm:'SHA1',checksumValue:createHash('sha1').update(readFileSync(file)).digest('hex')},{algorithm:'SHA256',checksumValue:createHash('sha256').update(readFileSync(file)).digest('hex')}],
+  checksums:[{algorithm:'SHA1',checksumValue:createHash('sha1').update(bytes).digest('hex')},{algorithm:'SHA256',checksumValue:createHash('sha256').update(bytes).digest('hex')}],
   licenseConcluded:'NOASSERTION', licenseInfoInFiles:['NOASSERTION'], copyrightText:'NOASSERTION',
-}));
+}); });
 const verification = createHash('sha1').update(files.map(file => file.checksums[0].checksumValue).sort().join('')).digest('hex');
 const document = {
   spdxVersion:'SPDX-2.3', dataLicense:'CC0-1.0', SPDXID:'SPDXRef-DOCUMENT',

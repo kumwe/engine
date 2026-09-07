@@ -1,5 +1,6 @@
 import {mkdirSync, writeFileSync} from 'node:fs';
 mkdirSync('artifacts/fuzz-seeds', {recursive: true});
+mkdirSync('artifacts/fuzz-regressions', {recursive: true});
 const seeds = [Buffer.from('KEC1\x01\x00\x00\x00\x01\x00\x00\x00', 'binary')];
 for (const [op, p, s, rp, rs, mode, left, right] of [
   [0, 10, 2, 0, 0, 0, '-0.00', ''],
