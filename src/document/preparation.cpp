@@ -42,14 +42,16 @@ std::string handle(const value& input, std::uint32_t code, bool declared) {
     }
     return name;
 }
-value expression_values(const value& input) {
+value expression_values(const value& input, const std::set<std::string, std::less<>>& dependencies) {
     object output;
-    for (const auto& [key, item] : input.as<object>()) {
-        output.emplace(key, document::expression_value(item));
+    for (const auto& key : dependencies) {
+        if (const auto* item = input.find(key)) output.emplace(key, document::expression_value(*item));
     }
     return value(std::move(output));
 }
-struct admission final { value item; bool valid; };
+// A call-local view: request values and compiled defaults outlive admission.
+// Retained values are still copied by store_value after their output check.
+struct admission final { const value& item; bool valid; };
 admission admitted(const value& input, std::uint32_t code) {
     shape(input, {"value", "valid"}, code);
     const bool valid = flag(input.at("valid"), code);
@@ -121,11 +123,14 @@ plan plan::compile(const value& program) {
             if (expression.is<std::nullptr_t>()) continue;
             auto compiled = vm::formula::compile(expression);
             if (compiled.document().at("type") != value("boolean") || !compiled.line_dependencies().empty()) invalid(code);
+            const auto& dependencies = compiled.dependencies();
+            output.condition_fields_.insert(dependencies.begin(), dependencies.end());
             canonical_field.insert_or_assign(key, compiled.document());
             if (std::string_view(key) == "visibility_condition") next.visibility.push_back(std::move(compiled));
             else next.editability.push_back(std::move(compiled));
         }
         canonical.emplace_back(std::move(canonical_field));
+        output.declarations_.emplace(next.handle, output.fields_.size());
         output.fields_.push_back(std::move(next));
     }
     output.document_ = value(object{{"fields", value(std::move(canonical))},
@@ -212,8 +217,6 @@ value plan::execute(const value& request, const value& lines, std::uint64_t& bud
         context.initial_findings.emplace_back(std::move(next));
         retained_findings = projected;
     };
-    std::map<std::string, const field*, std::less<>> declarations;
-    for (const auto& field : fields_) declarations.emplace(field.handle, &field);
     auto put = [&](const std::string& name, const admission& result) {
         if (!result.valid) finding(name, "invalid_type");
         else store_value(name, result.item);
@@ -221,8 +224,8 @@ value plan::execute(const value& request, const value& lines, std::uint64_t& bud
     std::vector<const field*> conditioned;
     if (create) {
         for (const auto& entry : input.as<list>()) {
-            const auto name = entry.at("handle").as<std::string>();
-            if (!declarations.contains(name)) finding(name, "unknown");
+            const auto& name = entry.at("handle").as<std::string>();
+            if (!declarations_.contains(name)) finding(name, "unknown");
         }
         for (const auto& field : fields_) {
             charge(budget);
@@ -248,17 +251,18 @@ value plan::execute(const value& request, const value& lines, std::uint64_t& bud
         }
         context.after_computation = [&](const value& computed, std::uint64_t& remaining,
                                          const document::finding_sink& sink) {
-            const auto expression_input = expression_values(computed);
+            if (conditioned.empty()) return;
+            const auto expression_input = expression_values(computed, condition_fields_);
             for (const auto* field : conditioned) conditions(*field, expression_input, remaining, output_limit, sink);
         };
     } else {
-        const auto expression_input = expression_values(current);
+        const auto expression_input = expression_values(current, condition_fields_);
         for (const auto& entry : input.as<list>()) {
             charge(budget);
-            const auto name = entry.at("handle").as<std::string>();
-            const auto found = declarations.find(name);
-            if (found == declarations.end()) { finding(name, "unknown"); continue; }
-            const auto& field = *found->second;
+            const auto& name = entry.at("handle").as<std::string>();
+            const auto found = declarations_.find(name);
+            if (found == declarations_.end()) { finding(name, "unknown"); continue; }
+            const auto& field = fields_.at(found->second);
             if (field.identity || field.immutable) {
                 const auto& old = member(current, name);
                 if (!document::normalized_strict_equal(old, entry.at("submitted"))) finding(name, "immutable");
