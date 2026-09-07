@@ -3,6 +3,8 @@
 #include "value/json.hpp"
 #include "vm/formula.hpp"
 #include <cstdint>
+#include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -19,6 +21,8 @@ struct field final {
 // are explicit host inputs; this class never normalizes or allocates them.
 class plan final {
     std::vector<field> fields_;
+    std::map<std::string, std::size_t, std::less<>> declarations_;
+    std::set<std::string, std::less<>> condition_fields_;
     document::plan validation_;
     json::value document_;
 public:

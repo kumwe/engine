@@ -20,9 +20,17 @@ int main(int argc, char** argv) {
         for (const auto& fixture : corpus.at("fixtures").as<value::list>()) {
             try {
             const auto compiled = preparation::plan::compile(fixture.at("program"));
-            const auto restored = preparation::plan::compile(compiled.document());
+            const auto restored = [&] {
+                const auto temporary = preparation::plan::compile(compiled.document());
+                auto copied = temporary;
+                return preparation::plan(std::move(copied));
+            }();
             std::uint64_t budget = 1000000;
             const auto actual = restored.execute(fixture.at("input"), fixture.at("lines"), budget, 1000, 1000000);
+            std::uint64_t repeated_budget = 1000000;
+            const auto repeated = restored.execute(fixture.at("input"), fixture.at("lines"), repeated_budget, 1000, 1000000);
+            test::require(repeated == actual && repeated_budget == budget,
+                "copied and moved plans retain no original-plan or previous-execution references");
             const auto& expected = fixture.at("expected");
             if (actual.at("findings") != expected.at("findings")
                 || (expected.at("returns_values") == value(true) && actual.at("values") != expected.at("values"))) {
@@ -60,6 +68,16 @@ int main(int argc, char** argv) {
         try { (void)compiled.execute(duplicate, value(), budget, 100, 100000); }
         catch (const refusal& failure) { refused = failure.code == KUMWE_ENGINE_V1_INVALID_INPUT; }
         test::require(refused, "ordered input cannot contain duplicate PHP map keys");
+
+        auto unused_invalid = sample.at("input");
+        std::get<value::object>(unused_invalid.data).at("input") = json::parse(R"([
+            {"handle":"undeclared","submitted":null,"normalized":{"valid":true,
+                "value":{"type":"exact-decimal","value":"invalid"}}}])");
+        budget = 100000;
+        refused = false;
+        try { (void)compiled.execute(unused_invalid, value(), budget, 100, 100000); }
+        catch (const refusal& failure) { refused = failure.code == KUMWE_ENGINE_V1_INVALID_INPUT; }
+        test::require(refused, "unused values still undergo admission before condition projection");
 
         auto instance_default = sample.at("program");
         auto& default_field = std::get<value::list>(std::get<value::object>(instance_default.data).at("fields").data).front();
