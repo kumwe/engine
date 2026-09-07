@@ -7,14 +7,23 @@
     {
       "module": "decimal",
       "owner": "kumwe/conversion",
-      "semantic_source": "5ccea7f7dc4ebd11bc27b11da8573da42807c196",
-      "semantic_version": "0.1.2",
+      "semantic_source": "e95d5633722929e77b73005f8c44cfe4d99ac8c3",
+      "semantic_version": "0.1.3",
       "corpus": "corpus/decimal/decimal-v1.tsv",
       "corpus_sha256": "635db251898707828e24f12b1abb672273552f5f633186a725cc9f50ac08140c",
       "status": "draft_implemented",
       "release_verified": false,
-      "corpus_source_commit": "ef3f2bae09ddab839497b2d296141581d70ba059",
-      "corpus_pull_request": "https://github.com/kumwe/conversion/pull/5"
+      "corpus_source_commit": "e95d5633722929e77b73005f8c44cfe4d99ac8c3",
+      "semantic_release": {
+        "repository": "kumwe/conversion",
+        "version": "0.1.3",
+        "tag": "v0.1.3",
+        "commit": "e95d5633722929e77b73005f8c44cfe4d99ac8c3",
+        "corpus_path": "resources/conformance/decimal-v1.tsv",
+        "corpus_sha256": "635db251898707828e24f12b1abb672273552f5f633186a725cc9f50ac08140c",
+        "publication": "published",
+        "external_attestation": null
+      }
     },
     {
       "module": "definition_vm",
@@ -27,7 +36,17 @@
       "profile": "formula-draft/1",
       "corpus": "corpus/definition/formula-v1.json",
       "corpus_sha256": "11033679b018fdc9a192e954ef11089444a00a1d89c6279d3c192be9252cf42f",
-      "release_verified": false
+      "release_verified": false,
+      "semantic_release": {
+        "repository": "kumwe/business-definition",
+        "version": "0.1.0",
+        "tag": "v0.1.0",
+        "commit": "f3b86f8af1469066637fd1b4b8f71c4df634adf8",
+        "corpus_path": "resources/corpus/formula-v1.json",
+        "corpus_sha256": "11033679b018fdc9a192e954ef11089444a00a1d89c6279d3c192be9252cf42f",
+        "publication": "published",
+        "external_attestation": null
+      }
     },
     {
       "module": "document_batch",
@@ -51,7 +70,17 @@
       "excluded": [
         "Host raw codec normalization, encryption, UUID generation, sequence allocation, authorization, retrieval and persistence",
         "App runtime cutover"
-      ]
+      ],
+      "semantic_release": {
+        "repository": "kumwe/record-model",
+        "version": "0.1.0",
+        "tag": "v0.1.0",
+        "commit": "d7955e6beae2c3a9fa30052aea5ec3478af7dffc",
+        "corpus_path": "resources/conformance/document-profile-v1.json",
+        "corpus_sha256": "84b6c2e55ae591c921536aa755cbb5a9a40a7a19847fe47415e55dce2614c177",
+        "publication": "published",
+        "external_attestation": null
+      }
     },
     {
       "module": "report",
@@ -67,7 +96,17 @@
       "release_verified": false,
       "excluded": [
         "Host authorization, retrieval, projection, rendering and delivery"
-      ]
+      ],
+      "semantic_release": {
+        "repository": "kumwe/reporting",
+        "version": "0.1.0",
+        "tag": "v0.1.0",
+        "commit": "d8cae56726170d39cd6e95e45b0ffcb085920849",
+        "corpus_path": "resources/conformance/report-materialization-v1.json",
+        "corpus_sha256": "975116dc897a0bfdee4a08f9065eb10ccfec06a32f4eb93a48015b08af408c01",
+        "publication": "published",
+        "external_attestation": null
+      }
     },
     {
       "module": "canonical_streaming",
@@ -79,7 +118,17 @@
       "profile": "kumwe-canonical-json/generic-v1",
       "corpus": "corpus/canonical/generic-v1.json",
       "corpus_sha256": "84d21b12e7a2bfd752356d9a6e664bcb332e209d19017e7634e7485a4fa4e250",
-      "release_verified": false
+      "release_verified": false,
+      "semantic_release": {
+        "repository": "kumwe/canonical-json",
+        "version": "0.1.1",
+        "tag": "v0.1.1",
+        "commit": "e7006a2580a49a1c8ab507b0d7b9c3403b4f9f58",
+        "corpus_path": "resources/corpus/v1.json",
+        "corpus_sha256": "84d21b12e7a2bfd752356d9a6e664bcb332e209d19017e7634e7485a4fa4e250",
+        "publication": "published",
+        "external_attestation": null
+      }
     }
   ]
 }

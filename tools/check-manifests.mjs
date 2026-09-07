@@ -99,6 +99,16 @@ assert.deepEqual(capabilities.capabilities, ['decimal-batch-draft/1', ...contrac
 for (const module of contracts.modules) {
   assert.equal(createHash('sha256').update(readFileSync(module.corpus)).digest('hex'), module.corpus_sha256);
   assert.equal(module.release_verified, false);
+  const release = module.semantic_release;
+  assert.ok(release && typeof release === 'object', `Missing published semantic coordinate: ${module.module}`);
+  assert.ok((module.owners ?? [module.owner]).includes(release.repository));
+  assert.match(release.version, /^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/);
+  assert.equal(release.tag, `v${release.version}`);
+  assert.match(release.commit, /^[a-f0-9]{40}$/);
+  assert.match(release.corpus_path, /^resources\/(?:conformance|corpus)\/[a-z0-9-]+\.(?:json|tsv)$/);
+  assert.equal(release.corpus_sha256, module.corpus_sha256);
+  assert.equal(release.publication, 'published');
+  assert.equal(release.external_attestation, null, 'Source provenance must not invent independent release acceptance');
 }
 assert.deepEqual(capabilities.corpora.map(corpus => corpus.path), ownership.conformance.corpora,
   'Every advertised corpus must have exactly one conformance owner');

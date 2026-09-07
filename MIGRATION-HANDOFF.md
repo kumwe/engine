@@ -14,19 +14,38 @@ source:
   semantic_inputs:
     -
       owner: "kumwe/conversion"
-      version_or_commit: "ef3f2bae09ddab839497b2d296141581d70ba059"
-      manifest_or_corpus: "resources/conformance/decimal-v1.tsv (reviewed draft; behavior source v0.1.2 at 5ccea7f7dc4ebd11bc27b11da8573da42807c196)"
+      version_or_commit: "v0.1.3 at e95d5633722929e77b73005f8c44cfe4d99ac8c3"
+      manifest_or_corpus: "resources/conformance/decimal-v1.tsv (published source; independent release attestation pending)"
       sha256: "635db251898707828e24f12b1abb672273552f5f633186a725cc9f50ac08140c"
+    -
+      owner: "kumwe/business-definition"
+      version_or_commit: "v0.1.0 at f3b86f8af1469066637fd1b4b8f71c4df634adf8"
+      manifest_or_corpus: "resources/corpus/formula-v1.json (published source; independent release attestation pending)"
+      sha256: "11033679b018fdc9a192e954ef11089444a00a1d89c6279d3c192be9252cf42f"
+    -
+      owner: "kumwe/record-model"
+      version_or_commit: "v0.1.0 at d7955e6beae2c3a9fa30052aea5ec3478af7dffc"
+      manifest_or_corpus: "resources/conformance/document-profile-v1.json (published source; independent release attestation pending)"
+      sha256: "84b6c2e55ae591c921536aa755cbb5a9a40a7a19847fe47415e55dce2614c177"
+    -
+      owner: "kumwe/reporting"
+      version_or_commit: "v0.1.0 at d8cae56726170d39cd6e95e45b0ffcb085920849"
+      manifest_or_corpus: "resources/conformance/report-materialization-v1.json (published source; independent release attestation pending)"
+      sha256: "975116dc897a0bfdee4a08f9065eb10ccfec06a32f4eb93a48015b08af408c01"
+    -
+      owner: "kumwe/canonical-json"
+      version_or_commit: "v0.1.1 at e7006a2580a49a1c8ab507b0d7b9c3403b4f9f58"
+      manifest_or_corpus: "resources/corpus/v1.json (published source; independent release attestation pending)"
+      sha256: "84d21b12e7a2bfd752356d9a6e664bcb332e209d19017e7634e7485a4fa4e250"
   examined_dependencies:
-    - "Conversion v0.1.2 ExactDecimal, ExactDecimalArithmetic and six Money/Quantity rounding modes; no PHP source copied."
+    - "Conversion v0.1.3 ExactDecimal, ExactDecimalArithmetic and six Money/Quantity rounding modes; no PHP source copied."
     - "Computation portable program, batch, findings and capability contracts; exact candidate compiler/executor and canonical adapter verified through the Zend binding."
-  active_related_pull_requests:
-    - "https://github.com/kumwe/conversion/pull/5"
+  active_related_pull_requests: []
 target:
   repository: "https://github.com/kumwe/engine"
   artifact_identity: "CMake Kumwe::Engine"
   canonical_namespace_or_abi: "kumwe::engine / kumwe_engine_v1_"
-  branch: "agent/native-kernels-v2"
+  branch: "codex/extraction-readiness-20260907"
   pull_request: "https://github.com/kumwe/engine/pull/2"
 ownership:
   responsibility: "Standalone exact decimal, compiled formula/document/report execution and generic canonical encoding/digests through one owned C ABI."
@@ -47,10 +66,10 @@ ownership:
       sha256: "62cf59b8d6feb369f0d801b59b69796ea569570177e02b903c0bec6b01e04d21"
     -
       path: "resources/capabilities.json"
-      sha256: "81044186b8a49ecc8106e5438499dfa9652f0108606f199f1721bdf5e42f084c"
+      sha256: "6d4d8a1126e2a3970ce127fa96d231c9002ba065a40304c838c4698773b5b995"
     -
       path: "resources/contracts.json"
-      sha256: "50c74cc2a70b05a73f973d012f1ea903a1ad65a74c551aa8703763404fcea782"
+      sha256: "21d34cf061b27bd2cffdc80629b760b3ef804b7853e9b5c8489b8ee60f415234"
     -
       path: "tests/ownership.json"
       sha256: "04034d0c586e0427a5641c87c336575b8898fb2def48ab87b2d01c44ef70c73e"
@@ -128,7 +147,7 @@ native_cpp:
   corpora:
     -
       owner: "kumwe/conversion"
-      version: "draft source ef3f2bae09ddab839497b2d296141581d70ba059, not a release"
+      version: "v0.1.3 at e95d5633722929e77b73005f8c44cfe4d99ac8c3; attestation pending"
       profile: "decimal-v1.tsv existing Conversion exact decimal semantics"
       sha256: "635db251898707828e24f12b1abb672273552f5f633186a725cc9f50ac08140c"
   limits_and_errors:
@@ -170,7 +189,7 @@ documentation:
     - "tests/support.hpp"
   changelog_record: "CHANGELOG.md / Unreleased"
 release_expectations:
-  version_policy: "No release from this incomplete draft. First App-eligible Engine release requires exactly identified 1.0.0 and frozen ABI 1 after all v2 gates."
+  version_policy: "No release before candidate and immutable-source release gates pass. First App-eligible Engine release requires exactly identified 1.0.0 and frozen ABI 1 after all v2 gates."
   expected_artifact_types:
     - "CMake source archive"
     - "Checksums"
@@ -178,7 +197,7 @@ release_expectations:
     - "Signed provenance"
     - "External candidate and stable release attestations"
   required_checks:
-    - "Complete E1 formula/document, E2 report/canonical and E3 hardening/freeze."
+    - "E1 formula/document and E2 report/canonical are implemented; verify E3 hardening/freeze on the final source."
     - "Verified immutable semantic releases and corpora."
     - "Native behavior/boundary/conformance/fuzz/sanitizer/lifecycle/ABI/consumer/benchmark/supply-chain gates."
     - "Non-publishing exact Engine/extension candidate cross-build before ready-for-review status."
@@ -201,7 +220,7 @@ next_task:
   files_to_remove: []
   tests_to_remove: []
   tests_to_retain_or_add:
-    - "Retain decimal corpus/ABI tests; add every future kernel behavior, boundary, semantic corpus and performance test in Engine."
+    - "Retain all five kernel corpora and ABI/ownership/bounds tests in Engine; downstream binding tests cover PHP-specific behavior."
   di_or_provisioning_changes: []
   capability_index_changes: []
   changelog_and_evidence_changes:
@@ -231,18 +250,19 @@ governance:
   non_roadmap_refs:
     - "NRM-2026-013"
     - "NRM-2026-042"
+    - "NRM-2026-044"
   completion_claim: false
 decisions:
-  - "Root independent pre-code boundary review approved the draft exact-decimal slice on 2026-09-07; full E1/candidate remains unclaimed."
+  - "All five kernels have implementation and corpus coverage; first stable release remains gated by independent verification and performance acceptance."
   - "Preserve exact semantic owners and never advertise unavailable native operations."
-  - "No production publishing workflow is supplied for an incomplete Engine."
+  - "No production publishing workflow is supplied before the accepted immutable-release gate."
 blockers:
   - "Final exact-head native checks and independent binding archive verification precede release review."
-  - "Exact verified semantic releases, full E3 gates and non-publishing PHP candidate cross-build are not yet available."
-  - "No stable Engine release, extension binding, App cutover or performance objective is claimed."
+  - "Exact published semantic source/corpus bytes are matched; independent owner release attestations, ABI freeze and final candidate cross-build acceptance remain outstanding."
+  - "No stable Engine or extension release, App cutover or performance objective is claimed."
 ---
 
-# Native draft handoff
+# Native implementation handoff
 
 This reviewable native implementation candidate is not a stable release or App adoption.
 The five-module architecture, exact test ownership and downstream release barriers remain mandatory.

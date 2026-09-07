@@ -1,36 +1,30 @@
 # Test ownership and evidence
 
-Every implemented native behavior, boundary and conformance test belongs in Engine. `tests/ownership.json`
-maps every exported C function to real discovered CTest IDs. The validator compares header exports,
-symbol manifest and test inventory, requires behavior/boundary ownership, verifies the exact corpus
-digest and rejects nine intentionally weakened declarations. Adding an ABI export without coverage
-cannot pass CI. Future kernels must extend their own tests and semantic corpus before advertising a
-capability. Downstream suites do not substitute for missing native package tests.
+Every native behavior, boundary and conformance test belongs in Engine. `tests/ownership.json`
+maps all twelve exported C functions to discovered CTest IDs. The manifest gate checks headers,
+exported symbols, exact corpora and negative ownership fixtures; a new export without its own
+behavior and boundary coverage fails the gate. Downstream suites do not replace native tests.
 
-- `behavior-boundary`: exact values, all six modes, wide products, independent integer differential
-  identities, malformed bytes, precision/scale limits, atomic output, work/output caps, version and
-  capability refusal, 10,000 allocation cycles and concurrent immutable reads/independent calls.
-- `conversion-corpus`: all 108 owner vectors through both C++ and C ABI, including byte/refusal parity.
-- `plain-c-ownership`: C compilation/linking, struct layout, capability response and repeated cleanup.
-- `architecture`: production include/dependency and forbidden-operation checks.
-- `exported-symbols`: Linux test shared-library actual export equality with the C ABI allowlist.
-- `check-consumer.sh` and `check-archive.sh`: isolated install and reproducible committed source build.
-- `check-fault-seeds.sh`: three independently rebuilt arithmetic faults must be killed by existing tests.
-- Clang fuzz CI mutates real encoded seed batches and capability envelopes; ASan/UBSan/LeakSanitizer
-  run the suite and fuzz harness. Retain minimized regressions when found.
+| Owned suite | Responsibility |
+|---|---|
+| Decimal behavior/boundary and Conversion corpus | Exact values, six rounding modes, wide arithmetic, differential identities, all 108 owner vectors, budgets and 10,000 lifecycle cycles |
+| Formula corpus and compiled-plan ownership | Immutable compilation, typed execution, malformed profiles, opaque payloads, cancellation, concurrent execution, exact output byte limits and reuse after refusal |
+| Document/preparation/normalization/validator corpora | Complete normalized preparation, computed values, ordered findings, Unicode behavior and hostile inputs |
+| Reporting and numeric-string corpora | Typed materialization, aggregation, ordering, converted values and exact refusal semantics |
+| Canonical corpus and lossless JSON transport | GenericV1 byte/digest parity, raw value kinds, escaping, UTF-8, duplicates, bounds and malformed long string spans |
+| C consumer, CLI, architecture and exported symbols | Actual C linkage/ownership, all diagnostic routes, package boundaries and exact Linux ABI export allowlist |
+| Archive/installed consumer and fault seeds | Reproducible committed source, independent consumption and deliberate arithmetic/validation fault detection |
 
-GCC, Clang and AppleClang release jobs build and run the package tests. Linux Clang sanitizer/fuzz,
-source archive and installed consumer jobs are required. TSan, allocator fault injection, candidate
-PHP/Zend lifecycle, stable ABI backward compatibility and the complete five-module suite are future
-release gates, not evidence produced by this first slice. Invalid foreign pointer dereferences are
-outside valid C memory preconditions; fuzzing does not fabricate unsafe addresses and call that
-memory-safety evidence. Owned, null, consumed and valid concurrently read buffers are exercised.
+CI runs GCC/Clang Linux and AppleClang macOS builds, ASan/UBSan with leak detection and corpus-seeded
+libFuzzer, and the shared immutable-plan test under TSan. The exact workflow result is evidence for
+its tested source/platform only. Stable old-client ABI compatibility, final independent candidate
+attestation and release acceptance remain outstanding. Foreign fabricated pointers are outside the
+C memory preconditions; null, owned, consumed and valid concurrently borrowed handles are tested.
 
-Conversion owns the semantic corpus itself; Engine owns native replay and ABI behavior. The extension
-will retain cross-layer conformance and marshalling/lifecycle tests. App retains composition, security,
-storage, provisioning/recovery, acceptance and whole-path performance. This draft removes no App tests.
+The extension owns Zend marshalling, request lifecycle and cross-layer replay. App retains composition,
+authorization, persistence, provisioning/recovery, acceptance and whole-path performance tests. No
+App implementation or unit test is removed by this package change. Test-only PHP oracle/benchmark
+sources are excluded from native source and extension distribution archives.
 
-The Linux test-only shared export probe omits `-z,defs` in sanitizer builds because Clang links the
-ASan runtime into the final executable; release probes retain it. This follows the
-[Clang AddressSanitizer usage documentation](https://clang.llvm.org/docs/AddressSanitizer.html#usage).
-No sanitizer diagnostic is suppressed.
+The test-only shared export probe omits `-z,defs` with sanitizers because Clang resolves its sanitizer
+runtime from the final executable; release probes retain it. No sanitizer diagnostic is suppressed.

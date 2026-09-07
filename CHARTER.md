@@ -9,9 +9,9 @@ The development candidate implements all five modules against frozen owner seman
 typed normalized document values, preparation, computed-field normalization and ordered findings.
 It does not claim an ABI freeze, stable release or measured App performance improvement.
 
-Semantic meaning belongs to the framework package owning each contract. Draft source coordinates
-permit development only; verified immutable semantic releases and corpora are mandatory before
-candidate cross-build and release. Engine has no PHP namespace, Composer/PHP/Zend/PIE dependency,
+Semantic meaning belongs to the framework package owning each contract. Exact published source
+coordinates and matching corpus hashes are recorded in resources/contracts.json; independent
+release verification remains mandatory before production release. Engine has no PHP namespace, Composer/PHP/Zend/PIE dependency,
 App service, database, network, authorization, transaction, trust, rendering or delivery behavior.
 
 The sole binding surface is C with the `kumwe_engine_v1_` prefix. Internal C++ uses
@@ -20,11 +20,11 @@ The diagnostic executable is a test tool. Installed consumers receive a static C
 public C header; the internal C++ implementation has no stability promise.
 
 Development targets are 64-bit Linux GCC/Clang and macOS AppleClang, tested in CI. Windows,
-32-bit targets, stable binary ABI compatibility, TSan and PHP binding compatibility are not
-claimed. Every supported source consumer builds offline from the pinned dependency source closure.
+32-bit targets and stable binary ABI compatibility are not claimed. Linux TSan covers the shared
+immutable-plan test; the separate PHP binding runs its own candidate compatibility matrix. Every supported source consumer builds offline from the pinned dependency source closure.
 
 All native behavior, boundary, conformance, architecture, lifecycle and robustness tests belong
-here. Binding tests later own PHP marshalling/lifecycle parity; App retains only composition,
+here. Binding tests own PHP marshalling/lifecycle parity; App retains only composition,
 authority, provisioning/recovery, acceptance and measured full-path performance evidence.
 
 First App-eligible release is Engine 1.0.0 with frozen ABI 1, all five modules and the complete

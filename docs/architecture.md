@@ -31,5 +31,5 @@ Native semantic input never includes database queries, authorization, raw secret
 
 The draft buffer-release pointer-to-owner-slot convention intentionally refines Computation's proposal:
 release clears the owning slot, supporting repeated exception cleanup. A copied raw pointer remains
-non-owning and cannot safely be released. A later joint ABI review must freeze this agreement before
-any extension candidate; the draft does not silently promise compatibility with an unimplemented ABI.
+non-owning and cannot safely be released. The candidate extension follows this ownership agreement. Joint ABI review and old-client
+compatibility evidence must freeze it before stable publication.

@@ -1,31 +1,34 @@
 # Release and candidate gates
 
-This incomplete E0/E1 slice has no publishing workflow and must remain a draft PR. `0.0.0-dev` is
-capability metadata, not a release record. C ABI symbols/layout are proposed, not frozen. Human
-merge/tag/publication and App adoption are separate decisions under the v2 protocol.
+All five native kernels are implemented and have owner-corpus replay, bounded ABI execution,
+consumer builds and memory/security CI. `0.0.0-dev` identifies an implementation candidate;
+ABI 1 is not frozen and no native release has been published. Implementation completion does
+not establish release verification or App acceleration.
 
-Before the first Engine candidate: complete decimal plus formula/document execution; then report
-and canonical streaming; immutable plan hydration/cache, cancellation, deterministic findings,
-resource limits, complete unit/property/differential/fuzz/sanitizer/lifecycle and ABI suites.
-Reconcile exact verified semantic releases and corpora for all implemented owners. The current
-Conversion corpus is reviewed draft evidence and is not a released immutable semantic input.
+`resources/contracts.json` records exact published semantic-owner tags, commits and corpus paths.
+The recorded corpus bytes match those immutable source commits. External release attestations
+remain a separate requirement: publication and a matching hash alone do not establish that the
+owner release passed every programme acceptance gate. Updates must retain an exact coordinate;
+never use a moving branch, `latest`, or an unconstrained range for embedded native sources.
 
-Before Engine 1.0.0 / frozen ABI 1: complete every v2 Engine brief gate, supported matrix, full-boundary
-benchmarks, compatibility checks, deterministic source archives, license/advisory review, SBOM and
-signed provenance. Create changelog-driven release automation with protected-branch and immutable
-release checks only after the release gate is implemented. No guessed tag or self-authored passing
-release attestation belongs in source.
+The remaining release gates are the independently verified semantic release barrier, accepted
+ABI compatibility/freeze, a final supported-platform run, representative whole-boundary performance
+acceptance, and signed source/artifact provenance. The retained benchmark evidence includes slower
+native document, preparation and canonical workloads; a faster inner kernel cannot close that gap.
+Repeat the complete PHP/Zend comparison on the final artifact after optimization. No App cutover
+or capacity claim follows from passing the native test suite.
 
-A separate agent must build the exact Engine PR-head source archive in a dedicated
-`kumwe/kumwe-engine` candidate branch, without network retrieval at consumer compile time. It tests
-thin Zend marshalling, module load, ABI/capability/corpus agreement, lifecycle and the supported PHP
-matrix. Its external `ENGINE-CANDIDATE-ATTESTATION.yaml` binds Engine and extension commit/tree,
-archive digest and evidence; never store it inside either tested source tree. Any input change
-invalidates it. Only a current passing candidate check permits ready-for-review status and human
-merge/release. After publication a fresh independent verifier produces the release attestation.
+An independent candidate cross-build must consume the exact Engine PR-head archive in
+`kumwe/kumwe-engine` without build-time network retrieval. It checks Zend marshalling, module load,
+ABI/capability/corpus agreement, lifecycle and the claimed PHP matrix. Its external
+`ENGINE-CANDIDATE-ATTESTATION.yaml` binds both tested commits/trees and the archive digest; it must
+remain outside both source trees. Any tested-input change invalidates that evidence. Human merge
+and immutable Engine publication follow a passing current candidate gate. A separate verifier
+then attests the published Engine release before the stable extension embeds it.
 
-`bash tools/source-archive.sh` deterministically archives committed source with no timestamp-bearing
-gzip header. `check-archive.sh` compares two archives and builds an isolated consumer from it.
-`node tools/source-sbom.mjs` inventories every committed source file with SPDX/SHA1/SHA256 identity.
-These artifacts live outside the archived source and do not claim their own final digest. CI uploads
-them keyed to the tested head; they are development artifacts, not a candidate attestation or release.
+`bash tools/source-archive.sh` archives committed source with reproducible gzip metadata.
+`check-archive.sh` compares two archives and builds an isolated installed consumer.
+`node tools/source-sbom.mjs` inventories committed source with SPDX/SHA1/SHA256 identities.
+CI stores these development artifacts against the tested head. They are not release attestations.
+Release automation must be added and reviewed with the accepted immutable-release policy before
+Engine 1.0.0 is published; this candidate deliberately has no publishing workflow.

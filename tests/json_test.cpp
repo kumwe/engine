@@ -38,11 +38,24 @@ int main() {
             {std::string(4096, 'a') + '"' + std::string(4096, 'b'),
                 '"' + std::string(4096, 'a') + "\\\"" + std::string(4096, 'b') + '"'}}) {
             test::require(json::encode(json::value(input), expected.size()) == expected, "exact UTF8 text spans and escape bytes");
+            test::require(json::parse(expected).as<std::string>() == input, "parser retains text spans around every escape kind");
             test::require(json::encoded_size(json::value(input), expected.size()) == expected.size(), "counting writer uses exact UTF8 escape lengths");
             bool refused = false;
             try { (void)json::encode(json::value(input), expected.size() - 1); }
             catch (const refusal& failure) { refused = failure.code == KUMWE_ENGINE_V1_EXHAUSTED_LIMIT; }
             test::require(refused, "text spans retain exact output limit");
+        }
+        for (const auto& source : std::vector<std::string>{
+            '\"' + std::string(8192, 'a'),
+            '\"' + std::string(8192, 'a') + '\\',
+            '\"' + std::string(8192, 'a') + '\x1f' + '\"',
+            '\"' + std::string(8192, 'a') + '\xff' + '\"',
+            '\"' + std::string(8192, 'a') + "\\ud800tail\"",
+            '\"' + std::string(8192, 'a') + "\\q\""}) {
+            bool refused = false;
+            try { (void)json::parse(source); }
+            catch (const refusal& error) { refused = error.code == KUMWE_ENGINE_V1_INVALID_INPUT; }
+            test::require(refused, "parser refuses malformed input after a long ordinary span");
         }
         bool invalid_before_limit = false;
         try { (void)json::encode(json::value(std::string(4096, 'a') + '\xff'), 1); }

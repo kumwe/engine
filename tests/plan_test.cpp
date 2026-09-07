@@ -55,6 +55,22 @@ int main() {
         test::require(kumwe_engine_v1_execute(plan.handle, &view, nullptr, &result.buffer) == 0, "coarse ordered batch");
         test::require(result.bytes() == R"({"results":[{"correlation":"row.1","findings":[],"result":{"findings":[],"value":7},"result_json":"{\"findings\":[],\"value\":7}"},{"correlation":"row.2","findings":[],"result":{"findings":[],"value":11},"result_json":"{\"findings\":[],\"value\":11}"}],"wire_version":1})",
             "streamed complete envelope preserves canonical payload bytes");
+        for (const auto count : {std::size_t{1}, std::size_t{2}}) {
+            auto exact = execution;
+            std::get<value::list>(std::get<value::object>(exact.data).at("documents").data).resize(count);
+            auto data = json::encode(exact); auto input = test::view(data); test::response complete;
+            test::require(kumwe_engine_v1_execute(plan.handle, &input, nullptr, &complete.buffer) == 0,
+                "measure complete output before applying exact byte budget");
+            const auto expected_bytes = complete.bytes();
+            auto& limits = std::get<value::object>(std::get<value::object>(exact.data).at("limits").data);
+            for (unsigned short_by = 0; short_by < 2; ++short_by) {
+                limits["max_output_bytes"] = value(static_cast<std::int64_t>(expected_bytes.size() - short_by));
+                data = json::encode(exact); input = test::view(data); test::response bounded;
+                const auto status = kumwe_engine_v1_execute(plan.handle, &input, nullptr, &bounded.buffer);
+                test::require(short_by == 0 ? status == 0 && bounded.bytes() == expected_bytes
+                    : status == 6 && bounded.buffer == nullptr, "nonempty batch exact output budget remains atomic");
+            }
+        }
         const auto expected = json::parse(R"({"wire_version":1,"results":[
             {"correlation":"row.1","result":{"value":7,"findings":[]}},
             {"correlation":"row.2","result":{"value":11,"findings":[]}}]})");

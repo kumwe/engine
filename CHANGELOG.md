@@ -2,11 +2,18 @@
 
 ## Unreleased
 
-- Begin MIG-2026-011 / KUMWE-CS-2026-011 / NRM-2026-013 with an E0/E1 native exact-decimal slice.
-- Implement fixed-scale parsing, comparison, multiplication and six Conversion rounding rules,
-  bounded atomic decimal batches and an explicitly unstable C ABI with owned immutable results.
-- Replay the 108-vector Conversion-owned draft corpus through C++ and C ABI; add native behavior,
-  boundary, conformance, lifecycle, architecture, symbol, sanitizer/fuzz and consumer checks.
-- Add source archives/SPDX inventory, CMake installation and diagnostic batch benchmarks.
-- This is enabling work. Formula/document/report/canonical kernels, ABI freeze, candidate binding,
-  verified semantic inputs, Engine release and App performance improvement remain unclaimed.
+- Implement all five deterministic kernels: exact decimal batches, compiled formula VM,
+  normalized document preparation/computation/validation, report materialization and GenericV1
+  canonical encoding with streaming SHA-256. All native behavior/boundary/conformance tests
+  reside in Engine; the binding owns PHP-specific tests and App retains host acceptance.
+- Correct exact output-byte accounting: valid nonempty batches now fit a budget equal to
+  their complete serialized size; one-byte-short limits still refuse atomically.
+- Remove direct-document tree copies and intermediate output-item buffers; parse ordinary
+  JSON string spans in blocks while retaining UTF-8, escape, numeric and bound semantics.
+- Match frozen corpora to exact published Conversion, Definition, Record Model, Reporting and
+  Canonical JSON coordinates; preserve the independent release-attestation barrier.
+- Retain C/ABI/CLI, corpus, fuzz/sanitizer/thread, lifecycle, archive/install, fault-seed and
+  whole PHP/Zend benchmark gates. Pin all CI actions to reviewed source commits.
+- NRM-2026-013 / NRM-2026-042 / NRM-2026-044 are enabling implementation evidence.
+  ABI freeze, verified native release, full-path acceleration acceptance and App cutover
+  remain outstanding; no functional roadmap completion is claimed.
