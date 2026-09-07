@@ -1,0 +1,13 @@
+{
+  "schema": "kumwe-engine-contract-matrix/v1",
+  "state": "draft_e0_e1_decimal_slice",
+  "completion_claim": false,
+  "abi_frozen": false,
+  "modules": [
+    {"module":"decimal","owner":"kumwe/conversion","semantic_source":"5ccea7f7dc4ebd11bc27b11da8573da42807c196","semantic_version":"0.1.2","corpus":"corpus/decimal/decimal-v1.tsv","corpus_sha256":"635db251898707828e24f12b1abb672273552f5f633186a725cc9f50ac08140c","status":"draft_implemented","release_verified":false},
+    {"module":"definition_vm","owners":["kumwe/business-definition","kumwe/computation"],"status":"not_implemented","required":"Owner formula/condition/invariant envelope, ordered findings, corpus and verified releases"},
+    {"module":"document_batch","owners":["kumwe/computation","kumwe/record-values","kumwe/record-model"],"status":"not_implemented","required":"Whole-document preparation, dependency ordering, normalized values and verified corpora"},
+    {"module":"report","owners":["kumwe/reporting","kumwe/record-query"],"status":"not_implemented","required":"Bounded computation-only report contract and verified corpus"},
+    {"module":"canonical_streaming","owners":["kumwe/canonical-json"],"status":"not_implemented","required":"Exact verified canonical profile and corpus, after formula/document milestone"}
+  ]
+}
