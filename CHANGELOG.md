@@ -1,5 +1,7 @@
 # Changelog
 
+- Candidate canonical KEC1 framing removes tagged JSON/base64 expansion inside the existing ABI and PHP API; identical semantic corpus, limits and finding order are retained.
+
 ## Unreleased
 
 - Implement all five deterministic kernels: exact decimal batches, compiled formula VM,

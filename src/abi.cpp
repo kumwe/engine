@@ -67,13 +67,27 @@ kumwe_engine_v1_status kumwe_engine_v1_canonical(const kumwe_engine_v1_view* req
     return allocated(response, [&]() {
         using value = kumwe::engine::json::value;
         using namespace kumwe::engine;
-        auto input = json::parse(request_bytes(request, 67108864), 67108864, 2000000, 512);
+        const auto bytes = request_bytes(request, 67108864);
+        const bool binary = bytes.starts_with("KEC1");
+        auto metadata = bytes;
+        std::string_view payload;
+        if (binary) {
+            if (bytes.size() < 8) throw refusal(KUMWE_ENGINE_V1_INVALID_INPUT);
+            std::uint32_t length = 0;
+            for (std::size_t i = 0; i < 4; ++i)
+                length |= static_cast<std::uint32_t>(static_cast<unsigned char>(bytes[4 + i])) << (8U * i);
+            if (length > bytes.size() - 8) throw refusal(KUMWE_ENGINE_V1_INVALID_INPUT);
+            if (length > 16384) throw refusal(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
+            metadata = bytes.substr(8, length);
+            payload = bytes.substr(8 + length);
+        }
+        auto input = json::parse(metadata, binary ? 16384 : 67108864, binary ? 128 : 2000000, binary ? 16 : 512);
         if (!input.is<value::object>()) throw refusal(KUMWE_ENGINE_V1_INVALID_INPUT);
         if (input.at("wire_version") != value(std::int64_t{1})) throw refusal(KUMWE_ENGINE_V1_UNSUPPORTED_VERSION);
         if (input.at("corpus_digest") != value(KUMWE_ENGINE_CANONICAL_CORPUS)) throw refusal(KUMWE_ENGINE_V1_INCOMPATIBLE_CORPUS);
         auto& object = std::get<value::object>(input.data);
         object.erase("wire_version"); object.erase("corpus_digest");
-        try { return json::encode(canonical::evaluate(input), 67108864); }
+        try { return json::encode(binary ? canonical::evaluate_binary(input, payload) : canonical::evaluate(input), 67108864); }
         catch (const canonical::error& error) {
             return json::encode(value(value::object{{"finding", value(error.what())}}));
         }

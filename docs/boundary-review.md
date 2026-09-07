@@ -1,20 +1,29 @@
-# Independent boundary review
+# Native boundary review
 
-On 2026-09-07 the extraction coordinator reviewed the proposed Engine scope before algorithm code.
-The reviewed boundary is an E0/E1 exact-decimal development slice under the v2 native architecture,
-using Conversion's approved existing operations and explicit draft semantic provenance. It is not a
-full E1 candidate, frozen ABI, human release approval or evidence of all five modules.
+The candidate implements exact decimal, formula, normalized document/preparation, report and
+canonical kernels behind the owned C ABI. The initial E0/E1 decimal review has been superseded
+by full-kernel corpus, ownership, archive/consumer and Zend boundary checks. This review records
+implementation evidence; it does not freeze ABI 1 or replace independent release acceptance.
 
-A separate reviewer examined the first published C++/ABI implementation. Three refinements followed:
+The original review's ownership refinements remain enforced: repository test/corpus paths reject
+symlinks and noncanonical paths; nonempty buffer slots remain unchanged on refusal; struct-size
+validation precedes output-view clearing; multiplication work covers maximum normalized precision.
 
-1. Test/corpus ownership paths now require canonical repository files, reject symlinks at every path
-   component and reject directories/dot segments. Negative fixtures exercise those refusals.
-2. Buffer view documentation now promises clearing data/size only after validating a supported struct
-   size. A nonempty output slot is refused unchanged and remains releasable; callers must initialize
-   output null for the null-on-refusal guarantee. A regression preserves the existing owned handle.
-3. Work charging now covers the maximum normalized multiplication coefficient workspace. Short input
-   literals padded to large scales cannot receive an unrealistically small multiplication budget.
-   Regression vectors exercise both sides of the exact work boundary.
+The readiness review corrected exact-fit batch output accounting and long-lived native plan
+exhaustion, removed duplicated transport trees/copies, and introduced bounded internal framing.
+An independent reviewer replayed all 79 expanded canonical corpus cases through KEC1 encode and
+digest (158 operations), plus malformed length/tag/key refusals. The compiled framing review
+compared 120 JSON/KEB1 calls across empty and nonempty batches, Unicode/control characters and
+exact output budgets; 222 malformed/truncated/overflow/trailing frames refused without a result.
+Corresponding corpus, framing, logical byte-budget and malformed-frame tests are committed here;
+Zend owns the public PHP array, NUL-terminated JSON slice and lifetime tests in the binding repo.
 
-Native ownership, corpus identity and source manifests are checked mechanically. The exact semantic
-release barrier and full candidate binding review remain open as recorded in MIGRATION-HANDOFF.md.
+Framing preserves ordered PHP key types, raw string bytes and IEEE-754 bits. Canonical admission
+charges immediate keys before sorting and children, and applies profile budgets before caller-sized
+allocations. Compiled input/output budgets charge their equivalent original JSON envelopes. The
+fuzzer now reaches canonical and compiled execution as well as decimal and capabilities, with
+valid binary seeds and owned-buffer status invariants.
+
+Current PR CI must pass again after every source change. The candidate still requires independent
+semantic-release verification, an accepted ABI/version and supported deployment matrix, immutable
+release provenance and representative whole-call performance acceptance before stable publication.

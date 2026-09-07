@@ -107,6 +107,11 @@ jobs:
       - run: bash tools/check-archive.sh
       - run: bash tools/check-fault-seeds.sh
       - run: node tools/source-sbom.mjs > artifacts/source.spdx.json
+      - name: Verify deterministic candidate source-release preparation
+        run: |
+          python3 tools/release-source-test.py
+          python3 tools/release-source.py prepare "$RUNNER_TEMP/native-source-bundle"
+          python3 tools/release-source.py verify "$RUNNER_TEMP/native-source-bundle" --expected-commit "$(git rev-parse HEAD)"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: development-source-${{ github.sha }}
@@ -114,3 +119,4 @@ jobs:
             artifacts/kumwe-engine-source.tar.gz
             artifacts/SHA256SUMS
             artifacts/source.spdx.json
+            ${{ runner.temp }}/native-source-bundle

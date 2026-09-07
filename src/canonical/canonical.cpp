@@ -385,6 +385,101 @@ value decode(const json::value& input, std::size_t depth, std::size_t& nodes, st
     }
     return value(std::move(result));
 }
+// Frames are tag:u8, payload_bytes:u32le, payload. Array payloads contain a
+// u32le count followed by key/value frames. Borrowed frame spans allow semantic
+// admission in sorted-key order before allocating caller-sized values.
+std::uint64_t little_integer(std::string_view bytes) {
+    std::uint64_t output = 0;
+    for (std::size_t i = 0; i < bytes.size(); ++i)
+        output |= static_cast<std::uint64_t>(static_cast<unsigned char>(bytes[i])) << (8U * i);
+    return output;
+}
+struct frame final { unsigned char tag; std::string_view payload; };
+frame read_frame(std::string_view& input) {
+    if (input.size() < 5) malformed();
+    const auto tag = static_cast<unsigned char>(input.front());
+    const auto size = static_cast<std::size_t>(little_integer(input.substr(1, 4)));
+    input.remove_prefix(5);
+    if (size > input.size()) malformed();
+    const auto payload = input.substr(0, size);
+    input.remove_prefix(size);
+    return {tag, payload};
+}
+value decode_binary(frame input, std::size_t depth, std::size_t& nodes,
+                    std::size_t& bytes, const limits& bounds) {
+    if (depth > bounds.max_depth) reject("canonical.depth-limit");
+    if (nodes == bounds.max_nodes) reject("canonical.node-limit");
+    ++nodes;
+    const auto charge = [&](std::size_t width) {
+        if (width > bounds.max_input_bytes - bytes) reject("canonical.input-limit");
+        bytes += width;
+    };
+    if (input.tag <= 2 || input.tag == 7) {
+        if (!input.payload.empty()) malformed();
+        if (input.tag == 7) reject("canonical.unsupported-type");
+        if (input.tag == 0) return value();
+        charge(1);
+        return value(input.tag == 2);
+    }
+    if (input.tag == 3 || input.tag == 4) {
+        charge(8);
+        if (input.payload.size() != 8) malformed();
+        const auto bits = little_integer(input.payload);
+        if (input.tag == 3) return value(std::bit_cast<std::int64_t>(bits));
+        if ((bits & 0x7ff0000000000000ULL) == 0x7ff0000000000000ULL) reject("canonical.non-finite-number");
+        return value(binary64{bits});
+    }
+    if (input.tag == 5) {
+        charge(input.payload.size());
+        return value(std::string(input.payload));
+    }
+    if (input.tag != 6 || input.payload.size() < 4) malformed();
+    auto remaining = input.payload;
+    const auto count = static_cast<std::size_t>(little_integer(remaining.substr(0, 4)));
+    remaining.remove_prefix(4);
+    if (count > bounds.max_nodes - nodes) reject("canonical.node-limit");
+    // Even empty keys/values require two five-byte frames. Check before reserve.
+    if (count > remaining.size() / 10) malformed();
+    const auto entries = remaining;
+    for (std::size_t i = 0; i < count; ++i) {
+        const auto key = read_frame(remaining);
+        if (key.tag == 3 && key.payload.size() == 8) charge(8);
+        else if (key.tag == 5) charge(key.payload.size());
+        else malformed();
+        (void)read_frame(remaining);
+    }
+    if (!remaining.empty()) malformed();
+    struct entry final { frame child; value::key key; std::string text; };
+    std::vector<entry> ordered;
+    ordered.reserve(count);
+    remaining = entries;
+    bool list = true;
+    for (std::size_t i = 0; i < count; ++i) {
+        const auto key = read_frame(remaining);
+        const auto child = read_frame(remaining);
+        if (key.tag == 3) {
+            const auto number = std::bit_cast<std::int64_t>(little_integer(key.payload));
+            if (number != static_cast<std::int64_t>(i)) list = false;
+            ordered.push_back({child, number, integer_text(number)});
+        } else {
+            if (coercing_key(key.payload)) malformed();
+            list = false;
+            ordered.push_back({child, std::string(key.payload), std::string(key.payload)});
+        }
+    }
+    if (!list) {
+        std::sort(ordered.begin(), ordered.end(), [](const entry& a, const entry& b) {
+            return std::lexicographical_compare(a.text.begin(), a.text.end(), b.text.begin(), b.text.end(),
+                [](char x, char y) { return static_cast<unsigned char>(x) < static_cast<unsigned char>(y); });
+        });
+        for (std::size_t i = 1; i < ordered.size(); ++i) if (ordered[i - 1].text == ordered[i].text) malformed();
+    }
+    value::array result;
+    result.reserve(count);
+    for (auto& item : ordered)
+        result.emplace_back(std::move(item.key), decode_binary(item.child, depth + 1, nodes, bytes, bounds));
+    return value(std::move(result));
+}
 }
 std::string encode(const value& input, const limits& bounds) {
     validate_limits(bounds);
@@ -431,6 +526,29 @@ json::value evaluate(const json::value& request) {
     const auto bounds = custom == nullptr ? limits{} : limits_from_json(*custom);
     std::size_t nodes = 0, bytes = 0;
     const auto source = decode(request.at("input"), 0, nodes, bytes, &bounds);
+    std::string output;
+    sha256 hash;
+    sink writer{bounds.max_output_bytes, 0, operation == "encode" ? &output : nullptr,
+        operation == "digest" ? &hash : nullptr};
+    writer.emit_admitted(source);
+    return json::value(json::value::object{{operation == "encode" ? "output" : "sha256",
+        json::value(operation == "encode" ? std::move(output) : hash.finish())}});
+}
+json::value evaluate_binary(const json::value& request, std::string_view input) {
+    if (string_member(request, "profile") != "kumwe-canonical-json/generic-v1" || request.find("input") != nullptr) malformed();
+    if (!request.is<json::value::object>()) malformed();
+    for (const auto& [key, unused] : request.as<json::value::object>()) {
+        (void)unused;
+        if (key != "profile" && key != "operation" && key != "limits") malformed();
+    }
+    const auto& operation = string_member(request, "operation");
+    if (operation != "encode" && operation != "digest") malformed();
+    const auto* custom = request.find("limits");
+    const auto bounds = custom == nullptr ? limits{} : limits_from_json(*custom);
+    const auto root = read_frame(input);
+    if (!input.empty()) malformed();
+    std::size_t nodes = 0, bytes = 0;
+    const auto source = decode_binary(root, 0, nodes, bytes, bounds);
     std::string output;
     sha256 hash;
     sink writer{bounds.max_output_bytes, 0, operation == "encode" ? &output : nullptr,

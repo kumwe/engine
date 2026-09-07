@@ -7,6 +7,42 @@
 
 using namespace kumwe::engine;
 namespace {
+void append_le(std::string& output, std::uint64_t value, std::size_t width) {
+    for (std::size_t i = 0; i < width; ++i) output.push_back(static_cast<char>(value >> (8U * i)));
+}
+std::string binary_frame(unsigned char tag, std::string payload = {}) {
+    std::string output(1, static_cast<char>(tag));
+    append_le(output, payload.size(), 4);
+    output += payload;
+    return output;
+}
+std::string binary_fixture(const canonical::value& input) {
+    const auto& item = input.data;
+    if (std::holds_alternative<std::nullptr_t>(item)) return binary_frame(0);
+    if (const auto* boolean = std::get_if<bool>(&item)) return binary_frame(*boolean ? 2 : 1);
+    if (const auto* number = std::get_if<std::int64_t>(&item)) {
+        std::string payload; append_le(payload, static_cast<std::uint64_t>(*number), 8); return binary_frame(3, payload);
+    }
+    if (const auto* number = std::get_if<canonical::binary64>(&item)) {
+        std::string payload; append_le(payload, number->bits, 8); return binary_frame(4, payload);
+    }
+    if (const auto* text = std::get_if<std::string>(&item)) return binary_frame(5, *text);
+    if (const auto* entries = std::get_if<canonical::value::array>(&item)) {
+        std::string payload; append_le(payload, entries->size(), 4);
+        for (const auto& [key, child] : *entries) {
+            if (const auto* number = std::get_if<std::int64_t>(&key)) payload += binary_fixture(canonical::value(*number));
+            else payload += binary_fixture(canonical::value(std::get<std::string>(key)));
+            payload += binary_fixture(child);
+        }
+        return binary_frame(6, payload);
+    }
+    return binary_frame(7);
+}
+std::string binary_request(const json::value& metadata, const std::string& frame) {
+    const auto encoded = json::encode(metadata);
+    std::string wire = "KEC1"; append_le(wire, encoded.size(), 4); wire += encoded; wire += frame;
+    return wire;
+}
 canonical::value fixture(const json::value& input) {
     const auto& kind = input.at("type").as<std::string>();
     if (kind == "repeat-string") {
@@ -72,6 +108,17 @@ int main(int argc, char** argv) {
                     test::require(expected_finding != nullptr, id + ": unexpected refusal " + failure.what());
                     test::require(expected_finding->as<std::string>() == failure.what(), id + ": refusal order " + failure.what());
                 }
+                json::value::object metadata{{"wire_version", json::value(std::int64_t{1})},
+                    {"corpus_digest", "84d21b12e7a2bfd752356d9a6e664bcb332e209d19017e7634e7485a4fa4e250"},
+                    {"profile", "kumwe-canonical-json/generic-v1"}, {"operation", digest ? "digest" : "encode"}};
+                if (custom != nullptr) metadata.emplace("limits", *custom);
+                const auto wire = binary_request(json::value(metadata), binary_fixture(source));
+                const auto view = test::view(wire);
+                test::response owner;
+                test::require(kumwe_engine_v1_canonical(&view, &owner.buffer) == KUMWE_ENGINE_V1_OK, id + ": binary ABI ownership/status");
+                const auto actual = json::parse(owner.bytes());
+                const auto key = expected_finding != nullptr ? "finding" : (digest ? "sha256" : "output");
+                test::require(actual.at(key) == item.at("expected").at(key), id + ": binary ABI bytes/digest/finding including expanded limits");
             }
             const auto& input_kind = item.at("input").at("type").as<std::string>();
             if (input_kind != "repeat-string" && input_kind != "repeat-list" && input_kind != "nested-list") {
@@ -104,6 +151,32 @@ int main(int argc, char** argv) {
             ++count;
         }
         test::require(count == 79, "all 79 canonical fixtures replayed");
+        {
+        const json::value binary_metadata(json::value::object{{"wire_version", json::value(std::int64_t{1})},
+            {"corpus_digest", "84d21b12e7a2bfd752356d9a6e664bcb332e209d19017e7634e7485a4fa4e250"},
+            {"profile", "kumwe-canonical-json/generic-v1"}, {"operation", "encode"}});
+        std::vector<std::string> malformed_frames;
+        const auto empty = binary_frame(0);
+        for (std::size_t width = 0; width < 5; ++width) malformed_frames.push_back(empty.substr(0, width));
+        malformed_frames.insert(malformed_frames.end(), {empty + empty, binary_frame(255), binary_frame(8),
+            binary_frame(0, "x"), binary_frame(1, "x"), binary_frame(3, "short"), binary_frame(4),
+            binary_frame(6), std::string("\x05\xff\xff\xff\xff", 5)});
+        std::string bad_count; append_le(bad_count, 2, 4);
+        malformed_frames.push_back(binary_frame(6, bad_count));
+        const auto integer_key = binary_fixture(canonical::value(std::int64_t{0}));
+        for (const auto& key : {integer_key, binary_frame(5, "key")}) {
+            std::string duplicate; append_le(duplicate, 2, 4); duplicate += key + empty + key + empty;
+            malformed_frames.push_back(binary_frame(6, duplicate));
+        }
+        std::string coercing; append_le(coercing, 1, 4); coercing += binary_frame(5, "0") + empty;
+        malformed_frames.push_back(binary_frame(6, coercing));
+        for (const auto& malformed : malformed_frames) {
+            const auto wire = binary_request(binary_metadata, malformed);
+            const auto view = test::view(wire); test::response owner;
+            test::require(kumwe_engine_v1_canonical(&view, &owner.buffer) == KUMWE_ENGINE_V1_INVALID_INPUT
+                && owner.buffer == nullptr, "binary malformed frames refuse atomically");
+        }
+        }
         // Frozen PHP 8.5.10 oracle with serialize_precision=-1: adjacent ULPs at
         // fixed/scientific notation and large-significand transitions, both signs.
         for (const auto& [bits, expected] : std::vector<std::pair<std::uint64_t, std::string>>{
