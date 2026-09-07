@@ -239,7 +239,11 @@ value plan::execute_impl(const value& fields, const value& lines, std::uint64_t&
     result_fields.emplace("values", std::move(values));
     result_fields.emplace("findings", value(std::move(findings)));
     value result(std::move(result_fields));
-    (void)json::encoded_size(result, output_limit);
+    // Each immutable canonical value and finding was measured before retention.
+    // Projection above changes representation to those already counted bytes;
+    // no consumer can mutate values after storage. Preserve the final empty
+    // envelope check without traversing the complete output a second time.
+    fits(retained_values, retained_findings);
     return result;
 }
 }

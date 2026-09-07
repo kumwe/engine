@@ -8,6 +8,37 @@ namespace kumwe::engine::json {
 namespace {
 [[noreturn]] void invalid() { throw refusal(KUMWE_ENGINE_V1_INVALID_INPUT); }
 [[noreturn]] void exhausted() { throw refusal(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT); }
+struct text_scan final { bool valid = true; std::size_t extra = 0; };
+template<bool CountEscaping>
+text_scan scan_text(std::string_view source) noexcept {
+    text_scan result;
+    auto add = [&](std::size_t count) {
+        // Saturate accounting while continuing UTF-8 admission: invalid text
+        // always precedes a string's output-budget refusal.
+        const auto maximum = std::numeric_limits<std::size_t>::max();
+        result.extra = count > maximum - result.extra ? maximum : result.extra + count;
+    };
+    for (std::size_t i = 0; i < source.size();) {
+        const auto first = static_cast<unsigned char>(source[i++]);
+        if (first < 0x80) {
+            if constexpr (CountEscaping) {
+                if (first < 32) add(first == '\b' || first == '\f' || first == '\n' || first == '\r' || first == '\t' ? 1U : 5U);
+                else if (first == '"' || first == '\\') add(1);
+            }
+            continue;
+        }
+        unsigned count = 0; std::uint32_t cp = 0, minimum = 0;
+        if (first >= 0xc2 && first <= 0xdf) { count = 1; cp = first & 31U; minimum = 0x80; }
+        else if (first >= 0xe0 && first <= 0xef) { count = 2; cp = first & 15U; minimum = 0x800; }
+        else if (first >= 0xf0 && first <= 0xf4) { count = 3; cp = first & 7U; minimum = 0x10000; }
+        else return {false, 0};
+        if (count > source.size() - i) return {false, 0};
+        while (count-- != 0) { const auto next = static_cast<unsigned char>(source[i++]); if ((next & 0xc0U) != 0x80U) return {false, 0}; cp = (cp << 6U) | (next & 63U); }
+        if (cp < minimum || cp > 0x10ffff || (cp >= 0xd800 && cp <= 0xdfff)) return {false, 0};
+        if constexpr (CountEscaping) { if (cp == 0x2028 || cp == 0x2029) add(3); }
+    }
+    return result;
+}
 void utf8(std::string& output, std::uint32_t cp) {
     if (cp < 0x80) output.push_back(static_cast<char>(cp));
     else if (cp < 0x800) {
@@ -138,26 +169,45 @@ public:
     }
     bool complete() { spaces(); return bytes.empty(); }
 };
-template<bool Materialize>
+template<bool Materialize, bool QuoteSize = false>
 class writer final {
     std::string bytes;
     std::size_t limit;
     std::size_t counted = 0;
-    void append(std::string_view token) {
+    std::size_t quote_extra = 0;
+    void append(std::string_view token, std::size_t escaped_extra = 0) {
         if (token.size() > limit - size()) exhausted();
         if constexpr (Materialize) bytes += token;
         else counted += token.size();
+        if constexpr (QuoteSize) {
+            const auto maximum = std::numeric_limits<std::size_t>::max();
+            quote_extra = escaped_extra > maximum - quote_extra ? maximum : quote_extra + escaped_extra;
+        }
     }
     void string(std::string_view input) {
+        if constexpr (!Materialize) {
+            const auto scanned = scan_text<true>(input);
+            if (!scanned.valid) invalid();
+            auto remaining = limit - counted;
+            if (input.size() > remaining) exhausted();
+            remaining -= input.size();
+            if (scanned.extra > remaining) exhausted();
+            remaining -= scanned.extra;
+            if (remaining < 2) exhausted();
+            counted += input.size() + scanned.extra + 2;
+            return;
+        }
         if (!valid_utf8(input)) invalid();
-        append("\"");
+        append("\"", 1);
         constexpr char hex[] = "0123456789abcdef";
         std::size_t start = 0;
         for (std::size_t i = 0; i < input.size(); ++i) {
             const auto c = static_cast<unsigned char>(input[i]);
             auto escape = [&](std::string_view text, std::size_t consumed = 1) {
                 append(input.substr(start, i - start));
-                append(text);
+                std::size_t extra = 0;
+                if constexpr (QuoteSize) for (const auto byte : text) if (byte == '"' || byte == '\\') ++extra;
+                append(text, extra);
                 i += consumed - 1;
                 start = i + 1;
             };
@@ -178,7 +228,7 @@ class writer final {
             }
         }
         append(input.substr(start));
-        append("\"");
+        append("\"", 1);
     }
 public:
     explicit writer(std::size_t max) : limit(max) {}
@@ -201,6 +251,12 @@ public:
         }
     }
     std::string finish() { return std::move(bytes); }
+    encoded_value finish_with_quoted_size() {
+        const auto maximum = std::numeric_limits<std::size_t>::max();
+        const auto quoted = bytes.size() > maximum - 2 || quote_extra > maximum - 2 - bytes.size()
+            ? maximum : bytes.size() + quote_extra + 2;
+        return {std::move(bytes), quoted};
+    }
 };
 }
 const value* value::find(std::string_view key) const noexcept {
@@ -215,20 +271,9 @@ value parse(std::string_view source, std::size_t max_bytes, std::size_t max_node
     auto result = input.next(); if (!input.complete()) invalid(); return result;
 }
 std::string encode(const value& source, std::size_t max_bytes) { writer<true> output(max_bytes); output.add(source); return output.finish(); }
+encoded_value encode_with_quoted_size(const value& source, std::size_t max_bytes) { writer<true, true> output(max_bytes); output.add(source); return output.finish_with_quoted_size(); }
 std::size_t encoded_size(const value& source, std::size_t max_bytes) { writer<false> output(max_bytes); output.add(source); return output.size(); }
 bool valid_utf8(std::string_view source) noexcept {
-    for (std::size_t i = 0; i < source.size();) {
-        const auto first = static_cast<unsigned char>(source[i++]);
-        if (first < 0x80) continue;
-        unsigned count = 0; std::uint32_t cp = 0, minimum = 0;
-        if (first >= 0xc2 && first <= 0xdf) { count = 1; cp = first & 31U; minimum = 0x80; }
-        else if (first >= 0xe0 && first <= 0xef) { count = 2; cp = first & 15U; minimum = 0x800; }
-        else if (first >= 0xf0 && first <= 0xf4) { count = 3; cp = first & 7U; minimum = 0x10000; }
-        else return false;
-        if (count > source.size() - i) return false;
-        while (count-- != 0) { const auto next = static_cast<unsigned char>(source[i++]); if ((next & 0xc0U) != 0x80U) return false; cp = (cp << 6U) | (next & 63U); }
-        if (cp < minimum || cp > 0x10ffff || (cp >= 0xd800 && cp <= 0xdfff)) return false;
-    }
-    return true;
+    return scan_text<false>(source).valid;
 }
 }

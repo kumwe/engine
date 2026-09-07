@@ -1,9 +1,12 @@
 # Changelog
 
-- Candidate canonical KEC1 framing removes tagged JSON/base64 expansion inside the existing ABI and PHP API; identical semantic corpus, limits and finding order are retained.
-
 ## Unreleased
 
+- Candidate canonical KEC1 framing removes tagged JSON/base64 expansion inside the existing
+  ABI and PHP API; identical semantic corpus, limits and finding order are retained.
+- Reuse exact incremental document output totals at finalization. Fuse UTF-8 admission and
+  JSON string-size counting, and collect the quoted size of immutable serialized results
+  during encoding. Existing failure ordering and original logical batch budgets remain intact.
 - Implement all five deterministic kernels: exact decimal batches, compiled formula VM,
   normalized document preparation/computation/validation, report materialization and GenericV1
   canonical encoding with streaming SHA-256. All native behavior/boundary/conformance tests

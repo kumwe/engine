@@ -69,6 +69,10 @@ int main() {
             json::parse(R"({"nested":[null,false,true,-9223372036854775808,1.2300e-1000,9223372036854775808,{"é":"a\n\"b"}],"empty":{}})"),
             json::value("\0\"\xe2\x80\xa8界"s), json::value(json::value::list{})}) {
             const auto encoded = json::encode(input);
+            const auto measured = json::encode_with_quoted_size(input);
+            test::require(measured.bytes == encoded
+                && measured.quoted_size == json::encoded_size(json::value(encoded)),
+                "fused serialization retains exact quoted transport size");
             for (std::size_t limit = 0; limit <= encoded.size() + 1; ++limit) {
                 std::uint32_t written_status = 0, counted_status = 0;
                 std::size_t written = 0, counted = 0;
@@ -78,6 +82,42 @@ int main() {
                 catch (const refusal& failure) { counted_status = failure.code; }
                 test::require(written_status == counted_status && written == counted,
                     "counting and materializing writers have identical nested/numeric byte boundaries");
+            }
+        }
+        std::string controls;
+        for (unsigned i = 0; i < 32; ++i) controls.push_back(static_cast<char>(i));
+        for (const auto& input : std::vector<json::value>{
+            json::value(json::value::object{}), json::value(json::value::list{}),
+            json::value(std::numeric_limits<std::int64_t>::min()),
+            json::value(std::numeric_limits<std::int64_t>::max()),
+            json::value(controls + "\"\\é界\xe2\x80\xa8\xe2\x80\xa9"),
+            json::value(json::value::object{{controls + "\"\\é", json::value(controls)},
+                {"nested", json::parse(R"([{},[],1.2300e-1000,9223372036854775808,{"quote\"":"slash\\"}])")}})}) {
+            const auto encoded = json::encode(input);
+            const auto measured = json::encode_with_quoted_size(input, encoded.size());
+            test::require(measured.bytes == encoded
+                && measured.quoted_size == json::encode(json::value(encoded)).size(),
+                "fused quote accounting covers all control/UTF8/key/numeric/container kinds");
+            for (std::size_t limit = 0; limit <= encoded.size() + 1; ++limit) {
+                std::uint32_t written_status = 0, counted_status = 0, measured_status = 0;
+                try { (void)json::encode(input, limit); } catch (const refusal& e) { written_status = e.code; }
+                try { (void)json::encoded_size(input, limit); } catch (const refusal& e) { counted_status = e.code; }
+                try { (void)json::encode_with_quoted_size(input, limit); } catch (const refusal& e) { measured_status = e.code; }
+                test::require(written_status == counted_status && written_status == measured_status,
+                    "fused writers preserve every byte-limit boundary");
+            }
+        }
+        for (const auto& input : std::vector<json::value>{
+            json::value(controls + std::string(4096, 'a') + '\xff'),
+            json::value(json::value::list{json::value("first"), json::value("\xed\xa0\x80")}),
+            json::value(json::value::object{{"a", json::value("first")}, {"z", json::value("\xf4\x90\x80\x80")}})}) {
+            for (const std::size_t limit : {0U, 1U, 8U, 32U, 65536U}) {
+                std::uint32_t written_status = 0, counted_status = 0, measured_status = 0;
+                try { (void)json::encode(input, limit); } catch (const refusal& e) { written_status = e.code; }
+                try { (void)json::encoded_size(input, limit); } catch (const refusal& e) { counted_status = e.code; }
+                try { (void)json::encode_with_quoted_size(input, limit); } catch (const refusal& e) { measured_status = e.code; }
+                test::require(written_status != 0 && written_status == counted_status && written_status == measured_status,
+                    "late invalid UTF8 and prior-container byte refusal keep ordered precedence");
             }
         }
         std::cout << "Lossless transport and hostile-input tests passed\n";

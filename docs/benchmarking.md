@@ -23,3 +23,10 @@ and records allocation/RSS, cold versus reused plans, bursts and multi-process s
 Run it against the final actual extension artifact; source availability alone is not a measured
 App speedup or capacity result. Neither synthetic suite establishes HTTP/database capacity or
 automatically authorizes native cutover.
+
+Output accounting retains the original logical JSON byte contract even when binary frames
+carry fewer bytes. The result encoder collects its quoted-string size while emitting bytes;
+document execution finalizes the exact totals already checked before each retained value
+and finding. These optimizations preserve refusal timing and do not relax output limits.
+Compare the complete caller against the preceding immutable candidate to evaluate them;
+the removal of a counting traversal is not itself an acceleration acceptance result.

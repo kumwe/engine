@@ -222,14 +222,16 @@ std::string plan::execute(std::string_view request, const std::atomic<bool>* can
         }
         // Retain exact canonical payload bytes through the Zend transport; decoding
         // to PHP arrays alone would erase the empty object/list distinction.
-        const value encoded_result(json::encode(result, max_output));
+        const auto serialized = binary ? json::encode_with_quoted_size(result, max_output)
+            : json::encoded_value{json::encode(result, max_output), 0};
+        const auto& encoded_result = serialized.bytes;
         const auto encoded_correlation = json::encode(value(correlation), max_output);
         const auto encoded_findings = json::encode(value(std::move(portable_findings)), max_output);
-        const auto quoted_result = binary ? std::string{} : json::encode(encoded_result, max_output);
+        const auto quoted_result = binary ? std::string{} : json::encode(value(encoded_result), max_output);
         // Keep both public representations without encoding the result tree twice.
         // The parts are encoded JSON values and keys remain in canonical order.
         const std::string_view parts[] = {"{\"correlation\":", encoded_correlation,
-            ",\"findings\":", encoded_findings, ",\"result\":", encoded_result.as<std::string>(),
+            ",\"findings\":", encoded_findings, ",\"result\":", encoded_result,
             ",\"result_json\":", quoted_result, "}"};
         std::size_t item_size = 0;
         for (const auto part : parts) {
@@ -237,7 +239,7 @@ std::string plan::execute(std::string_view request, const std::atomic<bool>* can
             item_size += part.size();
         }
         if (binary) {
-            const auto quoted_size = json::encoded_size(encoded_result, max_output);
+            const auto quoted_size = serialized.quoted_size;
             if (quoted_size > max_output - item_size) reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
             item_size += quoted_size;
         }
@@ -252,7 +254,7 @@ std::string plan::execute(std::string_view request, const std::atomic<bool>* can
         if (binary) {
             append_bytes(output, correlation);
             append_bytes(output, encoded_findings);
-            append_bytes(output, encoded_result.as<std::string>());
+            append_bytes(output, encoded_result);
         } else {
             if (!first_result) output.push_back(',');
             for (const auto part : parts) output.append(part);
