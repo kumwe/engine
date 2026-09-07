@@ -16,7 +16,10 @@ not one fastest sample. Do not use a hard flaky time threshold in ordinary corre
 
 An optional profile argument selects one workload family for diagnosis. CI runs every family.
 
-This diagnostic has no PHP baseline, production concurrency,
-measured allocation counts or App end-to-end boundary. It therefore supports development only.
-It does not demonstrate an App speedup, capacity objective, native cutover readiness or full E1 exit.
-The later benchmark suite must add all those measurements, representative bursts and saturation.
+The C++ diagnostic remains a development measurement. The separate
+[`benchmarks/e2e` harness](../benchmarks/e2e/README.md) compares all six semantic workload families
+with unchanged App/PHP methods through the actual Zend extension, verifies matching results,
+and records allocation/RSS, cold versus reused plans, bursts and multi-process saturation.
+Run it against the final actual extension artifact; source availability alone is not a measured
+App speedup or capacity result. Neither synthetic suite establishes HTTP/database capacity or
+automatically authorizes native cutover.
