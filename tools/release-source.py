@@ -119,6 +119,48 @@ def exact_hash(files, path, expected):
         raise ReleaseError('Source material digest mismatch: ' + path)
 
 
+def computation_baseline_blockers(baseline):
+    """Check recorded prerequisite facts, not external signatures or release acceptance."""
+    missing = 'The independently verified portable-only Computation Phase 1A baseline is unresolved.'
+    if not isinstance(baseline, dict) or baseline.get('state') != 'release-verified':
+        return [missing]
+    blockers = []
+    version = baseline.get('version')
+    if (baseline.get('repository') != 'kumwe/computation'
+            or not isinstance(version, str)
+            or re.fullmatch(r'(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)', version) is None
+            or version == '0.0.0' or baseline.get('release') != 'v' + version):
+        blockers.append('Computation baseline requires an exact published package version and matching tag.')
+    for field, length in [('commit', 40), ('archive_sha256', 64), ('api_digest', 64), ('capability_digest', 64)]:
+        value = baseline.get(field)
+        if not isinstance(value, str) or re.fullmatch('[a-f0-9]{' + str(length) + '}', value) is None:
+            blockers.append('Computation baseline requires an immutable ' + field + '.')
+    corpora = baseline.get('corpus_digests')
+    if (not isinstance(corpora, dict) or not corpora or any(
+            not isinstance(path, str) or not path.startswith('resources/')
+            or '..' in PurePosixPath(path).parts or '\\' in path
+            or PurePosixPath(path).as_posix() != path
+            or not isinstance(value, str) or re.fullmatch('[a-f0-9]{64}', value) is None
+            for path, value in corpora.items())):
+        blockers.append('Computation baseline requires exact portable corpus paths and SHA256 identities.')
+    requirements = baseline.get('runtime_requirements')
+    if (not isinstance(requirements, dict) or not requirements.get('php')
+            or any(not isinstance(name, str) or not isinstance(value, str) or not value
+                   for name, value in requirements.items())
+            or any(name.lower() in {'ext-kumwe_engine', 'kumwe/engine', 'kumwe/kumwe-engine'}
+                   for name in requirements)):
+        blockers.append('Computation baseline must record released runtime requirements without a native dependency.')
+    if baseline.get('native_bindings_present') is not False:
+        blockers.append('Computation baseline must independently establish the absence of native classes and DI bindings.')
+    attestation = baseline.get('attestation')
+    if (not isinstance(attestation, dict) or not isinstance(attestation.get('uri'), str)
+            or re.fullmatch(r'https://[^\s/]+/[^\s]+', attestation['uri']) is None
+            or not isinstance(attestation.get('sha256'), str)
+            or re.fullmatch('[a-f0-9]{64}', attestation['sha256']) is None):
+        blockers.append('Computation baseline requires an external release-attestation reference and SHA256 identity.')
+    return blockers
+
+
 def engine_materials(files, prefix=''):
     caps = read_json(files, prefix + 'resources/capabilities.json')
     abi = read_json(files, prefix + 'resources/abi-manifest.json')
@@ -136,7 +178,7 @@ def engine_materials(files, prefix=''):
             raise ReleaseError('Semantic owner material requires an exact source commit.')
         if module.get('corpus_sha256') != release.get('corpus_sha256'):
             raise ReleaseError('Semantic owner corpus disagrees with embedded corpus identity.')
-    blockers = []
+    blockers = computation_baseline_blockers(contracts.get('computation_baseline'))
     if re.fullmatch(r'[1-9][0-9]*\.[0-9]+\.[0-9]+', caps.get('version', '')) is None:
         blockers.append('Engine version is a development candidate, not an App-eligible stable release.')
     if (contracts.get('abi_frozen') is not True or abi.get('status') not in ('stable', 'frozen')
@@ -172,7 +214,7 @@ def source_facts(files, package_kind):
                   if path.startswith('vendor/engine/')}
         if not actual or actual != lock.get('files'):
             raise ReleaseError('Embedded Engine source closure differs from the exact lock.')
-        _, _, _, blockers = engine_materials(files, 'vendor/engine/')
+        _, _, contracts, blockers = engine_materials(files, 'vendor/engine/')
         if compatibility.get('state') == 'candidate' or lock.get('state') == 'candidate':
             blockers.append('The extension or its embedded Engine is a candidate.')
         if compatibility.get('publication_allowed') is not True:
@@ -194,6 +236,7 @@ def source_facts(files, package_kind):
             raise ReleaseError('Required source distribution material is absent: ' + path)
         materials.append({'path': path, 'sha256': digest(files[path])})
     return {'identity': identity, 'materials': materials, 'dependencies': dependencies,
+            'computation_baseline': contracts.get('computation_baseline'),
             'stable_source_blockers': blockers}
 
 
@@ -265,6 +308,7 @@ def provenance(record):
         'predicateType': 'https://kumwe.dev/provenance/native-source-assembly/v1',
         'predicate': {'source': record['source'], 'materials': record['materials'],
                       'dependencies': record['dependencies'],
+                      'computation_baseline': record['computation_baseline'],
                       'recipe': 'committed git archive; gzip -n; committed-source SPDX inventory',
                       'signed': False, 'release_attestation': False, 'compiled_artifact': False},
     })

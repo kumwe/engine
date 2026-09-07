@@ -205,5 +205,62 @@ class SourceReleaseTests(unittest.TestCase):
             RELEASE.archive_files(gzip.compress(stream.getvalue(), mtime=0), 'engine')
 
 
+class ComputationBaselineTests(unittest.TestCase):
+    def fixture(self):
+        # Synthetic metadata only: these are not releases or attestations written to source.
+        return {'state': 'release-verified', 'repository': 'kumwe/computation',
+                'version': '1.0.0', 'release': 'v1.0.0', 'commit': 'a' * 40,
+                'archive_sha256': 'b' * 64, 'api_digest': 'c' * 64,
+                'capability_digest': 'd' * 64,
+                'corpus_digests': {'resources/corpus/v1.json': 'e' * 64},
+                'runtime_requirements': {'php': '^8.5'}, 'native_bindings_present': False,
+                'attestation': {'uri': 'https://example.invalid/evidence/baseline.yaml', 'sha256': 'f' * 64}}
+
+    def test_missing_baseline_alone_refuses_otherwise_stable_engine_and_embedding(self):
+        # All older source-state gates are satisfied: the new prerequisite must stand alone.
+        for prefix in ('', 'vendor/engine/'):
+            files = {prefix + 'resources/capabilities.json': RELEASE.encode({
+                         'version': '1.0.0', 'abi_status': 'stable',
+                         'semantic_release_verified': True, 'corpora': []}),
+                     prefix + 'resources/abi-manifest.json': RELEASE.encode({'status': 'stable', 'files': {}}),
+                     prefix + 'resources/contracts.json': RELEASE.encode({
+                         'state': 'release-verified', 'abi_frozen': True, 'modules': []})}
+            with self.subTest(prefix=prefix):
+                blockers = RELEASE.engine_materials(files, prefix)[3]
+                self.assertEqual(len(blockers), 1)
+                with self.assertRaisesRegex(RELEASE.ReleaseError, 'portable-only Computation Phase 1A'):
+                    RELEASE.require_stable({'stable_source_blockers': blockers})
+        for value in (None, {}, [], {'state': 'unresolved'}, {'state': 'package-released'}):
+            self.assertTrue(RELEASE.computation_baseline_blockers(value))
+
+    def test_baseline_requires_exact_portable_identity_and_external_evidence_reference(self):
+        self.assertEqual(RELEASE.computation_baseline_blockers(self.fixture()), [])
+        corruptions = {
+            'repository': 'kumwe/engine', 'version': '1.0.1', 'release': 'main',
+            'commit': 'main', 'archive_sha256': None, 'api_digest': None, 'capability_digest': None,
+            'corpus_digests': {'resources/../corpus.json': 'e' * 64},
+            'runtime_requirements': {'php': '^8.5', 'ext-kumwe_engine': '0.0.0-dev'},
+            'native_bindings_present': True, 'attestation': None,
+        }
+        for field, value in corruptions.items():
+            with self.subTest(field=field):
+                baseline = self.fixture()
+                baseline[field] = value
+                self.assertTrue(RELEASE.computation_baseline_blockers(baseline))
+        for field in self.fixture():
+            with self.subTest(missing=field):
+                baseline = self.fixture()
+                del baseline[field]
+                self.assertTrue(RELEASE.computation_baseline_blockers(baseline))
+        for corpus in ([], {}, {'resources/corpus/v1.json': 'main'}):
+            baseline = self.fixture()
+            baseline['corpus_digests'] = corpus
+            self.assertTrue(RELEASE.computation_baseline_blockers(baseline))
+        for dependency in ('ext-kumwe_engine', 'EXT-KUMWE_ENGINE', 'kumwe/engine', 'kumwe/kumwe-engine'):
+            baseline = self.fixture()
+            baseline['runtime_requirements'][dependency] = '1.0.0'
+            self.assertTrue(RELEASE.computation_baseline_blockers(baseline))
+
+
 if __name__ == '__main__':
     unittest.main()
