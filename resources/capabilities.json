@@ -131,5 +131,7 @@
       "path": "corpus/reporting/materialization-v1.json",
       "sha256": "975116dc897a0bfdee4a08f9065eb10ccfec06a32f4eb93a48015b08af408c01"
     }
-  ]
+  ],
+  "abi_minor": 0,
+  "abi_manifest_sha256": "@ENGINE_ABI_MANIFEST_DIGEST@"
 }

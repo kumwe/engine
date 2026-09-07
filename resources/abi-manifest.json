@@ -1,0 +1,13 @@
+{
+  "schema": "kumwe-engine-abi/v1",
+  "abi_major": 1,
+  "abi_minor": 0,
+  "status": "unstable-development",
+  "paths_relative_to": "source_archive_root",
+  "files": {
+    "include/kumwe/engine/engine.h": "ec031a4636a87ebc80e653513df1a8db228efc1d500c25c122702c69389280ee",
+    "resources/abi-symbols.txt": "62cf59b8d6feb369f0d801b59b69796ea569570177e02b903c0bec6b01e04d21",
+    "resources/abi-symbols.map": "da36805ea915bd88a68925c9e936c8975fe73a0f80769f9bec3f9e400020b8e3",
+    "docs/abi.md": "25f4629106cdb446b3b113b5d024f6d1ac4c0aaa1eb84eae30ce34e75f350441"
+  }
+}
