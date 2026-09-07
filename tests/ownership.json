@@ -17,7 +17,8 @@
         "plain-c-ownership"
       ],
       "boundary": [
-        "behavior-boundary"
+        "behavior-boundary",
+        "plain-c-ownership"
       ]
     },
     "kumwe_engine_v1_buffer_view": {
@@ -26,39 +27,48 @@
         "plain-c-ownership"
       ],
       "boundary": [
-        "behavior-boundary"
+        "behavior-boundary",
+        "plain-c-ownership"
       ]
     },
     "kumwe_engine_v1_cancellation_create": {
       "behavior": [
-        "compiled-plan-ownership"
+        "compiled-plan-ownership",
+        "plain-c-ownership"
       ],
       "boundary": [
-        "compiled-plan-ownership"
+        "compiled-plan-ownership",
+        "plain-c-ownership"
       ]
     },
     "kumwe_engine_v1_cancellation_release": {
       "behavior": [
-        "compiled-plan-ownership"
+        "compiled-plan-ownership",
+        "plain-c-ownership"
       ],
       "boundary": [
-        "compiled-plan-ownership"
+        "compiled-plan-ownership",
+        "plain-c-ownership"
       ]
     },
     "kumwe_engine_v1_cancellation_request": {
       "behavior": [
-        "compiled-plan-ownership"
+        "compiled-plan-ownership",
+        "plain-c-ownership"
       ],
       "boundary": [
-        "compiled-plan-ownership"
+        "compiled-plan-ownership",
+        "plain-c-ownership"
       ]
     },
     "kumwe_engine_v1_canonical": {
       "behavior": [
-        "generic-canonical-corpus"
+        "generic-canonical-corpus",
+        "plain-c-ownership"
       ],
       "boundary": [
-        "generic-canonical-corpus"
+        "generic-canonical-corpus",
+        "plain-c-ownership"
       ]
     },
     "kumwe_engine_v1_capabilities": {
@@ -66,49 +76,60 @@
         "plain-c-ownership"
       ],
       "boundary": [
-        "behavior-boundary"
+        "behavior-boundary",
+        "plain-c-ownership"
       ]
     },
     "kumwe_engine_v1_compile": {
       "behavior": [
-        "compiled-plan-ownership"
+        "compiled-plan-ownership",
+        "plain-c-ownership"
       ],
       "boundary": [
-        "compiled-plan-ownership"
+        "compiled-plan-ownership",
+        "plain-c-ownership"
       ]
     },
     "kumwe_engine_v1_decimal_batch": {
       "behavior": [
         "behavior-boundary",
-        "conversion-corpus"
+        "conversion-corpus",
+        "plain-c-ownership"
       ],
       "boundary": [
         "behavior-boundary",
-        "conversion-corpus"
+        "conversion-corpus",
+        "plain-c-ownership"
       ]
     },
     "kumwe_engine_v1_execute": {
       "behavior": [
-        "compiled-plan-ownership"
+        "compiled-plan-ownership",
+        "plain-c-ownership"
       ],
       "boundary": [
-        "compiled-plan-ownership"
+        "compiled-plan-ownership",
+        "plain-c-ownership"
       ]
     },
     "kumwe_engine_v1_plan_describe": {
       "behavior": [
-        "compiled-plan-ownership"
+        "compiled-plan-ownership",
+        "plain-c-ownership"
       ],
       "boundary": [
-        "compiled-plan-ownership"
+        "compiled-plan-ownership",
+        "plain-c-ownership"
       ]
     },
     "kumwe_engine_v1_plan_release": {
       "behavior": [
-        "compiled-plan-ownership"
+        "compiled-plan-ownership",
+        "plain-c-ownership"
       ],
       "boundary": [
-        "compiled-plan-ownership"
+        "compiled-plan-ownership",
+        "plain-c-ownership"
       ]
     }
   },
@@ -121,15 +142,30 @@
       "normalized-document-batch",
       "report-materialization-corpus",
       "php-numeric-string-corpus",
-      "generic-canonical-corpus"
+      "generic-canonical-corpus",
+      "diagnostic-cli",
+      "normalized-document-preparation",
+      "normalized-document-validators",
+      "normalized-document-validator-edges",
+      "normalized-document-values",
+      "computed-value-normalization",
+      "unicode-normalization",
+      "unicode-data-provenance",
+      "normalized-document-computed-values"
     ],
     "corpora": [
       "corpus/decimal/decimal-v1.tsv",
-      "corpus/definition/formula-v1.json",
-      "corpus/document/validation-v1.json",
-      "corpus/reporting/materialization-v1.json",
       "corpus/canonical/generic-v1.json",
-      "tests/corpus/report-numeric-v1.json"
+      "corpus/definition/formula-v1.json",
+      "corpus/document/computed-normalization-v1.json",
+      "corpus/document/document-profile-v1.json",
+      "corpus/document/normalized-values-v1.json",
+      "corpus/document/preparation-v1.json",
+      "corpus/document/unicode-normalization-oracle-v1.json",
+      "corpus/document/validation-v1.json",
+      "corpus/document/validator-edges-v1.json",
+      "corpus/document/validator-extension-v1.json",
+      "corpus/reporting/materialization-v1.json"
     ]
   },
   "architecture": [

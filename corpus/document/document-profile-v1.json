@@ -1,0 +1,30 @@
+{
+  "schema": "kumwe-document-profile-corpus/v1",
+  "profile": "normalized-document-draft/1",
+  "corpora": [
+    {
+      "id": "computed-normalization-v1",
+      "sha256": "6949c2763e05a1b76ea4f6c29cc7c2df57eb25d80ee625078a1d16545a8b41f4"
+    },
+    {
+      "id": "normalized-values-v1",
+      "sha256": "752f41632d2ad38d74c5c61db5ff5f373b9427596d7766449b84398ddb15bce2"
+    },
+    {
+      "id": "unicode-normalization-oracle-v1",
+      "sha256": "8a1c1dce8686d09ca5e53d7b1971620e887237c6019a1189549bd873ec6a87da"
+    },
+    {
+      "id": "validation-v1",
+      "sha256": "fce91bfe3c9614ec3862b50c0defc10a9b69ed021671f8382d774d8cb0a20668"
+    },
+    {
+      "id": "validator-edges-v1",
+      "sha256": "65cde051396085a01e9723a120460c8e00519eb63acff80d7425533983f011b0"
+    },
+    {
+      "id": "validator-extension-v1",
+      "sha256": "dbc005bd77fdd764c873bdde57261bc6cb79a8463164fb83e0da8cbe7603161c"
+    }
+  ]
+}

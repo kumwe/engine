@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
     using namespace kumwe::engine;
     using value = json::value;
     try {
-        test::require(argc == 2, "document corpus path");
+        test::require(argc == 2 || argc == 3, "document corpus path and optional expected count");
         std::ifstream stream(argv[1], std::ios::binary);
         test::require(stream.good(), "document corpus readable");
         const std::string bytes{std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>()};
@@ -20,8 +20,8 @@ int main(int argc, char** argv) {
             const auto& definition = item.at("definition");
             for (const auto& field : definition.at("fields").as<value::list>()) {
                 value::object projected;
-                for (const auto key : {"handle", "required", "nullable", "formula", "validators"})
-                    projected.emplace(key, field.at(key));
+                for (const auto key : {"handle", "required", "nullable", "formula", "validators", "type", "precision", "scale", "length", "normalizers"})
+                    if (const auto* item = field.find(key)) projected.emplace(key, *item);
                 fields.emplace_back(std::move(projected));
             }
             if (const auto* rules = definition.find("record_invariants")) {
@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
             }
             ++count;
         }
-        test::require(count == 10, "all frozen document computation/validation vectors replayed");
+        test::require(count == (argc == 3 ? static_cast<std::size_t>(std::stoul(argv[2])) : 10), "all frozen document computation/validation vectors replayed");
         const auto source = json::parse(R"({"fields":[
             {"handle":"total","formula":{"op":"add","type":"integer","args":[
               {"op":"field","type":"integer","field":"subtotal"},
@@ -80,10 +80,33 @@ int main(int argc, char** argv) {
             catch (const refusal& failure) { refused = failure.code == KUMWE_ENGINE_V1_EXHAUSTED_LIMIT; }
             test::require(refused, "instruction/finding/output budget enforced");
         }
+        const auto patterned = document::plan::compile(json::parse(R"({"fields":[{"handle":"x","validators":[{"rule":"pattern","value":"x"}]}],"invariants":[]})"));
+        budget = 100000;
+        test::require(patterned.execute(json::parse(R"({"x":"x"})"), lines, budget, 100, 10000).at("findings") == value(value::list{}), "bounded pattern executes");
+        value::list copies;
+        for (unsigned i = 0; i < 512; ++i) copies.emplace_back(value::object{{"handle", value("copy" + std::to_string(i))}, {"length", value(std::int64_t{16384})},
+            {"formula", json::parse(R"({"op":"field","type":"string","field":"input"})")}});
+        const auto expanding = document::plan::compile(value(value::object{{"fields", value(copies)}, {"invariants", value(value::list{})}}));
+        budget = 1000000;
         bool refused = false;
-        try { (void)document::plan::compile(json::parse(R"({"fields":[{"handle":"x","validators":[{"rule":"pattern","value":"x"}]}],"invariants":[]})")); }
-        catch (const refusal& failure) { refused = failure.code == KUMWE_ENGINE_V1_INCOMPATIBLE_CAPABILITY; }
-        test::require(refused, "unimplemented semantic profiles refuse compilation");
+        try { (void)expanding.execute(value(value::object{{"input", value(std::string(16384, 'x'))}}), lines, budget, 100, 32768); }
+        catch (const refusal& failure) { refused = failure.code == KUMWE_ENGINE_V1_EXHAUSTED_LIMIT; }
+        test::require(refused && 1000000 - budget < 16384 + 10, "aggregate retained output refuses before copying 512 computed fields");
+        value::list nodes(4095, value());
+        test::require(document::normalized_value_valid(value(nodes)), "4096 semantic normalized nodes admitted");
+        nodes.emplace_back();
+        test::require(!document::normalized_value_valid(value(nodes)), "4097 semantic normalized nodes refused");
+        value nested;
+        for (unsigned i = 0; i < 8; ++i) nested = value(value::list{std::move(nested)});
+        test::require(document::normalized_value_valid(nested), "eight normalized array levels admitted");
+        nested = value(value::list{std::move(nested)});
+        test::require(!document::normalized_value_valid(nested), "ninth normalized array level refused");
+        for (const auto malformed : {
+            R"({"type":"normalized-value","version":2,"kind":"datetime","value":"2026-09-07T00:00:00.000000+00:00"})",
+            R"({"type":"normalized-value","version":1,"kind":"array","value":{"entries":[{"key":"0","value":null}]}})",
+            R"({"type":"normalized-value","version":1,"kind":"array","value":{"entries":[{"key":"a","value":1},{"key":"a","value":2}]}})",
+            R"({"type":"exact-decimal","value":"01.00"})"})
+            test::require(!document::normalized_value_valid(json::parse(malformed)), "malformed normalized tag refused");
         std::cout << count << " frozen document vectors plus dependency, findings, ownership and budget tests passed\n";
     } catch (const std::exception& error) { std::cerr << error.what() << '\n'; return 1; }
 }

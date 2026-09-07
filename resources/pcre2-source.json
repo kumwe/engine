@@ -1,0 +1,118 @@
+{
+  "schema": "kumwe-pcre2-source/v1",
+  "repository": "https://github.com/PCRE2Project/pcre2",
+  "tag": "pcre2-10.42",
+  "commit": "26eb5f6712f2d2e6d3d012b273c53f7b4d420379",
+  "selection": "Static 8-bit PCRE2 with Unicode and JIT; complete pinned SLJIT architecture source closure, no system or network dependency.",
+  "files": {
+    "AUTHORS": "430c8e1ae1c643cef5b14af882ada140bd8f675198d704cf88aa65addac3ab78",
+    "LICENCE": "87d884eceb7fc54611470ce9f74280d28612b0c877adfc767e9676892a638987",
+    "src/config.h.generic": "5843b14698dc777836d45e5633d2610df3b65a28540ea265f6bdc3ff05cca2d9",
+    "src/pcre2.h.generic": "c684acf79df1d782309e2fccb05e41ea25d7a059d8a1e7d61226b73dcc23e12f",
+    "src/pcre2_auto_possess.c": "38746bd5f62ffee23261bd4f70a83e704f163801d49d27e5d0e29f961af91c65",
+    "src/pcre2_chartables.c.dist": "0212492c6b5b2ca3cffe32da555c69f6485afcdc4b42f0fc0b1f8a6ed3ea0ae7",
+    "src/pcre2_compile.c": "7a1069ae62c6ca1674cd1ec8f100e2f92eaf907af2e7859d4efba78a82fb0d4d",
+    "src/pcre2_config.c": "ea02b830a3951c73cba40dc62777e7249f20b2e7b8ed5e302fb2bac467fd611a",
+    "src/pcre2_context.c": "c7a4e84b61b072cc4e2c610675521d3d8c76d6854170f302ab52db4a1b948be3",
+    "src/pcre2_convert.c": "1ff02da2013b0e05a053479b34f74db76deeef738ebb1e2793ced2811ce6874d",
+    "src/pcre2_dfa_match.c": "5db8667173223479272ff2bedf6ddcf892627b1839ffc3eae100ad4d91c11bcf",
+    "src/pcre2_error.c": "26b41f4edb9eb6c467e4871ff73ec1e9b2fdc25bba47e1496d0f6ffb71c58c8d",
+    "src/pcre2_extuni.c": "201bb82f6f813c25119ed1d6621e18f874d52fcd1c42290dbb13798c8ece7387",
+    "src/pcre2_find_bracket.c": "1ab133e396aff00029c50d968f6259dcf6526319df2ef8f1da04844b43df0ddd",
+    "src/pcre2_internal.h": "2f114d0ad9559f359d96ec769e7e8acb3f81340f3dd6b3a40fb205945a0c24a6",
+    "src/pcre2_intmodedep.h": "c62533ac48aa0371cd8a0cbcf0bb35f94e20e1dd660a12d3fead152465cd8a77",
+    "src/pcre2_jit_compile.c": "8a50960e5758bede47d11151b7bb9a6213592283a809cd181955bf2454af2621",
+    "src/pcre2_jit_match.c": "1124aaf02bc978949aacd89286455cc332e46ad3bc98c533c7a069c30dd96b4f",
+    "src/pcre2_jit_misc.c": "39039c2794b6f7e2bdb80449e90192b079a9b541cfce37d68dbf056d170d6e18",
+    "src/pcre2_jit_neon_inc.h": "a428d6eaaebc181e52f04c5d2e8ba16859a76ee320d6f3a07aa43521f29d9ff9",
+    "src/pcre2_jit_simd_inc.h": "e24dac471990ba5ae6420c9d846fb2dc9905a730dda4136458b42b47eb63f622",
+    "src/pcre2_maketables.c": "5c218e07ecca319cdc0d2a2653626da0341d93b4eb5c39a36589c35d1065353d",
+    "src/pcre2_match.c": "a573191067dc16788544c2e96dbbf612611e0c4ba81af1ae8cf8d60e1f26d40f",
+    "src/pcre2_match_data.c": "880dec3ce8f27e2a8df99d2bd31224f574ec24a4fb8fe9906bec2b03a6fdc097",
+    "src/pcre2_newline.c": "e80e2c8c8d7a462025c128099306721d765bf19228d62b3815d8a0be15f86e6a",
+    "src/pcre2_ord2utf.c": "6ea08238cc47761e9d087a54685fab279febffb2c0e54485983cb1f0790a9e5d",
+    "src/pcre2_pattern_info.c": "f8c0f52715098267e01aed461516d0ef7ba71ea4ea22e5d407a917419184e46f",
+    "src/pcre2_printint.c": "a3a77fdd3aae8cbf7cf5038214a89e39e109b168a14fa69a405e6ea92b438aaf",
+    "src/pcre2_script_run.c": "a6a418323b548e8c74a85e48f67c996857db776a23effa2f78b09f846074287c",
+    "src/pcre2_serialize.c": "e3c36ccad1cbc6d5b4fb80c4f8c9df0745e48cfc8b09f0302639224d0c95e9b8",
+    "src/pcre2_string_utils.c": "65fc0d8ed9f351770231db38233ba02ea37b2fc97910f359ef825430e36454bc",
+    "src/pcre2_study.c": "b5401147ba76985a5d458cfd7ab728837cdb5c5f518aa2dbf325f25e68b31e96",
+    "src/pcre2_substitute.c": "4ed0fc5a68a8e7370c0f69e34f4d3cfdf41168dbca61832b3d8b80d633165351",
+    "src/pcre2_substring.c": "dc345741847d39e159f6e496b21f396bc5b5066ad6c2b37a945891a8ca0e9a4e",
+    "src/pcre2_tables.c": "93b434c7feb8a30d57c33d706c4c8862a86f8cf0fc43d9074a0323cbaf6ad83a",
+    "src/pcre2_ucd.c": "f815dc164006f78a9f90c585e8fb03bf5c67e684e33d4768f71bafd52216fe84",
+    "src/pcre2_ucp.h": "df4b736caac10a6e324424e07d9d873a298c85ece84b0bd82207d9c4b7a3e021",
+    "src/pcre2_ucptables.c": "d75b17614f689832af74a44de85699f5b082e273e6ab804bc8d8e6efeb8dd120",
+    "src/pcre2_valid_utf.c": "584f66742c43351517c1aa2c55d22f94fddad212644f3e5ceedfa21ac64f58f9",
+    "src/pcre2_xclass.c": "f8063f4310acff5b5f3bd5a5e8a0996ef8f1ef3b664acdfdf28356c0a99b11d9",
+    "src/pcre2posix.h": "b6fc958cfe74cfaa616066eba9a66eca2a011ee85e8d3017d0fdda2d03561f84",
+    "src/sljit/sljitConfig.h": "891fc1ed25e5fa283e854bd6388f139559764832fefbafcd4dcd882ccfbded9b",
+    "src/sljit/sljitConfigInternal.h": "66ca0395762ff56578f8da305a32d816f2ec20bd7497ef4f3eee78d996548307",
+    "src/sljit/sljitExecAllocator.c": "d130ac3c944fcffbbc2872c90cfaf3496631b0f0141b56e682fa607d6d7b91b5",
+    "src/sljit/sljitLir.c": "74f5ef73607d1d3555cf5cc17672f2f2f4dcf968699ccca0e3956d338589f596",
+    "src/sljit/sljitLir.h": "aaf211a923e46e7b84e406718f2df8e88c77389b3eea4f7fac954c4b57f5da4c",
+    "src/sljit/sljitNativeARM_32.c": "e72c9a2adcae41930b30607fb5deef8e0b50b92c7e4c7bdde046d66169a3be7a",
+    "src/sljit/sljitNativeARM_64.c": "b5a86ed50c312da1640a099f980153585eb816269163b964c4b76eac60127086",
+    "src/sljit/sljitNativeARM_T2_32.c": "0744e8a990478e8945636c551dbdec4bb40796fa0f95e680a0d9e7d5e7b7cc21",
+    "src/sljit/sljitNativeMIPS_32.c": "bc4e5eeaa116c498955cda53ad4ef0ffea2d8028c9d5dcef64ce923dbf712520",
+    "src/sljit/sljitNativeMIPS_64.c": "17b0727005a9b4090f5562efefa7a2d6c3810ba10d936f5ea537793253402758",
+    "src/sljit/sljitNativeMIPS_common.c": "e8b253506ed29ad3c5990b7a1fcb081720cee961de4075a1efb3f8bd2d1c0ed4",
+    "src/sljit/sljitNativePPC_32.c": "e018b44587e12f1e2c02d5c5a2321e07a8bee9556a3db5774e679b1493aba8be",
+    "src/sljit/sljitNativePPC_64.c": "629bba638ccafe1418314c078fceff2545ebb4c5ee32c95693e90112b01085e2",
+    "src/sljit/sljitNativePPC_common.c": "1a3d4d7d30594d947733d3e5fc3ddc623977bf8c01df086b58e421b576d4aa11",
+    "src/sljit/sljitNativeRISCV_32.c": "44183345cb58cb6aa33083dd1cccb737b8fdbf266d242f2b0ad99f19814bf6fa",
+    "src/sljit/sljitNativeRISCV_64.c": "afe6ef3e6a458901b67781f762e44d37c60ba435a7b4811fa30c6b2b22cba6ab",
+    "src/sljit/sljitNativeRISCV_common.c": "4327c3bcc5fd1b1e07d7d23cbeb2bfd8dab3b002b3589212776961d23cb7d588",
+    "src/sljit/sljitNativeS390X.c": "874e0df57af111e55197e2e0b6513a94f451f3c44c06f93d7c62c721a725b67b",
+    "src/sljit/sljitNativeX86_32.c": "4e6c58e14ea7bf97bf5f498c48e0760670bc68f271d380d31d673987ac4d5f1a",
+    "src/sljit/sljitNativeX86_64.c": "39849b3ebdfa2faac64229ab41e7cbc2ea18018cdf1f366d4029fa59ffdbf359",
+    "src/sljit/sljitNativeX86_common.c": "f748c42c1454d8f572d24adcc206315c2af19d09e4129e656f40dad51802f706",
+    "src/sljit/sljitProtExecAllocator.c": "1dc1150c867a504429b8edbaebd37951fecea59c980668d5a6c3808341989216",
+    "src/sljit/sljitUtils.c": "a6f848e3be7939ba2e2b5304213497837b6b67dc433a63ba8a96947f6ab06c50",
+    "src/sljit/sljitWXExecAllocator.c": "49ddd4082d4f432a3478b0c826a8e9189b9842be6a727aa26b01e192c02261c1"
+  },
+  "base_commit": "52c08847921a324c804cabf2814549f50bce1265",
+  "upstream_branch": "release/pcre2-10.42",
+  "security_backports": [
+    {
+      "commit": "b8d7c16ecd5721be0357adc2bc2cafcd058332c0",
+      "path": "third_party/pcre2-backports/b8d7c16ecd5721be0357adc2bc2cafcd058332c0.patch",
+      "sha256": "605893b66d025d75df8725db1d754f610accd7c14d2d41c6459c01026a43cd3b"
+    },
+    {
+      "commit": "f5ccb6d7e9a59781e15b468ad7d65d18998a7494",
+      "path": "third_party/pcre2-backports/f5ccb6d7e9a59781e15b468ad7d65d18998a7494.patch",
+      "sha256": "0d787b241941e1f1d781a2f7ce50c5cca3348efecf17c86e48939952797098b5"
+    },
+    {
+      "commit": "dbdf7a5cd020cd134bca51c6841d87a648a3e968",
+      "path": "third_party/pcre2-backports/dbdf7a5cd020cd134bca51c6841d87a648a3e968.patch",
+      "sha256": "7e9d3b769f28d8ec90beed1f9af131404d0958f9b117f946be57ded816b96d7a"
+    },
+    {
+      "commit": "f7f66085e5afdf36b321a561d3e42d33efc7619e",
+      "path": "third_party/pcre2-backports/f7f66085e5afdf36b321a561d3e42d33efc7619e.patch",
+      "sha256": "a6c4cd7cb1e42fecb77df4224988f852d7087b8715e1202f110877984a54e4ee"
+    },
+    {
+      "commit": "751058affece62cb71bfdd3bea88ec62cda325cf",
+      "path": "third_party/pcre2-backports/751058affece62cb71bfdd3bea88ec62cda325cf.patch",
+      "sha256": "374b7f8d11bb0a49fb83ad2daea23543e63a4cc2f2071e5fd75e41282f569d6c"
+    },
+    {
+      "commit": "92bfa3fd49903057a903ddfa82c92d66ae16a607",
+      "path": "third_party/pcre2-backports/92bfa3fd49903057a903ddfa82c92d66ae16a607.patch",
+      "sha256": "9dc86d1e1a72c85b1e66f0fc3ee28b565689602a2e96de7024f0528fc6db7c50"
+    },
+    {
+      "commit": "3c917e053019abe928f36ad63c8d7f1e434787e5",
+      "path": "third_party/pcre2-backports/3c917e053019abe928f36ad63c8d7f1e434787e5.patch",
+      "sha256": "badb63d2b09c96720305ffaad54d7a0645b3d9005458713b2e08c63d30f4a08d"
+    },
+    {
+      "commit": "26eb5f6712f2d2e6d3d012b273c53f7b4d420379",
+      "path": "third_party/pcre2-backports/26eb5f6712f2d2e6d3d012b273c53f7b4d420379.patch",
+      "sha256": "ea1c7ea0e1ccf7afd91ed2eeb9c8432b15c11dab957c74028eaf4d8b46e4b769"
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 #include "report.hpp"
+#include "converted.hpp"
 #include "value/php_numeric.hpp"
 #include "vm/decimal.hpp"
 #include "vm/error.hpp"
@@ -85,13 +86,14 @@ bool date(std::string_view input) {
     }
     return true;
 }
-bool typed(std::string_view type, const value& input) {
+bool typed(std::string_view type, const value& input, std::uint64_t& budget) {
     if (input.is<std::nullptr_t>()) return true;
     if (type == "boolean") return input.is<bool>();
     if (type == "integer") return input.is<std::int64_t>();
     if (type == "decimal") return numeric(input);
     if (!input.is<std::string>()) return false;
     const auto& s = input.as<std::string>();
+    if (type == "converted_money" || type == "converted_quantity") return converted_literal(s, type == "converted_money", budget);
     if (type == "string") return characters(s) <= 4096;
     if (type == "date") return date(s);
     if (type == "date_time") {
@@ -161,7 +163,7 @@ report_plan report_plan::compile(const json::value& computation) {
     for (const auto& formula : formulas) {
         keys(formula, {"alias","type","expression","label"});
         const auto name = alias(formula, "alias"), type = text(formula, "type");
-        if (!one_of(type, {"boolean","integer","decimal","string","identifier","date","date_time"})) invalid();
+        if (!one_of(type, {"boolean","integer","decimal","string","identifier","date","date_time","converted_money","converted_quantity"})) invalid();
         const auto* expression = formula.find("expression");
         if (!expression) invalid();
         auto compiled = vm::formula::compile(*expression);
@@ -213,7 +215,7 @@ json::value report_plan::materialize(const json::value& authorized_rows, std::ui
                 fields.emplace(dependency,*cell);
             }
             auto evaluated = formula.expression.evaluate(value(std::move(fields)),empty,budget,max_output_bytes - output_bytes);
-            if (!scalar(evaluated) || !typed(formula.type,evaluated)) unavailable();
+            if (!scalar(evaluated) || !typed(formula.type,evaluated,budget)) unavailable();
             std::get<object>(row.data)[formula.alias] = std::move(evaluated);
         }
         if (!rows.empty()) {

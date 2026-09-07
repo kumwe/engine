@@ -1,0 +1,25 @@
+{
+  "schema": "kumwe-unicode-normalization-source/v1",
+  "semantic_oracle": {
+    "php": "8.5.10",
+    "mbstring_unicode": "17.0.0",
+    "intl_icu": "74.2",
+    "normalization_unicode": "15.1.0"
+  },
+  "license": "Unicode-3.0",
+  "license_source": "https://github.com/unicode-org/unicodetools/blob/d0de624cbbda904c2893c1b3b1ab74c36d4f03e2/LICENSE",
+  "data_source": "https://www.unicode.org/Public/{version}/ucd/{filename}",
+  "algorithm_sources": [
+    "https://www.unicode.org/versions/Unicode17.0.0/core-spec/chapter-3/#G33992",
+    "https://www.unicode.org/reports/tr15/"
+  ],
+  "files": {
+    "15.1.0/CompositionExclusions.txt": "59d2d9e3dfdf0a999cf9dae11d594f053631222679a2f5710315ea07f7fe82af",
+    "15.1.0/NormalizationTest.txt": "871238e37e3be0696ec2bd0891119a041b052da1a84485eda05a5438724b223e",
+    "15.1.0/UnicodeData.txt": "2fc713e6a31a87c4850a37fe2caffa4218180fadb5de86b43a143ddb4581fb86",
+    "17.0.0/DerivedCoreProperties.txt": "24c7fed1195c482faaefd5c1e7eb821c5ee1fb6de07ecdbaa64b56a99da22c08",
+    "17.0.0/SpecialCasing.txt": "efc25faf19de21b92c1194c111c932e03d2a5eaf18194e33f1156e96de4c9588",
+    "17.0.0/UnicodeData.txt": "2e1efc1dcb59c575eedf5ccae60f95229f706ee6d031835247d843c11d96470c",
+    "LICENSE": "356ee510031d46d09912cb68ca0951cceb620b109426585cec0d773c01c7d284"
+  }
+}

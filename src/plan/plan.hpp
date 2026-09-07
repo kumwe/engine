@@ -1,5 +1,6 @@
 #pragma once
 #include "document/document.hpp"
+#include "document/preparation.hpp"
 #include "vm/formula.hpp"
 #include "reporting/report.hpp"
 #include "value/json.hpp"
@@ -9,7 +10,7 @@
 
 namespace kumwe::engine::execution {
 class plan final {
-    std::variant<vm::formula, document::plan, reporting::report_plan> implementation_;
+    std::variant<vm::formula, document::plan, preparation::plan, reporting::report_plan> implementation_;
     json::value descriptor_;
 public:
     static plan compile(std::string_view request);

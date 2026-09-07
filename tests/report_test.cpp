@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
             } else test::require(refused,id + ": expected refusal");
             ++count;
         }
-        test::require(count == 12,"all frozen report materialization vectors replayed");
+        test::require(count == 116,"all frozen report materialization vectors replayed");
         auto rejects = [](std::string_view document) {
             bool rejected = false;
             try { (void)reporting::report_plan::compile(json::parse(document)); }
@@ -48,7 +48,6 @@ int main(int argc, char** argv) {
         rejects(R"({"columns":[{"alias":"n","type":"integer"}],"groups":[{"column":"absent"}]})");
         rejects(R"({"columns":[{"alias":"n","type":"integer"}],"formulas":[{"alias":"x","type":"integer","expression":{"op":"field","type":"integer","field":"absent"}}]})");
         rejects(R"({"columns":[{"alias":"n","type":"integer"}],"formulas":[{"alias":"x","type":"integer","expression":{"op":"line_aggregate","type":"integer","lines":"hidden","aggregate":"count"}}]})");
-        rejects(R"({"columns":[{"alias":"n","type":"integer"}],"formulas":[{"alias":"x","type":"converted_money","expression":{"op":"literal","type":"string","value":"unsafe"}}]})");
         const auto plan = reporting::report_plan::compile(json::parse(R"({"columns":[{"alias":"n","type":"integer"}],"formulas":[{"alias":"double_n","type":"integer","expression":{"op":"multiply","type":"integer","args":[{"op":"field","type":"integer","field":"n"},{"op":"literal","type":"integer","value":2}]}},{"alias":"next","type":"integer","expression":{"op":"add","type":"integer","args":[{"op":"field","type":"integer","field":"double_n"},{"op":"literal","type":"integer","value":1}]}}],"sorts":[{"output":"next","direction":"desc","nulls_last":true}]})"));
         const auto input = json::parse(R"([{"n":2},{"n":3}])");
         std::uint64_t budget = 100000;
