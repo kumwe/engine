@@ -1,0 +1,23 @@
+{
+  "format": "kumwe-benchmark-container-context/1",
+  "observed_utc": "2026-09-07T19:26:03.741187+00:00",
+  "cpu_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "cgroup": {
+    "cpu.max": "800000 100000",
+    "cpu.stat": "usage_usec 51680411641\nuser_usec 28118254714\nsystem_usec 23562156927\nnice_usec 0\nnr_periods 273654\nnr_throttled 13267\nthrottled_usec 1052948365\nnr_bursts 0\nburst_usec 0",
+    "cpuset.cpus.effective": "0-8",
+    "memory.max": "21474836480",
+    "memory.current": "9386340352",
+    "memory.peak": "11892678656"
+  }
+}
