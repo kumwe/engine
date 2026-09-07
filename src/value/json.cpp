@@ -44,10 +44,20 @@ class reader final {
         if (take() != '"') invalid();
         std::string output;
         while (true) {
+            // Copy ordinary UTF-8 spans in one allocation-aware append. Payloads
+            // often contain large opaque document strings; pushing each byte
+            // separately repeatedly grew the string at the coarse boundary.
+            std::size_t length = 0;
+            while (length < bytes.size()) {
+                const auto c = static_cast<unsigned char>(bytes[length]);
+                if (c < 32 || c == '"' || c == '\\') break;
+                ++length;
+            }
+            output.append(bytes.substr(0, length));
+            bytes.remove_prefix(length);
             const char c = take();
             if (c == '"') break;
-            if (static_cast<unsigned char>(c) < 32) invalid();
-            if (c != '\\') { output.push_back(c); continue; }
+            if (c != '\\') invalid();
             switch (take()) {
             case '"': output.push_back('"'); break;
             case '\\': output.push_back('\\'); break;
@@ -118,8 +128,8 @@ public:
         if (consume('{')) {
             value::object items; spaces(); if (consume('}')) return value(std::move(items));
             while (true) {
-                spaces(); const auto key = string(); spaces(); if (!consume(':')) invalid();
-                if (!items.emplace(key, next(depth + 1)).second) invalid();
+                spaces(); auto key = string(); spaces(); if (!consume(':')) invalid();
+                if (!items.emplace(std::move(key), next(depth + 1)).second) invalid();
                 spaces(); if (consume('}')) break; if (!consume(',')) invalid();
             }
             return value(std::move(items));

@@ -28,7 +28,7 @@ jobs:
       CC: ${{ matrix.cc }}
       CXX: ${{ matrix.cxx }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DKUMWE_ENGINE_BENCHMARKS=ON
       - run: cmake --build build --parallel 4
       - run: ctest --test-dir build --output-on-failure
@@ -41,7 +41,7 @@ jobs:
       - run: bash tools/check-consumer.sh
       - run: build/engine-benchmark > benchmark.jsonl
       - run: node tools/benchmark-metadata.mjs > benchmark-metadata.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: diagnostic-${{ matrix.os }}-${{ matrix.cc }}
           path: |
@@ -55,13 +55,13 @@ jobs:
       ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
       UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DKUMWE_ENGINE_SANITIZERS=ON -DKUMWE_ENGINE_FUZZ=ON
       - run: cmake --build build --parallel 4
       - run: ctest --test-dir build --output-on-failure
       - run: node tools/fuzz-seeds.mjs
       - run: build/engine-fuzz artifacts/fuzz-seeds -max_total_time=30 -max_len=1048577 -rss_limit_mb=1024 -artifact_prefix=artifacts/fuzz-regressions/
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: fuzz-regressions-${{ github.sha }}
@@ -77,7 +77,7 @@ jobs:
       CXX: clang++
       TSAN_OPTIONS: halt_on_error=1:exitcode=97
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: Record compiler and configure TSan shadow address range
         run: |
           clang --version
@@ -93,7 +93,7 @@ jobs:
           cmake --build build-tsan --target plan-tests --parallel 4
       - name: Execute shared immutable plan under ThreadSanitizer
         run: ctest --test-dir build-tsan --output-on-failure -R '^compiled-plan-ownership$'
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: thread-sanitizer-${{ github.sha }}
@@ -103,11 +103,11 @@ jobs:
   archive-and-faults:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - run: bash tools/check-archive.sh
       - run: bash tools/check-fault-seeds.sh
       - run: node tools/source-sbom.mjs > artifacts/source.spdx.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: development-source-${{ github.sha }}
           path: |

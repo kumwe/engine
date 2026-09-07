@@ -91,7 +91,7 @@ plan plan::compile(std::string_view request) {
 std::string plan::describe() const { return json::encode(descriptor_, 16777216); }
 std::string plan::execute(std::string_view request, const std::atomic<bool>* cancellation) const {
     const auto started = std::chrono::steady_clock::now();
-    const auto envelope = json::parse(request);
+    auto envelope = json::parse(request);
     shape(envelope, {"wire_version", "documents", "limits"});
     version(envelope.at("wire_version"));
     const auto& limits = envelope.at("limits");
@@ -109,25 +109,33 @@ std::string plan::execute(std::string_view request, const std::atomic<bool>* can
         if (elapsed >= static_cast<std::int64_t>(max_ms)) reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
     };
     checkpoint();
-    const auto& documents = envelope.at("documents");
+    auto& documents = std::get<object>(envelope.data).at("documents");
     if (!documents.is<list>()) reject();
     if (documents.as<list>().size() > max_documents) reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
     std::string output = "{\"results\":[";
+    constexpr std::string_view suffix = "],\"wire_version\":1}";
     bool first_result = true;
     std::set<std::string> seen;
     std::size_t findings_used = 0;
-    std::size_t bytes_used = 32;
-    for (const auto& document : documents.as<list>()) {
+    for (auto& document : std::get<list>(documents.data)) {
         checkpoint();
         const bool opaque = document.find("input") != nullptr;
         if (opaque) shape(document, {"correlation", "input"});
         else shape(document, {"correlation", "fields", "lines"});
-        const auto correlation = text(document.at("correlation"));
+        const auto& correlation = text(document.at("correlation"));
         if (!token(correlation) || !seen.emplace(correlation).second) reject();
-        auto decoded = opaque ? json::parse(text(document.at("input")), max_input) : document;
-        if (opaque) shape(decoded, {"fields", "lines"});
-        auto& fields = std::get<object>(decoded.data).at("fields");
-        const auto& lines = decoded.at("lines");
+        // The input tree is already operation-owned. Direct envelopes can lend
+        // their lines and move their fields into document execution without
+        // duplicating a complete document. Opaque payloads need one parse only.
+        value decoded;
+        value* admitted = &document;
+        if (opaque) {
+            decoded = json::parse(text(document.at("input")), max_input);
+            shape(decoded, {"fields", "lines"});
+            admitted = &decoded;
+        }
+        auto& fields = std::get<object>(admitted->data).at("fields");
+        const auto& lines = admitted->at("lines");
         if (!fields.is<object>() || !(lines.is<object>() || lines.is<std::nullptr_t>())) reject();
         auto result = std::visit([&](const auto& compiled) -> value {
             using T = std::decay_t<decltype(compiled)>;
@@ -173,19 +181,18 @@ std::string plan::execute(std::string_view request, const std::atomic<bool>* can
             if (part.size() > max_output - item_size) reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
             item_size += part.size();
         }
-        std::string bytes;
-        bytes.reserve(item_size);
-        for (const auto part : parts) bytes.append(part);
-        if (bytes_used > max_output || bytes.size() > max_output - bytes_used) reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
-        bytes_used += bytes.size() + 1;
-        // The budget check already produced the complete canonical item. Retain
-        // those bytes directly, avoiding another value-tree copy and encoding.
+        // Account for exactly the final wire bytes, including separators and
+        // suffix. A valid nonempty result fits when its limit equals its size.
+        // Refusal remains atomic because output is not published until success.
+        const auto remaining = max_output - std::min<std::uint64_t>(max_output, output.size());
+        const auto overhead = suffix.size() + (first_result ? 0U : 1U);
+        if (output.size() > max_output || overhead > remaining || item_size > remaining - overhead)
+            reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
         if (!first_result) output.push_back(',');
-        output.append(bytes);
+        for (const auto part : parts) output.append(part);
         first_result = false;
     }
     checkpoint();
-    constexpr std::string_view suffix = "],\"wire_version\":1}";
     if (output.size() > max_output || suffix.size() > max_output - output.size()) reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
     output.append(suffix);
     checkpoint();
