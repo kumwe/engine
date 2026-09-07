@@ -3,6 +3,8 @@
 #include "batch.hpp"
 #include <iostream>
 #include <limits>
+#include <utility>
+#include <vector>
 int main() {
     using namespace std::string_literals;
     using namespace kumwe::engine;
@@ -27,6 +29,44 @@ int main() {
             test::require(refused, "resource budget enforced");
         }
         test::require(json::encode(json::value("\0\n\t\xe2\x80\xa8"s)) == "\"\\u0000\\n\\t\\u2028\"", "PHP-compatible UTF8 escaping");
+        for (const auto& [input, expected] : std::vector<std::pair<std::string, std::string>>{
+            {"ordinary UTF8 é界", "\"ordinary UTF8 é界\""},
+            {"prefix\"middle\\suffix", "\"prefix\\\"middle\\\\suffix\""},
+            {"\"edge\"", "\"\\\"edge\\\"\""},
+            {"x\0\x1f\b\f\n\r\tend"s, "\"x\\u0000\\u001f\\b\\f\\n\\r\\tend\""},
+            {"before\xe2\x80\xa8" "between\xe2\x80\xa9"s, "\"before\\u2028between\\u2029\""},
+            {std::string(4096, 'a') + '"' + std::string(4096, 'b'),
+                '"' + std::string(4096, 'a') + "\\\"" + std::string(4096, 'b') + '"'}}) {
+            test::require(json::encode(json::value(input), expected.size()) == expected, "exact UTF8 text spans and escape bytes");
+            test::require(json::encoded_size(json::value(input), expected.size()) == expected.size(), "counting writer uses exact UTF8 escape lengths");
+            bool refused = false;
+            try { (void)json::encode(json::value(input), expected.size() - 1); }
+            catch (const refusal& failure) { refused = failure.code == KUMWE_ENGINE_V1_EXHAUSTED_LIMIT; }
+            test::require(refused, "text spans retain exact output limit");
+        }
+        bool invalid_before_limit = false;
+        try { (void)json::encode(json::value(std::string(4096, 'a') + '\xff'), 1); }
+        catch (const refusal& failure) { invalid_before_limit = failure.code == KUMWE_ENGINE_V1_INVALID_INPUT; }
+        test::require(invalid_before_limit, "UTF8 refusal still precedes string output limit");
+        invalid_before_limit = false;
+        try { (void)json::encoded_size(json::value(std::string(4096, 'a') + '\xff'), 1); }
+        catch (const refusal& failure) { invalid_before_limit = failure.code == KUMWE_ENGINE_V1_INVALID_INPUT; }
+        test::require(invalid_before_limit, "counting writer retains UTF8 refusal precedence");
+        for (const auto& input : std::vector<json::value>{
+            json::parse(R"({"nested":[null,false,true,-9223372036854775808,1.2300e-1000,9223372036854775808,{"é":"a\n\"b"}],"empty":{}})"),
+            json::value("\0\"\xe2\x80\xa8界"s), json::value(json::value::list{})}) {
+            const auto encoded = json::encode(input);
+            for (std::size_t limit = 0; limit <= encoded.size() + 1; ++limit) {
+                std::uint32_t written_status = 0, counted_status = 0;
+                std::size_t written = 0, counted = 0;
+                try { written = json::encode(input, limit).size(); }
+                catch (const refusal& failure) { written_status = failure.code; }
+                try { counted = json::encoded_size(input, limit); }
+                catch (const refusal& failure) { counted_status = failure.code; }
+                test::require(written_status == counted_status && written == counted,
+                    "counting and materializing writers have identical nested/numeric byte boundaries");
+            }
+        }
         std::cout << "Lossless transport and hostile-input tests passed\n";
     } catch (const std::exception& error) { std::cerr << error.what() << '\n'; return 1; }
 }

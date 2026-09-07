@@ -4,6 +4,7 @@
 #include "validators.hpp"
 #include <functional>
 #include <cstdint>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -38,12 +39,19 @@ struct invariant final {
 class plan final {
     std::vector<field> fields_;
     std::vector<invariant> invariants_;
+    std::set<std::string, std::less<>> projected_fields_;
     json::value document_;
     bool require_all_ = true;
+    json::value execute_impl(const json::value& fields, const json::value& lines,
+        std::uint64_t& budget, std::size_t finding_limit, std::size_t output_limit,
+        const execution_context* context, json::value* owned_fields) const;
 public:
     static plan compile(const json::value& program);
     const json::value& document() const noexcept { return document_; }
     json::value execute(const json::value& fields, const json::value& lines,
+                        std::uint64_t& budget, std::size_t finding_limit,
+                        std::size_t output_limit, const execution_context* context = nullptr) const;
+    json::value execute_owned(json::value&& fields, const json::value& lines,
                         std::uint64_t& budget, std::size_t finding_limit,
                         std::size_t output_limit, const execution_context* context = nullptr) const;
 };

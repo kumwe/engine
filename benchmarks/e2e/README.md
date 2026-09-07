@@ -67,7 +67,9 @@ high-water mark across its earlier workloads; allocation workers provide a fresh
 identity metadata; failures leave `complete: false`. No speedup or release gate is inferred merely
 from successful execution. For a repeat on the same hardware/PHP/App/corpus, pass
 `--baseline /path/to/prior/results.json`. A deterministic 2,000-resample independent bootstrap compares
-median latency distributions (at least 20 samples each). It fails only when the lower 95% ratio bound
+median latency distributions (at least 20 samples each). Admission also requires identical workload
+source and dataset descriptors, compiler/optimization/sanitizer configuration, PHP semantic sources
+and output digests; changing the measured work or build mode cannot manufacture a regression result. It fails only when the lower 95% ratio bound
 exceeds `1 + --regression-threshold` (default 10%). Report this screening alongside repeated full runs;
 it is not a substitute for representative deployment evidence or a significance correction across
 many exploratory comparisons. The admission test deliberately corrupts correctness and injects a

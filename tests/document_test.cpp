@@ -41,6 +41,10 @@ int main(int argc, char** argv) {
                           << " actual " << json::encode(actual) << '\n';
                 return 1;
             }
+            auto owned_fields = item.at("normalized_values");
+            std::uint64_t owned_work = 1000000;
+            test::require(compiled.execute_owned(std::move(owned_fields), lines, owned_work, 1000, 1000000) == actual
+                && owned_work == work, "owned and borrowed document paths preserve exact result and work charges");
             ++count;
         }
         test::require(count == (argc == 3 ? static_cast<std::size_t>(std::stoul(argv[2])) : 10), "all frozen document computation/validation vectors replayed");
@@ -65,6 +69,22 @@ int main(int argc, char** argv) {
         test::require(output.at("values").at("total") == value(std::int64_t{13}), "dependency passes");
         test::require(output.at("findings") == value(value::list{}), "UTF8 character length");
         test::require(fields.find("total") == nullptr, "input remains immutable");
+        auto extra_fields = fields;
+        std::get<value::object>(extra_fields.data)["unreferenced"] = value("retained");
+        budget = 100000;
+        test::require(plan.execute(extra_fields, lines, budget, 100, 10000).at("values").at("unreferenced") == value("retained"),
+            "unreferenced input remains in canonical output");
+        std::get<value::object>(extra_fields.data)["unreferenced"] = json::parse(R"({"type":"normalized-value","version":2,"kind":"datetime","value":"2026-09-07T00:00:00.000000+00:00"})");
+        budget = 100000;
+        bool invalid_unreferenced = false;
+        try { (void)plan.execute(extra_fields, lines, budget, 100, 10000); }
+        catch (const refusal& failure) { invalid_unreferenced = failure.code == KUMWE_ENGINE_V1_INVALID_INPUT; }
+        test::require(invalid_unreferenced, "unreferenced normalized input still receives complete admission");
+        budget = 100000;
+        invalid_unreferenced = false;
+        try { (void)plan.execute_owned(std::move(extra_fields), lines, budget, 100, 10000); }
+        catch (const refusal& failure) { invalid_unreferenced = failure.code == KUMWE_ENGINE_V1_INVALID_INPUT; }
+        test::require(invalid_unreferenced, "owned unreferenced normalized input still receives complete admission");
         budget = 100000;
         const auto missing = plan.execute(value(value::object{}), lines, budget, 100, 10000);
         const auto expected = json::parse(R"([
@@ -79,6 +99,12 @@ int main(int argc, char** argv) {
             try { (void)plan.execute(value(value::object{}), lines, budget, which == 1 ? 1 : 100, which == 2 ? 1 : 10000); }
             catch (const refusal& failure) { refused = failure.code == KUMWE_ENGINE_V1_EXHAUSTED_LIMIT; }
             test::require(refused, "instruction/finding/output budget enforced");
+            const auto remaining = budget;
+            budget = which == 0 ? 0 : 100000;
+            refused = false;
+            try { (void)plan.execute_owned(value(value::object{}), lines, budget, which == 1 ? 1 : 100, which == 2 ? 1 : 10000); }
+            catch (const refusal& failure) { refused = failure.code == KUMWE_ENGINE_V1_EXHAUSTED_LIMIT; }
+            test::require(refused && budget == remaining, "owned and borrowed budget crossings preserve refusal and work charges");
         }
         const auto patterned = document::plan::compile(json::parse(R"({"fields":[{"handle":"x","validators":[{"rule":"pattern","value":"x"}]}],"invariants":[]})"));
         budget = 100000;

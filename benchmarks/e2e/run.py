@@ -8,6 +8,7 @@ import math
 import os
 from pathlib import Path
 import platform
+import queue
 import random
 import selectors
 import statistics
@@ -170,16 +171,19 @@ def capacity(args, results):
                         warm = worker.request({**request, 'iterations': args.warmup})
                         require_parity(warm, expected, 'capacity warmup')
                         expected = warm['digest']
+                    available = queue.Queue()
+                    for worker in workers:
+                        available.put(worker)
                     started = time.perf_counter_ns()
-                    def burst_task(index):
+                    def burst_task(_index):
                         entered = time.perf_counter_ns()
-                        # Executor assigns at most one active task per worker via explicit queue ownership.
-                        worker = workers[index % count]
-                        with worker.lock:
+                        worker = available.get()
+                        try:
                             service_start = time.perf_counter_ns()
-                            worker.process.stdin.write(json.dumps(request) + '\n'); worker.process.stdin.flush()
-                            response = worker.read()
-                        done = time.perf_counter_ns()
+                            response = worker.request(request)
+                            done = time.perf_counter_ns()
+                        finally:
+                            available.put(worker)
                         require_parity(response, expected, 'burst')
                         return {'queue_ns': service_start - started, 'dispatch_wait_ns': service_start - entered,
                                 'completion_ns': done - started, 'boundary_ns': done - service_start,
@@ -266,22 +270,36 @@ def allocations(args, results):
             write(args.output / 'results.json', results)
 
 
+def require_comparable_metadata(old, current):
+    for key in ('machine', 'php_sha256', 'corpus_hashes'):
+        if old[key] != current[key]:
+            raise RuntimeError(f'Regression comparison requires matching {key}')
+    if old['harness_hashes']['worker.php'] != current['harness_hashes']['worker.php']:
+        raise RuntimeError('Regression comparison requires identical workload implementation')
+    for key in ('php', 'php_binary_sha256', 'icu', 'sources', 'conversion_reference'):
+        if old['worker_identity']['php'][key] != current['worker_identity']['php'][key]:
+            raise RuntimeError(f'Regression comparison requires matching PHP semantic baseline {key}')
+    prior_build = old['worker_identity']['native']['capabilities']['binding_build']
+    current_build = current['worker_identity']['native']['capabilities']['binding_build']
+    for key in ('architecture', 'compiler', 'engine_flags', 'extension_flags', 'libc', 'sanitizers',
+                'thread_model', 'zend_module_api', 'debug'):
+        if prior_build[key] != current_build[key]:
+            raise RuntimeError(f'Regression comparison requires matching native build configuration {key}')
+
+
 def compare(args, results):
     if not args.baseline:
         return []
     old = json.loads(args.baseline.read_text())
-    for key in ('machine', 'php_sha256', 'corpus_hashes'):
-        if old['metadata'][key] != results['metadata'][key]:
-            raise RuntimeError(f'Regression comparison requires matching {key}')
-    for key in ('php', 'php_binary_sha256', 'icu', 'sources', 'conversion_reference'):
-        if old['metadata']['worker_identity']['php'][key] != results['metadata']['worker_identity']['php'][key]:
-            raise RuntimeError(f'Regression comparison requires matching PHP semantic baseline {key}')
+    require_comparable_metadata(old['metadata'], results['metadata'])
     previous = {(r['key'], r['backend']): r for r in old['matrix']}
     checks = []
     for row in results['matrix']:
         key = (row['key'], row['backend'])
         if key not in previous:
             raise RuntimeError(f'Missing baseline workload {key}')
+        if row['dataset_descriptor_sha256'] != previous[key]['dataset_descriptor_sha256']:
+            raise RuntimeError(f'Changed baseline dataset {key}')
         require_parity(row, previous[key]['digest'], 'regression baseline')
         checks.append({'key': key, **regression(previous[key]['durations_ns'], row['durations_ns'], args.regression_threshold)})
     return checks

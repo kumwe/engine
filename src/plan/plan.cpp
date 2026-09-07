@@ -20,7 +20,7 @@ void shape(const value& input, std::initializer_list<std::string_view> allowed) 
         if (std::find(allowed.begin(), allowed.end(), key) == allowed.end()) reject();
     }
 }
-std::string text(const value& input) {
+const std::string& text(const value& input) {
     if (!input.is<std::string>()) reject();
     return input.as<std::string>();
 }
@@ -83,7 +83,7 @@ plan plan::compile(std::string_view request) {
     } else reject(KUMWE_ENGINE_V1_INCOMPATIBLE_CAPABILITY);
     output.descriptor_ = value(object{{"wire_version", value(std::int64_t{1})}, {"profile", value(profile)},
         {"corpus_digest", value(corpus)}, {"program", std::visit([](const auto& p) { return p.document(); }, output.implementation_)}});
-    (void)json::encode(output.descriptor_, max_output);
+    (void)json::encoded_size(output.descriptor_, max_output);
     const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - started).count();
     if (elapsed >= static_cast<std::int64_t>(max_ms)) reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
     return output;
@@ -112,7 +112,8 @@ std::string plan::execute(std::string_view request, const std::atomic<bool>* can
     const auto& documents = envelope.at("documents");
     if (!documents.is<list>()) reject();
     if (documents.as<list>().size() > max_documents) reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
-    list results;
+    std::string output = "{\"results\":[";
+    bool first_result = true;
     std::set<std::string> seen;
     std::size_t findings_used = 0;
     std::size_t bytes_used = 32;
@@ -123,9 +124,9 @@ std::string plan::execute(std::string_view request, const std::atomic<bool>* can
         else shape(document, {"correlation", "fields", "lines"});
         const auto correlation = text(document.at("correlation"));
         if (!token(correlation) || !seen.emplace(correlation).second) reject();
-        const auto decoded = opaque ? json::parse(text(document.at("input")), max_input) : document;
+        auto decoded = opaque ? json::parse(text(document.at("input")), max_input) : document;
         if (opaque) shape(decoded, {"fields", "lines"});
-        const auto& fields = decoded.at("fields");
+        auto& fields = std::get<object>(decoded.data).at("fields");
         const auto& lines = decoded.at("lines");
         if (!fields.is<object>() || !(lines.is<object>() || lines.is<std::nullptr_t>())) reject();
         auto result = std::visit([&](const auto& compiled) -> value {
@@ -137,6 +138,8 @@ std::string plan::execute(std::string_view request, const std::atomic<bool>* can
                 if (!lines.is<object>() || !lines.as<object>().empty()) reject();
                 return value(object{{"rows", compiled.materialize(fields.at("rows"), budget, 100000, max_output)},
                     {"findings", value(list{})}});
+            } else if constexpr (std::is_same_v<T, kumwe::engine::document::plan>) {
+                return compiled.execute_owned(std::move(fields), lines, budget, max_findings - findings_used, max_output);
             } else {
                 return compiled.execute(fields, lines, budget, max_findings - findings_used, max_output);
             }
@@ -156,15 +159,35 @@ std::string plan::execute(std::string_view request, const std::atomic<bool>* can
         }
         // Retain exact canonical payload bytes through the Zend transport; decoding
         // to PHP arrays alone would erase the empty object/list distinction.
-        value item(object{{"correlation", value(correlation)}, {"result_json", value(json::encode(result, max_output))},
-            {"findings", value(std::move(portable_findings))}, {"result", std::move(result)}});
-        const auto bytes = json::encode(item, max_output);
+        const value encoded_result(json::encode(result, max_output));
+        const auto encoded_correlation = json::encode(value(correlation), max_output);
+        const auto encoded_findings = json::encode(value(std::move(portable_findings)), max_output);
+        const auto quoted_result = json::encode(encoded_result, max_output);
+        // Keep both public representations without encoding the result tree twice.
+        // The parts are encoded JSON values and keys remain in canonical order.
+        const std::string_view parts[] = {"{\"correlation\":", encoded_correlation,
+            ",\"findings\":", encoded_findings, ",\"result\":", encoded_result.as<std::string>(),
+            ",\"result_json\":", quoted_result, "}"};
+        std::size_t item_size = 0;
+        for (const auto part : parts) {
+            if (part.size() > max_output - item_size) reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
+            item_size += part.size();
+        }
+        std::string bytes;
+        bytes.reserve(item_size);
+        for (const auto part : parts) bytes.append(part);
         if (bytes_used > max_output || bytes.size() > max_output - bytes_used) reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
         bytes_used += bytes.size() + 1;
-        results.push_back(std::move(item));
+        // The budget check already produced the complete canonical item. Retain
+        // those bytes directly, avoiding another value-tree copy and encoding.
+        if (!first_result) output.push_back(',');
+        output.append(bytes);
+        first_result = false;
     }
     checkpoint();
-    auto output = json::encode(value(object{{"wire_version", value(std::int64_t{1})}, {"results", value(std::move(results))}}), max_output);
+    constexpr std::string_view suffix = "],\"wire_version\":1}";
+    if (output.size() > max_output || suffix.size() > max_output - output.size()) reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
+    output.append(suffix);
     checkpoint();
     return output;
 }
