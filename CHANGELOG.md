@@ -10,6 +10,8 @@
   their complete serialized size; one-byte-short limits still refuse atomically.
 - Remove direct-document tree copies and intermediate output-item buffers; parse ordinary
   JSON string spans in blocks while retaining UTF-8, escape, numeric and bound semantics.
+- Reuse canonical tagged-decoder admission/order directly during emission instead of building
+  and sorting a second normalized tree; decode base64 using a fixed lookup table.
 - Match frozen corpora to exact published Conversion, Definition, Record Model, Reporting and
   Canonical JSON coordinates; preserve the independent release-attestation barrier.
 - Retain C/ABI/CLI, corpus, fuzz/sanitizer/thread, lifecycle, archive/install, fault-seed and
