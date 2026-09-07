@@ -216,9 +216,48 @@ struct sink final {
         else if (const auto* boolean = std::get_if<bool>(&source)) token(*boolean ? "true" : "false");
         else token("null");
     }
+    // decode(..., semantics) has already admitted every value and sorted each
+    // array in the normative traversal order. Re-admission used to allocate a
+    // second tree and sort/copy every key again at the coarse ABI boundary.
+    void emit_admitted(const value& input) {
+        const auto* members = std::get_if<value::array>(&input.data);
+        if (members == nullptr) {
+            emit(normalized{&input, {}, false, {}});
+            return;
+        }
+        bool list = true;
+        std::size_t index = 0;
+        for (const auto& [key, child] : *members) {
+            (void)child;
+            const auto* integer = std::get_if<std::int64_t>(&key);
+            if (integer == nullptr || *integer != static_cast<std::int64_t>(index++)) {
+                list = false; break;
+            }
+        }
+        token(list ? "[" : "{");
+        bool first = true;
+        for (const auto& [key, child] : *members) {
+            if (!first) token(",");
+            first = false;
+            if (!list) {
+                if (const auto* integer = std::get_if<std::int64_t>(&key)) quoted(integer_text(*integer));
+                else quoted(std::get<std::string>(key));
+                token(":");
+            }
+            emit_admitted(child);
+        }
+        token(list ? "]" : "}");
+    }
 };
 std::string unbase64(std::string_view input) {
-    constexpr std::string_view alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    static constexpr auto alphabet = [] {
+        std::array<unsigned char, 256> lookup{};
+        lookup.fill(255);
+        constexpr std::string_view symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        for (std::size_t i = 0; i < symbols.size(); ++i)
+            lookup[static_cast<unsigned char>(symbols[i])] = static_cast<unsigned char>(i);
+        return lookup;
+    }();
     if (input.size() % 4 != 0 || input.size() > 22369624) malformed();
     std::string output;
     output.reserve(input.size() / 4 * 3);
@@ -232,8 +271,8 @@ std::string unbase64(std::string_view input) {
                 ++padding; bits <<= 6U;
             } else {
                 if (padding != 0) malformed();
-                const auto position = alphabet.find(c);
-                if (position == std::string_view::npos) malformed();
+                const auto position = alphabet[static_cast<unsigned char>(c)];
+                if (position == 255) malformed();
                 bits = (bits << 6U) | static_cast<std::uint32_t>(position);
             }
         }
@@ -392,7 +431,12 @@ json::value evaluate(const json::value& request) {
     const auto bounds = custom == nullptr ? limits{} : limits_from_json(*custom);
     std::size_t nodes = 0, bytes = 0;
     const auto source = decode(request.at("input"), 0, nodes, bytes, &bounds);
+    std::string output;
+    sha256 hash;
+    sink writer{bounds.max_output_bytes, 0, operation == "encode" ? &output : nullptr,
+        operation == "digest" ? &hash : nullptr};
+    writer.emit_admitted(source);
     return json::value(json::value::object{{operation == "encode" ? "output" : "sha256",
-        json::value(operation == "encode" ? encode(source, bounds) : digest(source, bounds))}});
+        json::value(operation == "encode" ? std::move(output) : hash.finish())}});
 }
 }
