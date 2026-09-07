@@ -55,7 +55,15 @@ jobs:
       - run: cmake --build build --parallel 4
       - run: ctest --test-dir build --output-on-failure
       - run: node tools/fuzz-seeds.mjs
-      - run: build/engine-fuzz artifacts/fuzz-seeds -max_total_time=30 -max_len=1048577 -rss_limit_mb=1024
+      - run: build/engine-fuzz artifacts/fuzz-seeds -max_total_time=30 -max_len=1048577 -rss_limit_mb=1024 -artifact_prefix=artifacts/fuzz-regressions/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fuzz-regressions-${{ github.sha }}
+          path: |
+            artifacts/fuzz-seeds
+            artifacts/fuzz-regressions
+            build/Testing/Temporary/LastTest.log
   archive-and-faults:
     runs-on: ubuntu-24.04
     steps:
