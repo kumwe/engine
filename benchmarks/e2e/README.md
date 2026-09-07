@@ -35,6 +35,13 @@ final serialization. Cold timings include host definition construction, native c
 release. Formula/document/preparation workloads use native batches of at most 64 documents. Report
 materialization uses the complete row set in one call. These boundaries are part of the measured cost.
 
+Current bindings advertise `opaque-compiled-results/1`. The caller requests `result_format: opaque`
+when available, matching Computation's consumption of the original `result_json` bytes; the caller
+still decodes those bytes and performs identical final serialization. Earlier comparison modules
+keep their mandatory decoded copy as well. Worker identity records the selected result format.
+This removes unused binding work, not semantic work or the caller's result decoding. Both compared
+modules run this same worker, and every output retains its original parity digest.
+
 Canonical encoding and digest are separate workloads. The App canonical owner limits arrays to 512
 members and depth 32; generated maps have at most 256 members and no floating point values. This
 comparison does not assert equivalence between that profile and the entire generic canonical profile.

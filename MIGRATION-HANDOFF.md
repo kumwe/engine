@@ -39,7 +39,7 @@ source:
       sha256: "84d21b12e7a2bfd752356d9a6e664bcb332e209d19017e7634e7485a4fa4e250"
   examined_dependencies:
     - "Conversion v0.1.3 ExactDecimal, ExactDecimalArithmetic and six Money/Quantity rounding modes; no PHP source copied."
-    - "Computation portable program, batch, findings and capability contracts; exact candidate compiler/executor and canonical adapter verified through the Zend binding."
+    - "Computation portable program, batch, findings and capability contracts; exact candidate compiler/executor and canonical adapter verified through the Zend binding. This candidate evidence does not establish a published, independently verified portable Phase 1A baseline."
   active_related_pull_requests: []
 target:
   repository: "https://github.com/kumwe/engine"
@@ -69,7 +69,7 @@ ownership:
       sha256: "6d4d8a1126e2a3970ce127fa96d231c9002ba065a40304c838c4698773b5b995"
     -
       path: "resources/contracts.json"
-      sha256: "21d34cf061b27bd2cffdc80629b760b3ef804b7853e9b5c8489b8ee60f415234"
+      sha256: "2ae40600a569d2656a7fb84f21fd5de1e659a19ae7efb6c0ee55a9c54aa01264"
     -
       path: "tests/ownership.json"
       sha256: "04034d0c586e0427a5641c87c336575b8898fb2def48ab87b2d01c44ef70c73e"
@@ -198,7 +198,7 @@ release_expectations:
     - "External candidate and stable release attestations"
   required_checks:
     - "E1 formula/document and E2 report/canonical are implemented; verify E3 hardening/freeze on the final source."
-    - "Verified immutable semantic releases and corpora."
+    - "Verified immutable semantic releases and corpora, including the separate portable-only Computation Phase 1A contract baseline before the first stable Engine release."
     - "Native behavior/boundary/conformance/fuzz/sanitizer/lifecycle/ABI/consumer/benchmark/supply-chain gates."
     - "Non-publishing exact Engine/extension candidate cross-build before ready-for-review status."
   required_registry_or_installer: null
@@ -257,6 +257,7 @@ decisions:
   - "Preserve exact semantic owners and never advertise unavailable native operations."
   - "No production publishing workflow is supplied before the accepted immutable-release gate."
 blockers:
+  - "Computation Phase 1A portable-only baseline release remains unresolved: published v0.2.0/v0.2.1 and the 0.3.0 adapter candidate require the native extension; none supplies the required independent pre-Engine contract release and attestation."
   - "Final exact-head native checks and independent binding archive verification precede release review."
   - "Exact published semantic source/corpus bytes are matched; independent owner release attestations, ABI freeze and final candidate cross-build acceptance remain outstanding."
   - "No stable Engine or extension release, App cutover or performance objective is claimed."

@@ -11,6 +11,17 @@ remain a separate requirement: publication and a matching hash alone do not esta
 owner release passed every programme acceptance gate. Updates must retain an exact coordinate;
 never use a moving branch, `latest`, or an unconstrained range for embedded native sources.
 
+The separate Computation Phase 1A prerequisite is currently unresolved. The inspected
+published `v0.2.0` and `v0.2.1` packages require `ext-kumwe_engine: 0.0.0-dev`; the
+`0.3.0` adapter candidate also has a native requirement. None establishes the required
+portable-only baseline. Untagged portable source can inform reconstruction, but cannot
+supply an immutable release or its external verification. `resources/contracts.json`
+records this missing baseline explicitly, with unknown release facts left null.
+A portable contract-baseline release must be published and independently verified
+before the first stable Engine release. The later Computation adapter successor waits
+for the verified Engine and extension releases; candidate cross-builds do not close
+that ordering requirement.
+
 The remaining release gates are the independently verified semantic release barrier, accepted
 ABI compatibility/freeze, a final supported-platform run, representative whole-boundary performance
 acceptance, and signed source/artifact provenance. The retained benchmark evidence includes slower
@@ -72,7 +83,19 @@ tracked edits, unsafe archive paths, links, caches, credential-like files and PH
 
 `--require-stable` is an additional source-state check for the stable release stage.
 It refuses the current development version, unfrozen ABI, draft contract matrix and
-unverified semantic releases. It is intentionally absent from ordinary candidate CI.
+unverified semantic releases, and an absent or incomplete portable Computation baseline.
+The baseline record must have `state: release-verified`, the exact `kumwe/computation`
+version/tag/commit and source archive SHA256, public API and capability manifest SHA256s,
+a nonempty map of portable corpus paths to SHA256s, the observed released runtime
+requirements without a native dependency, `native_bindings_present: false`, and an
+external attestation `uri`/`sha256` reference. `api_digest`, `capability_digest` and
+`corpus_digests` identify the portable release artifacts; they must not be copied from
+an adapter candidate. A separate verifier must first check those artifacts and the
+absence of native concrete classes and ConfigProvider/factory bindings. The source
+check validates recorded prerequisites; it does not download or independently attest
+their content. Unknown facts remain null until that verification exists. Both
+`source.json` and the unsigned provenance retain the baseline record. The stable
+option is intentionally absent from ordinary candidate CI.
 This option does not verify signatures, approve ABI freeze or replace the independent
 candidate/release attestations. Those are review decisions and evidence produced by
 the existing programme release-verification process.

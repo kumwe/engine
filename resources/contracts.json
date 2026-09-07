@@ -3,6 +3,20 @@
   "state": "draft_runtime_kernels",
   "completion_claim": false,
   "abi_frozen": false,
+  "computation_baseline": {
+    "state": "unresolved",
+    "repository": "kumwe/computation",
+    "release": null,
+    "version": null,
+    "commit": null,
+    "archive_sha256": null,
+    "api_digest": null,
+    "capability_digest": null,
+    "corpus_digests": null,
+    "runtime_requirements": null,
+    "native_bindings_present": null,
+    "attestation": null
+  },
   "modules": [
     {
       "module": "decimal",

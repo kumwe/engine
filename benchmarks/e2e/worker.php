@@ -139,7 +139,7 @@ function compile_case(array $data): array
 }
 function run_case(array $case, string $phase): mixed
 {
-    global $native, $runtime, $codec, $rules, $compute, $validate, $materialize, $reportService;
+    global $native, $runtime, $codec, $rules, $compute, $validate, $materialize, $reportService, $opaqueResults;
     $profile = $case['profile']; $size = $case['size']; $hostile = $case['hostile'];
     if ($profile === 'canonical') {
         // Shared App/native subset: no floats, <=512 items per array, depth <32.
@@ -236,10 +236,14 @@ function run_case(array $case, string $phase): mixed
     $out = [];
     foreach (array_chunk($documents, 64) as $chunk) {
     try {
-        $result = $case['runtime']->execute(['plan_id' => $case['native_plan']['plan_id'], 'batch' => [
+        $request = ['plan_id' => $case['native_plan']['plan_id'], 'batch' => [
             'wire_version' => 1, 'documents' => $chunk, 'limits' => ['max_input_bytes' => 67108864,
                 'max_output_bytes' => 16777216, 'max_documents' => 4096, 'max_findings' => 65536,
-                'max_instructions' => 1000000000, 'max_milliseconds' => 30000]]]);
+                'max_instructions' => 1000000000, 'max_milliseconds' => 30000]]];
+        // Current Computation consumes only the Engine-owned JSON payload.
+        // Old comparison modules retain their original mandatory decoded copy.
+        if ($opaqueResults) { $request['result_format'] = 'opaque'; }
+        $result = $case['runtime']->execute($request);
     } catch (Kumwe\Engine\Exception\BindingFailure $failure) {
         if (!in_array($profile, ['formula', 'report'], true) || !$hostile || $failure->getCode() !== 1) { throw $failure; }
         return ['refusal' => 1];
@@ -257,9 +261,12 @@ $sourcePaths = ['BusinessDefinition/Domain/Expression.php', 'BusinessDefinition/
     'BusinessReporting/Application/ReportService.php'];
 $hashes = [];
 foreach ($sourcePaths as $path) { $hashes[$path] = hash_file('sha256', $config['app'] . '/src/' . $path); }
+$observedCapabilities = $native ? $runtime->capabilities() : null;
+$opaqueResults = $native && in_array('opaque-compiled-results/1', $observedCapabilities['binding_features'] ?? [], true);
 $ready = ['ready' => true, 'backend' => $config['backend'], 'php' => PHP_VERSION, 'php_binary_sha256' => hash_file('sha256', PHP_BINARY), 'icu' => INTL_ICU_VERSION,
     'sources' => $hashes, 'conversion_reference' => Composer\InstalledVersions::getReference('kumwe/conversion'),
-    'capabilities' => $native ? $runtime->capabilities() : null, 'zend_allocator' => getenv('USE_ZEND_ALLOC') !== '0'] + rss();
+    'capabilities' => $observedCapabilities, 'compiled_result_format' => $native ? ($opaqueResults ? 'opaque' : 'both') : null,
+    'zend_allocator' => getenv('USE_ZEND_ALLOC') !== '0'] + rss();
 echo json_encode($ready, JSON_FLAGS) . "\n";
 while (($line = fgets(STDIN)) !== false) {
     try {
