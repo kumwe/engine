@@ -27,12 +27,14 @@ typedef uint32_t kumwe_engine_v1_status;
 #define KUMWE_ENGINE_V1_EXHAUSTED_LIMIT UINT32_C(6)
 #define KUMWE_ENGINE_V1_CANCELLED UINT32_C(7)
 #define KUMWE_ENGINE_V1_INTERNAL_FAILURE UINT32_C(8)
-/* Output slots must initially be null. On any refusal, *response remains null. */
+/* Output slots must initially be null; refusals then leave *response null.
+ * A nonempty slot is refused unchanged so its existing owner remains releasable. */
 KUMWE_ENGINE_API kumwe_engine_v1_status kumwe_engine_v1_capabilities(
     const kumwe_engine_v1_view *request, kumwe_engine_v1_buffer **response);
 KUMWE_ENGINE_API kumwe_engine_v1_status kumwe_engine_v1_decimal_batch(
     const kumwe_engine_v1_view *request, kumwe_engine_v1_buffer **response);
-/* Caller initializes output struct_size and abi_major; failure clears data and size. */
+/* Caller initializes output struct_size and abi_major. For supported struct sizes,
+ * failure clears data and size. An invalid size is refused without accessing them. */
 KUMWE_ENGINE_API kumwe_engine_v1_status kumwe_engine_v1_buffer_view(
     const kumwe_engine_v1_buffer *buffer, kumwe_engine_v1_view *output);
 /* Null owner or null *owner is harmless. Valid unique ownership is required. */

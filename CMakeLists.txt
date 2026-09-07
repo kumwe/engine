@@ -49,7 +49,12 @@ if(BUILD_TESTING)
     add_library(abi-visibility SHARED ${ENGINE_SOURCES})
     target_include_directories(abi-visibility PRIVATE include src "${CMAKE_CURRENT_BINARY_DIR}/generated")
     set_target_properties(abi-visibility PROPERTIES CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN YES)
-    target_link_options(abi-visibility PRIVATE "LINKER:--version-script=${CMAKE_CURRENT_SOURCE_DIR}/resources/abi-symbols.map" "LINKER:-z,defs" "LINKER:-z,relro,-z,now")
+    target_link_options(abi-visibility PRIVATE "LINKER:--version-script=${CMAKE_CURRENT_SOURCE_DIR}/resources/abi-symbols.map" "LINKER:-z,relro,-z,now")
+    # Clang resolves sanitizer runtime from the executable, not this test-only DSO.
+    # Production release symbol-link checks retain -z,defs.
+    if(NOT KUMWE_ENGINE_SANITIZERS)
+      target_link_options(abi-visibility PRIVATE "LINKER:-z,defs")
+    endif()
     add_test(NAME exported-symbols COMMAND bash "${CMAKE_CURRENT_SOURCE_DIR}/tools/check-symbols.sh" "$<TARGET_FILE:abi-visibility>")
   endif()
 endif()

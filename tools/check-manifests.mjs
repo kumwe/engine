@@ -1,8 +1,19 @@
 import assert from 'node:assert/strict';
-import {readFileSync, existsSync} from 'node:fs';
+import {readFileSync, lstatSync, realpathSync, mkdtempSync, symlinkSync, rmSync, mkdirSync} from 'node:fs';
+import {resolve, sep} from 'node:path';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 const read = file => readFileSync(file, 'utf8');
+const root = realpathSync('.');
+function repositoryFile(path) {
+  assert.ok(typeof path === 'string' && path.length > 0 && !path.startsWith('/') && !path.includes('\\'));
+  const parts = path.split('/');
+  assert.ok(parts.every(part => part !== '' && part !== '.' && part !== '..'));
+  let target = root;
+  for (const part of parts) { target += sep + part; assert.equal(lstatSync(target).isSymbolicLink(), false); }
+  assert.ok(lstatSync(target).isFile());
+  assert.equal(realpathSync(target), resolve(root,path));
+}
 const abi = read('resources/abi-symbols.txt').trim().split('\n');
 const declared = [...read('include/kumwe/engine/engine.h').matchAll(/KUMWE_ENGINE_API (?:kumwe_engine_v1_status|void) (kumwe_engine_v1_\w+)\(/g)].map(item => item[1]).sort();
 assert.deepEqual(declared, abi, 'Every public function must have exactly one manifest owner');
@@ -23,7 +34,7 @@ function checkOwnership(data) {
   tests(data.conformance.tests);
   assert.ok(Array.isArray(data.conformance.corpora) && data.conformance.corpora.length > 0);
   for (const path of [...data.conformance.corpora, ...data.architecture]) {
-    assert.ok(nonempty(path) && !path.includes('..') && !path.startsWith('/') && existsSync(path));
+    repositoryFile(path);
   }
   assert.ok(Array.isArray(data.architecture) && data.architecture.length > 0);
   assert.match(data.host.baseline, /^[a-f0-9]{40}$/);
@@ -42,10 +53,20 @@ for (const mutate of [
   data => data.conformance.status = 'future',
   data => data.conformance.corpora = ['missing-corpus.tsv'],
   data => data.host.baseline = 'main',
+  data => data.conformance.corpora = ['corpus'],
+  data => data.conformance.corpora = ['corpus/./decimal/decimal-v1.tsv'],
 ]) {
   const changed = structuredClone(ownership); mutate(changed);
   assert.throws(() => checkOwnership(changed), 'Ownership gate must refuse negative fixture');
 }
+mkdirSync('artifacts', {recursive:true});
+const fixture = mkdtempSync('artifacts/ownership-links-');
+try {
+  symlinkSync(resolve('corpus'), fixture + '/corpus', 'dir');
+  const changed = structuredClone(ownership);
+  changed.conformance.corpora = [fixture + '/corpus/decimal/decimal-v1.tsv'];
+  assert.throws(() => checkOwnership(changed), 'Intermediate symlink cannot establish repository test ownership');
+} finally { rmSync(fixture, {recursive:true,force:true}); }
 const contracts = JSON.parse(read('resources/contracts.json'));
 assert.equal(contracts.completion_claim, false); assert.equal(contracts.abi_frozen, false);
 assert.deepEqual(contracts.modules.map(module => module.module), ['decimal','definition_vm','document_batch','report','canonical_streaming']);
@@ -56,4 +77,4 @@ assert.equal(capabilities.corpus_sha256, decimal.corpus_sha256);
 assert.equal(capabilities.semantic_source, decimal.semantic_source);
 assert.equal(capabilities.semantic_release_verified, false);
 assert.deepEqual(capabilities.capabilities, ['decimal-batch-draft/1']);
-console.log(`${abi.length} ABI exports own behavior/boundary tests; exact corpus and six negative ownership fixtures passed`);
+console.log(`${abi.length} ABI exports own behavior/boundary tests; exact corpus and nine negative ownership fixtures passed`);

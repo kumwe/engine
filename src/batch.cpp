@@ -59,7 +59,7 @@ std::string decimal_batch(std::string_view request) {
         const auto left_size = input.integer(2);
         const auto right_size = input.integer(2);
         if (left_size > 68 || right_size > 68) throw refusal(KUMWE_ENGINE_V1_INVALID_INPUT);
-        const auto cost = 512 + left_size * right_size;
+        const std::uint64_t cost = 512 + (operation == 2 ? 66 * 66 : 0);
         if (cost > budget) throw refusal(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
         budget -= cost;
         const auto left_literal = input.take(static_cast<std::size_t>(left_size));
