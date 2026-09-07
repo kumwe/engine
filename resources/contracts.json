@@ -36,15 +36,20 @@
         "kumwe/record-values",
         "kumwe/record-model"
       ],
-      "status": "draft_normalized_scalar_subset",
-      "required": "Whole-document preparation, dependency ordering, normalized values and verified corpora",
+      "status": "draft_normalized_document_implemented",
+      "required": "Exact owner corpora for normalized preparation, computed fields, values, validators and ordered findings; verified immutable releases",
       "profile": "normalized-document-draft/1",
-      "corpus": "corpus/document/validation-v1.json",
-      "corpus_sha256": "fce91bfe3c9614ec3862b50c0defc10a9b69ed021671f8382d774d8cb0a20668",
+      "corpus": "corpus/document/document-profile-v1.json",
+      "corpus_sha256": "84b6c2e55ae591c921536aa755cbb5a9a40a7a19847fe47415e55dce2614c177",
       "release_verified": false,
-      "not_implemented": [
-        "Host codec-aware value normalization and preparation",
-        "Pattern/email/url/UUID/exact-value validators outside the admitted scalar profile",
+      "profiles": [
+        "normalized-document-draft/1",
+        "normalized-preparation-draft/1"
+      ],
+      "preparation_corpus": "corpus/document/preparation-v1.json",
+      "preparation_corpus_sha256": "4eb1543929fcf5470eb8cae882127556cd57c02518109545483d8780266b561a",
+      "excluded": [
+        "Host raw codec normalization, encryption, UUID generation, sequence allocation, authorization, retrieval and persistence",
         "App runtime cutover"
       ]
     },
@@ -54,15 +59,14 @@
         "kumwe/reporting",
         "kumwe/record-query"
       ],
-      "status": "draft_materialization_subset",
+      "status": "draft_materialization_implemented",
       "required": "Bounded computation-only report contract and verified corpus",
       "profile": "report-materialization-draft/1",
       "corpus": "corpus/reporting/materialization-v1.json",
-      "corpus_sha256": "e235b1b465106fecc0c5857f75104db85acb4cbf770a429559ac05088222d426",
+      "corpus_sha256": "975116dc897a0bfdee4a08f9065eb10ccfec06a32f4eb93a48015b08af408c01",
       "release_verified": false,
-      "not_implemented": [
-        "Converted-value formula result normalization",
-        "Host authorization, retrieval, projection, rendering and delivery (excluded)"
+      "excluded": [
+        "Host authorization, retrieval, projection, rendering and delivery"
       ]
     },
     {

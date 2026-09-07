@@ -5,7 +5,8 @@ precision is checked at construction. Multiplication uses a fixed 132-entry digi
 binary floating point. Decimal precision is at most 65, so a signed fractional literal can be 68
 bytes including `-0.`. Zero retains scale and loses a negative sign. Comparison requires equal scales.
 The six built-in round modes implement Conversion's released vocabulary; Engine admits no callback
-or registry of caller code. Definition-specific arithmetic may be added only under its semantic owner.
+or registry of caller code. `src/vm` separately preserves Definition's 4,096-digit arithmetic
+semantics, immutable typed formulas, dependency ordering and exact refusal behavior.
 
 `src/batch` is the bounded native transport, whole-call work/output budget and atomic output assembly.
 The `KED1` diagnostic transport is Engine-owned and does not duplicate the semantic decimal contract.
@@ -16,13 +17,17 @@ state. Buffers are immutable until their one owner releases them. All other C++ 
 The installed product is a static library, exported CMake target and C header. A test-only shared
 library verifies the actual ELF export allowlist. Internal C++ types are private and not installed.
 The CLI replays the owner corpus through both internal C++ and C ABI; it is not an App runtime route.
-Architecture checks allowlist production includes and forbid network, file I/O, PHP and floating point.
+Architecture checks allowlist production includes and forbid network, file I/O and PHP. Binary64 is
+confined to the generic canonical profile and frozen PHP numeric-string comparison; exact monetary
+and formula arithmetic never uses it.
 
 `resources/contracts.json` records all five module owners and truthful implementation states.
-`resources/capabilities.json` advertises only the implemented development profile. Unsupported
-VM/document/report/canonical operations have no stub export and no success response. Their future
-plans, artifacts and findings must follow Computation's independently reviewed boundary and exact
-semantic-owner corpora. E1 formula/document completion precedes E2 reporting/canonical work.
+`resources/capabilities.json` advertises implemented development profiles and exact corpus digests.
+`src/document` owns normalized preparation, typed value projections, computed-field normalization,
+bounded validators and ordered findings. `src/reporting` owns computation-only materialization and
+converted value validation. `src/canonical` owns generic canonical bytes and streaming digests.
+`src/plan` binds immutable profile plans to explicit limits, cancellation and portable batch findings.
+Native semantic input never includes database queries, authorization, raw secrets or callbacks.
 
 The draft buffer-release pointer-to-owner-slot convention intentionally refines Computation's proposal:
 release clears the owning slot, supporting repeated exception cleanup. A copied raw pointer remains

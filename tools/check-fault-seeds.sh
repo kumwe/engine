@@ -6,7 +6,7 @@ trap 'rm -rf "$work"' EXIT
 for fault in negative-order tie-even magnitude-sign; do
   target="$work/$fault"
   mkdir -p "$target"
-  cp -R "$root"/{CMakeLists.txt,CHARTER.md,LICENSE,src,include,tests,resources,cmake,corpus,cli,tools} "$target/"
+  cp -R "$root"/{CMakeLists.txt,CHARTER.md,LICENSE,src,include,tests,resources,cmake,corpus,cli,tools,third_party} "$target/"
   case "$fault" in
     negative-order) sed -i 's/return left_negative ? -result : result;/return result;/' "$target/src/decimal/decimal.cpp" ;;
     tie-even) sed -i 's/(first == 5 \&\& (rest || odd))/(first == 5 \&\& (rest || !odd))/' "$target/src/decimal/decimal.cpp" ;;

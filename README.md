@@ -1,8 +1,8 @@
 # Kumwe Engine
 
-Standalone C++20 native foundation with a coarse C ABI. This draft implements the first
-exact-decimal slice: canonical fixed-scale values, exact comparison/multiplication, six rounding
-rules and atomic bounded batches. Its 108-vector Conversion-owned corpus runs through C++ and C.
+Standalone C++20 execution engine with a coarse C ABI. The development candidate implements exact
+decimals, immutable formula plans, complete normalized document preparation and validation,
+report materialization, and generic canonical encoding with streaming SHA-256.
 
 ```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
@@ -14,8 +14,8 @@ build/kumwe-engine-conformance
 ```
 
 CMake 3.25+, a C++20 compiler and a 64-bit Linux/macOS environment are required. The library,
-conformance executable and C consumer build offline with the standard library alone. Node and
-Bash are test/release tooling only; PHP, Composer and App are neither build nor runtime dependencies.
+conformance executable and C consumer build offline with the standard library and the exact vendored PCRE2 source closure. Node and
+Bash and Python are test/release tooling only; PHP, Composer and App are neither build nor runtime dependencies.
 
 Installed downstream usage:
 
@@ -28,7 +28,8 @@ Read [CHARTER](CHARTER.md), [ABI](docs/abi.md), [architecture](docs/architecture
 [consumer integration](docs/consumer.md), [testing/ownership](docs/testing.md),
 [security](SECURITY.md), [benchmarking](docs/benchmarking.md) and [release gates](docs/releasing.md).
 
-This is an **E0/E1 development slice**. The approved five-module Engine architecture remains:
-exact decimal → definition/formula VM → whole-document batch → reporting and canonical streaming.
-Only decimal is implemented here. ABI 1 is a draft proposal; Engine 1.0.0, the extension candidate
-cross-build, immutable semantic release verification and App acceleration are not claimed.
+All five modules have executable owner-corpus tests. ABI 1 remains a development proposal;
+Engine 1.0.0, immutable release verification and App acceleration are not claimed. The final exact
+source archive must pass the independent binding cross-build before release review.
+
+The explicit PCRE2 dependency and normalized validator/decimal transport are documented in [document validators](docs/document-validators.md). Upstream maintained10.42 security backports, per-file hashes and licenses are packaged; installation never selects a system PCRE library.

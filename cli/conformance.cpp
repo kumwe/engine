@@ -49,23 +49,17 @@ int verify_bundle(const char* path) {
     const auto status = capabilities(output);
     if (status != KUMWE_ENGINE_V1_OK) return emit(status, output);
     const auto manifest = json::parse(output.bytes());
-    const std::vector<std::pair<std::string, std::string>> corpora = {
-        {"decimal/decimal-v1.tsv", manifest.at("corpus_sha256").as<std::string>()},
-        {"definition/formula-v1.json", "formula-draft/1"},
-        {"document/validation-v1.json", "normalized-document-draft/1"},
-        {"reporting/materialization-v1.json", "report-materialization-draft/1"},
-        {"canonical/generic-v1.json", "kumwe-canonical-json/generic-v1"}
-    };
+    const auto& corpora = manifest.at("corpora").as<value::list>();
+    test::require(!corpora.empty(), "missing runtime corpus inventory");
     value::list checked;
-    for (const auto& [relative, profile] : corpora) {
-        std::string expected = profile;
-        if (!relative.starts_with("decimal/")) {
-            expected.clear();
-            for (const auto& contract : manifest.at("computation").at("contracts").as<value::list>()) {
-                if (contract.at("profile").as<std::string>() == profile) expected = contract.at("corpus_digest").as<std::string>();
-            }
-            test::require(!expected.empty(), "missing runtime corpus identity");
-        }
+    for (const auto& corpus : corpora) {
+        const auto& recorded = corpus.at("path").as<std::string>();
+        test::require(recorded.starts_with("corpus/") && recorded.find("/.") == std::string::npos
+            && recorded.find('\\') == std::string::npos, "invalid runtime corpus path");
+        const auto relative = recorded.substr(7);
+        const auto& expected = corpus.at("sha256").as<std::string>();
+        test::require(expected.size() == 64 && expected.find_first_not_of("0123456789abcdef") == std::string::npos,
+            "invalid runtime corpus identity");
         const auto file = std::string(path) + "/" + relative;
         const auto bytes = read_input(file.c_str());
         canonical::sha256 digest; digest.update(bytes);

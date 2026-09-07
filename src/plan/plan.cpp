@@ -74,6 +74,9 @@ plan plan::compile(std::string_view request) {
     } else if (profile == "normalized-document-draft/1") {
         if (corpus != KUMWE_ENGINE_DOCUMENT_CORPUS || corpus.empty()) reject(KUMWE_ENGINE_V1_INCOMPATIBLE_CORPUS);
         output.implementation_ = document::plan::compile(program);
+    } else if (profile == "normalized-preparation-draft/1") {
+        if (corpus != KUMWE_ENGINE_PREPARATION_CORPUS || corpus.empty()) reject(KUMWE_ENGINE_V1_INCOMPATIBLE_CORPUS);
+        output.implementation_ = preparation::plan::compile(program);
     } else if (profile == "report-materialization-draft/1") {
         if (corpus != KUMWE_ENGINE_REPORT_CORPUS) reject(KUMWE_ENGINE_V1_INCOMPATIBLE_CORPUS);
         output.implementation_ = reporting::report_plan::compile(program);

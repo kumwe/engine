@@ -5,10 +5,9 @@ conformance replay, fuzzing, sanitizers and diagnostic measurement. Its approved
 contains exact decimal, compiled definition VM, whole-document batch, report and canonical
 streaming modules, sharing bounded values, plans and buffers.
 
-This first development slice implements exact decimal batching against Conversion's existing
-semantics. It is an E0/E1 draft, not an Engine candidate, ABI freeze, stable release or App
-performance improvement claim. Formula/document compilation must follow before reporting and
-canonical expansion. Unsupported modules have no pretend implementation or advertised capability.
+The development candidate implements all five modules against frozen owner semantics, including
+typed normalized document values, preparation, computed-field normalization and ordered findings.
+It does not claim an ABI freeze, stable release or measured App performance improvement.
 
 Semantic meaning belongs to the framework package owning each contract. Draft source coordinates
 permit development only; verified immutable semantic releases and corpora are mandatory before
@@ -22,13 +21,19 @@ public C header; the internal C++ implementation has no stability promise.
 
 Development targets are 64-bit Linux GCC/Clang and macOS AppleClang, tested in CI. Windows,
 32-bit targets, stable binary ABI compatibility, TSan and PHP binding compatibility are not
-claimed. Every supported source consumer builds without network retrieval or third-party libraries.
+claimed. Every supported source consumer builds offline from the pinned dependency source closure.
 
 All native behavior, boundary, conformance, architecture, lifecycle and robustness tests belong
 here. Binding tests later own PHP marshalling/lifecycle parity; App retains only composition,
 authority, provisioning/recovery, acceptance and measured full-path performance evidence.
 
 First App-eligible release is Engine 1.0.0 with frozen ABI 1, all five modules and the complete
-v2 release gates. No publishing workflow exists in this incomplete development slice. Modules
+v2 release gates. Publication is separate from the development candidate. Modules
 remain in one repository until an independent consumer, independent cadence, stable contract and
 measured benefit justify a split.
+
+The existing bounded pattern validator requires one narrow reviewed third-party dependency: statically embedded, source-pinned maintained PCRE2 10.42 with all required upstream backports. It owns regular-expression matching only. No system-library selection or network build retrieval is allowed. See docs/document-validators.md and resources/pcre2-source.json.
+
+Computed-field casing uses pinned Unicode 17 data; NFC uses Unicode 15.1, matching the frozen PHP
+8.5/ICU 74 owner. Generated internal tables are reproducible from licensed source data. These
+normalizers are private document operations; no general text-processing API is exported.
