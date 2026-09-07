@@ -33,6 +33,11 @@ jobs:
       - run: cmake --build build --parallel 4
       - run: ctest --test-dir build --output-on-failure
       - run: node tools/check-manifests.mjs build
+      - name: Verify comparative benchmark statistics and correctness gates
+        run: python3 benchmarks/e2e/test_runner.py
+      - name: Verify native allocation instrumentation
+        if: matrix.os == 'ubuntu-24.04' && matrix.cc == 'gcc'
+        run: python3 benchmarks/e2e/test_probes.py
       - run: bash tools/check-consumer.sh
       - run: build/engine-benchmark > benchmark.jsonl
       - run: node tools/benchmark-metadata.mjs > benchmark-metadata.json
