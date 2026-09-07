@@ -40,11 +40,14 @@ ownership:
   next_consumer: "kumwe/kumwe-engine"
   public_manifests:
     -
+      path: "resources/abi-manifest.json"
+      sha256: "f11d4b501dc344a56d5a51c18a364d65c9add46e0b807c0e41804e4ad19ab6d1"
+    -
       path: "resources/abi-symbols.txt"
       sha256: "62cf59b8d6feb369f0d801b59b69796ea569570177e02b903c0bec6b01e04d21"
     -
       path: "resources/capabilities.json"
-      sha256: "b51c3af0f26702d10c0bd7766a312614357c57298a93479d8f6274ee11c1ba8e"
+      sha256: "81044186b8a49ecc8106e5438499dfa9652f0108606f199f1721bdf5e42f084c"
     -
       path: "resources/contracts.json"
       sha256: "50c74cc2a70b05a73f973d012f1ea903a1ad65a74c551aa8703763404fcea782"

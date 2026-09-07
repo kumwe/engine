@@ -64,6 +64,37 @@ jobs:
             artifacts/fuzz-seeds
             artifacts/fuzz-regressions
             build/Testing/Temporary/LastTest.log
+  thread-sanitizer:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      CC: clang
+      CXX: clang++
+      TSAN_OPTIONS: halt_on_error=1:exitcode=97
+    steps:
+      - uses: actions/checkout@v4
+      - name: Record compiler and configure TSan shadow address range
+        run: |
+          clang --version
+          uname -a
+          # Distribution TSan requires this mmap range; ASLR remains enabled.
+          sudo sysctl vm.mmap_rnd_bits=28
+      - name: Build instrumented Engine and existing concurrent plan test
+        run: |
+          cmake -S . -B build-tsan -DCMAKE_BUILD_TYPE=Debug \
+            '-DCMAKE_C_FLAGS=-fsanitize=thread -fno-omit-frame-pointer' \
+            '-DCMAKE_CXX_FLAGS=-fsanitize=thread -fno-omit-frame-pointer' \
+            '-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=thread'
+          cmake --build build-tsan --target plan-tests --parallel 4
+      - name: Execute shared immutable plan under ThreadSanitizer
+        run: ctest --test-dir build-tsan --output-on-failure -R '^compiled-plan-ownership$'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: thread-sanitizer-${{ github.sha }}
+          path: |
+            build-tsan/CMakeCache.txt
+            build-tsan/Testing/Temporary/LastTest.log
   archive-and-faults:
     runs-on: ubuntu-24.04
     steps:
