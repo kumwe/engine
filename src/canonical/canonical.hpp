@@ -39,4 +39,6 @@ limits limits_from_json(const json::value& input);
 // Requests: {profile:"kumwe-canonical-json/generic-v1", operation:"encode"|"digest",
 //           input:<tagged value>, limits?:{maxDepth,maxNodes,maxOutputBytes,maxInputBytes}}.
 json::value evaluate(const json::value& request);
+// KEC1's framed raw value transport; metadata has the same operation/profile/limits.
+json::value evaluate_binary(const json::value& metadata, std::string_view input);
 }

@@ -7,6 +7,32 @@
 #include <vector>
 
 namespace {
+void u32(std::string& output, std::size_t number) {
+    for (unsigned i = 0; i < 4; ++i) output.push_back(static_cast<char>(number >> (8U * i)));
+}
+void framed(std::string& output, std::string_view input) { u32(output, input.size()); output.append(input); }
+std::string binary_request(const kumwe::engine::json::value& request) {
+    using value = kumwe::engine::json::value;
+    auto metadata = request.as<value::object>(); metadata.erase("documents");
+    std::string output = "KEB1"; framed(output, kumwe::engine::json::encode(value(metadata)));
+    const auto& documents = request.at("documents").as<value::list>(); u32(output, documents.size());
+    for (const auto& document : documents) {
+        framed(output, document.at("correlation").as<std::string>());
+        framed(output, document.at("input").as<std::string>());
+    }
+    return output;
+}
+std::string binary_response(const kumwe::engine::json::value& response) {
+    using value = kumwe::engine::json::value;
+    const auto& results = response.at("results").as<value::list>();
+    std::string output = "KER2"; u32(output, results.size());
+    for (const auto& result : results) {
+        framed(output, result.at("correlation").as<std::string>());
+        framed(output, kumwe::engine::json::encode(result.at("findings")));
+        framed(output, result.at("result_json").as<std::string>());
+    }
+    return output;
+}
 struct plan_owner final {
     kumwe_engine_v1_plan* handle = nullptr;
     ~plan_owner() { kumwe_engine_v1_plan_release(&handle); }
@@ -81,6 +107,40 @@ int main() {
         const auto opaque_request = json::encode(opaque_execution); auto opaque_input = test::view(opaque_request); test::response opaque_result;
         test::require(kumwe_engine_v1_execute(opaque_plan.handle, &opaque_input, nullptr, &opaque_result.buffer) == 0
             && opaque_result.bytes() == result.bytes(), "opaque whole-batch payload preserves exact output bytes");
+        const auto framed_request = binary_request(opaque_execution);
+        const auto framed_input = test::view(framed_request); test::response framed_result;
+        const auto expected_framed = binary_response(json::parse(result.bytes()));
+        test::require(kumwe_engine_v1_execute(opaque_plan.handle, &framed_input, nullptr, &framed_result.buffer) == 0
+            && framed_result.bytes() == expected_framed, "framed batch returns identical correlation, findings and canonical bytes");
+        for (unsigned short_by = 0; short_by < 2; ++short_by) {
+            auto bounded = opaque_execution;
+            std::get<value::object>(std::get<value::object>(bounded.data).at("limits").data)["max_output_bytes"] =
+                value(static_cast<std::int64_t>(result.bytes().size() - short_by));
+            const auto bytes = binary_request(bounded); const auto input = test::view(bytes); test::response output;
+            const auto status = kumwe_engine_v1_execute(opaque_plan.handle, &input, nullptr, &output.buffer);
+            test::require(short_by == 0 ? status == 0 && output.bytes() == expected_framed : status == 6 && output.buffer == nullptr,
+                "framed output charges exactly the same logical JSON budget as legacy transport");
+        }
+        for (std::size_t length = 0; length < framed_request.size(); ++length) {
+            const auto truncated = framed_request.substr(0, length); const auto input = test::view(truncated); test::response output;
+            test::require(kumwe_engine_v1_execute(opaque_plan.handle, &input, nullptr, &output.buffer) != 0
+                && output.buffer == nullptr, "every truncated batch frame refuses atomically");
+        }
+        const auto trailing = framed_request + "x"; const auto trailing_input = test::view(trailing); test::response trailing_result;
+        test::require(kumwe_engine_v1_execute(opaque_plan.handle, &trailing_input, nullptr, &trailing_result.buffer) == 1
+            && trailing_result.buffer == nullptr, "framed batch trailing bytes refused");
+        auto exact_input = opaque_execution;
+        auto& input_limits = std::get<value::object>(std::get<value::object>(exact_input.data).at("limits").data);
+        for (unsigned i = 0; i < 3; ++i)
+            input_limits["max_input_bytes"] = value(static_cast<std::int64_t>(json::encode(exact_input).size()));
+        const auto logical_input_bytes = json::encode(exact_input).size();
+        for (unsigned short_by = 0; short_by < 2; ++short_by) {
+            input_limits["max_input_bytes"] = value(static_cast<std::int64_t>(logical_input_bytes - short_by));
+            const auto bytes = binary_request(exact_input); const auto input = test::view(bytes); test::response output;
+            const auto status = kumwe_engine_v1_execute(opaque_plan.handle, &input, nullptr, &output.buffer);
+            test::require(short_by == 0 ? status == 0 && output.bytes() == expected_framed : status == 6 && output.buffer == nullptr,
+                "framed input charges equivalent JSON bytes rather than bypassing limits with smaller transport");
+        }
         const auto received = json::parse(result.bytes());
         const auto& received_rows = received.at("results").as<value::list>();
         const auto& expected_rows = expected.at("results").as<value::list>();

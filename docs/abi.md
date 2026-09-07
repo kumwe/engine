@@ -89,6 +89,25 @@ must not race any borrowed use. `cancellation_create` returns a separately owned
 executions return. Cancellation is checked between complete items and before returning output.
 It does not poison a reusable plan or permit partial output.
 
+## Opaque batch framing
+
+The compiled-plan `execute` entry point accepts KEB1 alongside its JSON envelope. The binary
+request is ASCII `KEB1`, u32le metadata length, JSON metadata with exactly `wire_version` and
+`limits`, u32le document count, then correlation and opaque input as two u32le-length/raw-byte
+strings per document. Metadata has a 16 KiB/128-node/depth-16 ceiling. Document count is checked
+against the requested limit before reserve, input bytes against the request budget before copies,
+and all frames must terminate exactly. The equivalent original JSON request size is also charged
+against `max_input_bytes`; reduced escaping cannot bypass an existing caller budget. Opaque input
+remains the same strict lossless JSON passed
+to the original plan, with identical normalization, findings, correlations and cancellation.
+
+KEB1 returns ASCII `KER2`, u32le result count, then three u32le-length/raw-byte strings per result:
+correlation, portable findings JSON, canonical result JSON. The binding reconstructs the same
+public PHP `results` and `wire_version` envelope including both `result` and `result_json`.
+`max_output_bytes` still charges the exact equivalent original JSON response, including its
+quoted `result_json` and punctuation; choosing the smaller transport cannot bypass output limits.
+Refusal remains atomic. JSON requests still receive JSON responses; no caller is auto-migrated.
+
 ## Canonical operation
 
 `canonical` accepts the owner-defined tagged PHP value representation with `wire_version: 1`,
@@ -99,6 +118,24 @@ limit spelling and finding precedence belong to the exact Canonical JSON corpus/
 The result is `{ "output": "..." }`, `{ "sha256": "..." }`, or a semantic `{ "finding": ... }`.
 Malformed tags/envelopes return an ABI status. Canonical transport expansion has its own finite
 64 MiB/2,000,000-node/512-depth envelope; it does not broaden the semantic profile's budgets.
+
+The same `canonical` entry point also accepts the candidate KEC1 binary value transport.
+Its header is four ASCII bytes `KEC1`, a little-endian u32 metadata length, the JSON metadata,
+then exactly one value frame. Metadata contains the same wire version, corpus, profile,
+operation and optional limits, omits `input`, and permits no extra keys. Metadata is bounded
+to 16 KiB, 128 JSON nodes and depth 16; the complete request remains bounded to 64 MiB.
+This format is selected by the called entry point, independently of the capabilities query.
+
+Every frame is `tag:u8`, `payload_bytes:u32le`, then exactly that payload. Tags 0/1/2 mean
+null/false/true with empty payloads; 3/4 carry exactly eight little-endian int64/IEEE-754 bits;
+5 carries raw string bytes; 7 is an empty unsupported-type sentinel. Tag 6 is an ordered PHP
+array: u32le entry count, then one key frame and one value frame per entry. Keys use only
+tags 3 or 5. Integer key type, insertion order, negative zero and invalid UTF-8 bytes survive
+transport. Profile admission checks all immediate key bytes before sorting and visits children
+in normative sorted order; UTF-8 admission remains at output emission. No caller-sized string
+or entry vector is allocated before its semantic input/node budget check. Truncation, trailing
+bytes, unknown tags, malformed widths, coercing string keys and duplicate keys are refused.
+The resulting JSON output/finding envelope and semantic budgets are identical to tagged JSON.
 
 ## Diagnostic CLI
 

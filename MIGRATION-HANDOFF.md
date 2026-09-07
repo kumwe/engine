@@ -60,7 +60,7 @@ ownership:
   public_manifests:
     -
       path: "resources/abi-manifest.json"
-      sha256: "f11d4b501dc344a56d5a51c18a364d65c9add46e0b807c0e41804e4ad19ab6d1"
+      sha256: "1719425b31e5c15f222db18c45c87aef2b288ddf363a13f4c940c86224fa4543"
     -
       path: "resources/abi-symbols.txt"
       sha256: "62cf59b8d6feb369f0d801b59b69796ea569570177e02b903c0bec6b01e04d21"

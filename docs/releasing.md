@@ -30,5 +30,57 @@ then attests the published Engine release before the stable extension embeds it.
 `check-archive.sh` compares two archives and builds an isolated installed consumer.
 `node tools/source-sbom.mjs` inventories committed source with SPDX/SHA1/SHA256 identities.
 CI stores these development artifacts against the tested head. They are not release attestations.
-Release automation must be added and reviewed with the accepted immutable-release policy before
-Engine 1.0.0 is published; this candidate deliberately has no publishing workflow.
+The non-publishing source-release stage below now prepares and verifies the complete
+source evidence bundle. Candidate CI retains it against the tested head; publication and
+externally signed release verification remain separate stages under the immutable-release policy.
+
+## Source bundle preparation and verification
+
+The source assembly and verification stage is implemented by `tools/release-source.py`.
+It reuses the committed `source-archive.sh` and `source-sbom.mjs` recipes, builds the
+archive twice, and verifies its full SPDX file inventory, ABI files and semantic corpus
+identities. It needs Git, gzip, Bash, Node and Python 3.12+ as development tools only.
+No network request, tag creation, release API or publication permission is used.
+
+Run from a clean, committed checkout. Choose a new directory outside the repository:
+
+```sh
+python3 tools/release-source-test.py
+python3 tools/release-source.py prepare ../engine-source-evidence
+python3 tools/release-source.py verify ../engine-source-evidence \
+  --expected-commit "$(git rev-parse HEAD)"
+```
+
+The external directory contains:
+
+- `kumwe-engine-source.tar.gz`: the exact committed export, including its licenses,
+  public headers, ABI/capability manifests and corpora;
+- `source.spdx.json`: the existing complete Engine source SPDX inventory;
+- `source.json`: repository, exact commit/tree, optional existing tag, archive size and
+  digest, ABI/version identity, manifest digests and exact semantic-owner materials;
+- `source.provenance.json`: an unsigned in-toto source-assembly statement that binds
+  that archive and SPDX inventory to the source materials;
+- `SHA256SUMS`: checksums of all four artifacts, using relative names.
+
+Verification regenerates the committed export and metadata, checks byte equality and
+refuses rehashed false claims. Supply `--expected-sha256` when an independent caller has
+an approved archive digest. `--tag v1.0.0` checks an existing tag against the same commit;
+its version must also equal the declared source version, with only the optional `v` prefix ignored.
+It never creates or moves a tag. Outputs are kept outside the tested source, so neither
+the source tree nor its archive contains its own final identity. The tool refuses
+tracked edits, unsafe archive paths, links, caches, credential-like files and PHP oracles.
+
+`--require-stable` is an additional source-state check for the stable release stage.
+It refuses the current development version, unfrozen ABI, draft contract matrix and
+unverified semantic releases. It is intentionally absent from ordinary candidate CI.
+This option does not verify signatures, approve ABI freeze or replace the independent
+candidate/release attestations. Those are review decisions and evidence produced by
+the existing programme release-verification process.
+
+A stable release publisher must use the verified source bundle from the exact approved
+commit and existing immutable tag. It must retain the final supported-platform and
+whole-boundary benchmark evidence, sign/verifiably attest the source assembly and any
+compiled outputs with their actual toolchain/build tuple, and provide the external
+candidate and release verification records. A source SPDX inventory does not describe
+an unbuilt binary. No publishing workflow runs for a candidate, and this tooling never
+turns an unsigned source statement into a release-verification claim.

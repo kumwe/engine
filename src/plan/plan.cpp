@@ -39,6 +39,55 @@ bool token(std::string_view input) {
         && !(c >= '0' && c <= '9') && c != '_' && c != '-' && c != '.' && c != ':') return false;
     return true;
 }
+std::uint32_t take_u32(std::string_view& input) {
+    if (input.size() < 4) reject();
+    std::uint32_t result = 0;
+    for (std::size_t i = 0; i < 4; ++i)
+        result |= static_cast<std::uint32_t>(static_cast<unsigned char>(input[i])) << (8U * i);
+    input.remove_prefix(4);
+    return result;
+}
+std::string_view take_bytes(std::string_view& input) {
+    const auto size = take_u32(input);
+    if (size > input.size()) reject();
+    const auto result = input.substr(0, size);
+    input.remove_prefix(size);
+    return result;
+}
+void append_u32(std::string& output, std::size_t number) {
+    for (std::size_t i = 0; i < 4; ++i) output.push_back(static_cast<char>(number >> (8U * i)));
+}
+void append_bytes(std::string& output, std::string_view bytes) {
+    append_u32(output, bytes.size()); output.append(bytes);
+}
+value decode_batch(std::string_view bytes, bool binary) {
+    if (!binary) return json::parse(bytes);
+    const auto request_size = bytes.size();
+    bytes.remove_prefix(4);
+    const auto metadata = take_bytes(bytes);
+    if (metadata.size() > 16384) reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
+    auto envelope = json::parse(metadata, 16384, 128, 16);
+    shape(envelope, {"wire_version", "limits"});
+    version(envelope.at("wire_version"));
+    if (request_size > integer(envelope.at("limits").at("max_input_bytes"), 1, 67108864))
+        reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
+    const auto count = take_u32(bytes);
+    const auto maximum = integer(envelope.at("limits").at("max_documents"), 1, 4096);
+    if (count > maximum) reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
+    if (count > bytes.size() / 8) reject();
+    list documents;
+    documents.reserve(count);
+    for (std::size_t i = 0; i < count; ++i) {
+        const auto correlation = take_bytes(bytes);
+        const auto input = take_bytes(bytes);
+        if (!token(correlation) || !json::valid_utf8(input)) reject();
+        documents.emplace_back(object{{"correlation", value(std::string(correlation))},
+            {"input", value(std::string(input))}});
+    }
+    if (!bytes.empty()) reject();
+    std::get<object>(envelope.data).emplace("documents", value(std::move(documents)));
+    return envelope;
+}
 }
 plan plan::compile(std::string_view request) {
     const auto started = std::chrono::steady_clock::now();
@@ -91,13 +140,17 @@ plan plan::compile(std::string_view request) {
 std::string plan::describe() const { return json::encode(descriptor_, 16777216); }
 std::string plan::execute(std::string_view request, const std::atomic<bool>* cancellation) const {
     const auto started = std::chrono::steady_clock::now();
-    auto envelope = json::parse(request);
+    const bool binary = request.starts_with("KEB1");
+    auto envelope = decode_batch(request, binary);
     shape(envelope, {"wire_version", "documents", "limits"});
     version(envelope.at("wire_version"));
     const auto& limits = envelope.at("limits");
     shape(limits, {"max_input_bytes", "max_output_bytes", "max_documents", "max_findings", "max_instructions", "max_milliseconds"});
     const auto max_input = integer(limits.at("max_input_bytes"), 1, 67108864);
     if (request.size() > max_input) reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
+    // Framing removes escaping only. Caller budgets retain the logical byte
+    // charge of the equivalent original JSON request, including quoted inputs.
+    if (binary) (void)json::encoded_size(envelope, max_input);
     const auto max_output = integer(limits.at("max_output_bytes"), 1, 67108864);
     const auto max_documents = integer(limits.at("max_documents"), 1, 4096);
     const auto max_findings = integer(limits.at("max_findings"), 1, 65536);
@@ -112,7 +165,9 @@ std::string plan::execute(std::string_view request, const std::atomic<bool>* can
     auto& documents = std::get<object>(envelope.data).at("documents");
     if (!documents.is<list>()) reject();
     if (documents.as<list>().size() > max_documents) reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
-    std::string output = "{\"results\":[";
+    std::string output = binary ? "KER2" : "{\"results\":[";
+    if (binary) append_u32(output, documents.as<list>().size());
+    std::size_t logical_output_size = std::string_view("{\"results\":[").size();
     constexpr std::string_view suffix = "],\"wire_version\":1}";
     bool first_result = true;
     std::set<std::string> seen;
@@ -170,7 +225,7 @@ std::string plan::execute(std::string_view request, const std::atomic<bool>* can
         const value encoded_result(json::encode(result, max_output));
         const auto encoded_correlation = json::encode(value(correlation), max_output);
         const auto encoded_findings = json::encode(value(std::move(portable_findings)), max_output);
-        const auto quoted_result = json::encode(encoded_result, max_output);
+        const auto quoted_result = binary ? std::string{} : json::encode(encoded_result, max_output);
         // Keep both public representations without encoding the result tree twice.
         // The parts are encoded JSON values and keys remain in canonical order.
         const std::string_view parts[] = {"{\"correlation\":", encoded_correlation,
@@ -181,20 +236,32 @@ std::string plan::execute(std::string_view request, const std::atomic<bool>* can
             if (part.size() > max_output - item_size) reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
             item_size += part.size();
         }
+        if (binary) {
+            const auto quoted_size = json::encoded_size(encoded_result, max_output);
+            if (quoted_size > max_output - item_size) reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
+            item_size += quoted_size;
+        }
         // Account for exactly the final wire bytes, including separators and
         // suffix. A valid nonempty result fits when its limit equals its size.
         // Refusal remains atomic because output is not published until success.
-        const auto remaining = max_output - std::min<std::uint64_t>(max_output, output.size());
+        const auto remaining = max_output - std::min<std::uint64_t>(max_output, logical_output_size);
         const auto overhead = suffix.size() + (first_result ? 0U : 1U);
-        if (output.size() > max_output || overhead > remaining || item_size > remaining - overhead)
+        if (logical_output_size > max_output || overhead > remaining || item_size > remaining - overhead)
             reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
-        if (!first_result) output.push_back(',');
-        for (const auto part : parts) output.append(part);
+        logical_output_size += item_size + (first_result ? 0U : 1U);
+        if (binary) {
+            append_bytes(output, correlation);
+            append_bytes(output, encoded_findings);
+            append_bytes(output, encoded_result.as<std::string>());
+        } else {
+            if (!first_result) output.push_back(',');
+            for (const auto part : parts) output.append(part);
+        }
         first_result = false;
     }
     checkpoint();
-    if (output.size() > max_output || suffix.size() > max_output - output.size()) reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
-    output.append(suffix);
+    if (logical_output_size > max_output || suffix.size() > max_output - logical_output_size) reject(KUMWE_ENGINE_V1_EXHAUSTED_LIMIT);
+    if (!binary) output.append(suffix);
     checkpoint();
     return output;
 }
