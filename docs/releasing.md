@@ -99,10 +99,21 @@ This option does not verify signatures, approve ABI freeze or replace the indepe
 candidate/release attestations. Those are review decisions and evidence produced by
 the existing programme release-verification process.
 
-A stable release publisher must use the verified source bundle from the exact approved
-commit and existing immutable tag. It must retain the final supported-platform and
-whole-boundary benchmark evidence, sign/verifiably attest the source assembly and any
-compiled outputs with their actual toolchain/build tuple, and provide the external
-candidate and release verification records. A source SPDX inventory does not describe
-an unbuilt binary. No publishing workflow runs for a candidate, and this tooling never
-turns an unsigned source statement into a release-verification claim.
+## Immutable source publication
+
+`Native source release` runs after successful `Native quality` on the exact current
+default-branch commit, or through an explicit dispatch naming that successful run.
+`tools/release-native.py` checks every required Linux/macOS/compiler, sanitizer and
+archive lane, reruns the stable source gate, and refuses skipped or stale evidence.
+The workflow signs all five source evidence files with GitHub OIDC and verifies the
+repository, workflow, default-branch ref, exact commit and hosted build identity.
+Only then may it create the version tag and draft release. Existing tags and assets
+cannot be moved or overwritten; a retry verifies identical existing bytes before
+uploading missing files. Publication rechecks the final assets and current branch.
+`python3 tools/release-native-test.py` covers these refusal and interrupted-retry paths.
+
+The sixth release asset, `build-provenance.sigstore.json`, authenticates source assembly.
+This source-only publisher does not describe an unbuilt binary or produce an independent
+release-verification claim. The external candidate cross-build, final supported-platform
+and whole-boundary evidence, and separate verifier's published-release attestation remain
+required. A candidate fails the stable source gate and cannot publish.
