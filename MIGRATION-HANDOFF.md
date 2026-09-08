@@ -43,13 +43,14 @@ source:
   - Computation portable-only Phase 1A version 0.1.1 at fc9d049f8b675c8e19fd1672d49b5e206c9ad52a is published. Its
     exact archive, API, capability and corpus facts remain recorded; schema-valid durable independent release attestation
     is pending.
-  active_related_pull_requests: []
+  active_related_pull_requests:
+  - https://github.com/kumwe/kumwe-engine/pull/4
 target:
   repository: https://github.com/kumwe/engine
   artifact_identity: CMake Kumwe::Engine
   canonical_namespace_or_abi: kumwe::engine / kumwe_engine_v1_
-  branch: codex/abi1-release-readiness
-  pull_request: https://github.com/kumwe/engine/pull/7
+  branch: codex/stable-native-readiness-20260908
+  pull_request: https://github.com/kumwe/engine/pull/8
 ownership:
   responsibility: Standalone exact decimal, compiled formula/document/report execution and generic canonical encoding/digests
     through one owned C ABI.
@@ -151,9 +152,29 @@ native_cpp:
   - kumwe-canonical-json/generic-v1
   corpora:
   - owner: kumwe/conversion
-    version: v0.1.3 at e95d5633722929e77b73005f8c44cfe4d99ac8c3; attestation pending
-    profile: decimal-v1.tsv existing Conversion exact decimal semantics
+    version: 0.1.3 at e95d5633722929e77b73005f8c44cfe4d99ac8c3; release attestation pending
+    profile: decimal-batch-draft/1
     sha256: 635db251898707828e24f12b1abb672273552f5f633186a725cc9f50ac08140c
+  - owner: kumwe/business-definition
+    version: 0.1.2 at 1cb59229f311067e8cfdd773a34e34cfeb501791; release attestation pending
+    profile: formula-draft/1
+    sha256: 11033679b018fdc9a192e954ef11089444a00a1d89c6279d3c192be9252cf42f
+  - owner: kumwe/record-model
+    version: 0.1.0 at d7955e6beae2c3a9fa30052aea5ec3478af7dffc; release attestation pending
+    profile: normalized-document-draft/1
+    sha256: 84b6c2e55ae591c921536aa755cbb5a9a40a7a19847fe47415e55dce2614c177
+  - owner: kumwe/reporting
+    version: 0.1.0 at d8cae56726170d39cd6e95e45b0ffcb085920849; release attestation pending
+    profile: report-materialization-draft/1
+    sha256: 975116dc897a0bfdee4a08f9065eb10ccfec06a32f4eb93a48015b08af408c01
+  - owner: kumwe/canonical-json
+    version: 0.1.1 at e7006a2580a49a1c8ab507b0d7b9c3403b4f9f58; release attestation pending
+    profile: kumwe-canonical-json/generic-v1
+    sha256: 84d21b12e7a2bfd752356d9a6e664bcb332e209d19017e7634e7485a4fa4e250
+  - owner: kumwe/record-model
+    version: 0.1.0; release attestation pending
+    profile: normalized-preparation-draft/1
+    sha256: 4eb1543929fcf5470eb8cae882127556cd57c02518109545483d8780266b561a
   limits_and_errors:
   - Precision 1..65, scale 0..precision, literal at most 68 bytes.
   - Input/output at most 1 MiB; count 1..4096; deterministic work 1..1000000000 logical units.
@@ -188,6 +209,17 @@ tests:
   - No PHP oracle or App implementation is copied into Engine.
   corpora:
   - corpus/decimal/decimal-v1.tsv
+  - corpus/canonical/generic-v1.json
+  - corpus/definition/formula-v1.json
+  - corpus/document/computed-normalization-v1.json
+  - corpus/document/document-profile-v1.json
+  - corpus/document/normalized-values-v1.json
+  - corpus/document/preparation-v1.json
+  - corpus/document/unicode-normalization-oracle-v1.json
+  - corpus/document/validation-v1.json
+  - corpus/document/validator-edges-v1.json
+  - corpus/document/validator-extension-v1.json
+  - corpus/reporting/materialization-v1.json
 documentation:
   charter: CHARTER.md
   readme: README.md
