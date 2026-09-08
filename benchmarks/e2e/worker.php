@@ -266,7 +266,7 @@ $opaqueResults = $native && in_array('opaque-compiled-results/1', $observedCapab
 $ready = ['ready' => true, 'backend' => $config['backend'], 'php' => PHP_VERSION, 'php_binary_sha256' => hash_file('sha256', PHP_BINARY), 'icu' => INTL_ICU_VERSION,
     'sources' => $hashes, 'conversion_reference' => Composer\InstalledVersions::getReference('kumwe/conversion'),
     'capabilities' => $observedCapabilities, 'compiled_result_format' => $native ? ($opaqueResults ? 'opaque' : 'both') : null,
-    'zend_allocator' => getenv('USE_ZEND_ALLOC') !== '0'] + rss();
+    'zend_allocator' => getenv('USE_ZEND_ALLOC') !== '0', 'memory_limit' => ini_get('memory_limit')] + rss();
 echo json_encode($ready, JSON_FLAGS) . "\n";
 while (($line = fgets(STDIN)) !== false) {
     try {

@@ -77,7 +77,9 @@ class Worker:
         config['backend'] = backend
         config_path = args.output / (label + '.config.json')
         write(config_path, config)
-        invocation = [str(args.php)]
+        # Both paths need enough bounded memory for the widest 4096-document
+        # workload, including final serialization. Keep PHP fatals off JSON IPC.
+        invocation = [str(args.php), '-d', 'memory_limit=1G', '-d', 'display_errors=stderr']
         if backend == 'native':
             invocation += ['-d', 'extension=' + str(args.extension)]
         invocation += [str(args.engine / 'benchmarks/e2e/worker.php'), str(config_path)]
@@ -276,7 +278,7 @@ def require_comparable_metadata(old, current):
             raise RuntimeError(f'Regression comparison requires matching {key}')
     if old['harness_hashes']['worker.php'] != current['harness_hashes']['worker.php']:
         raise RuntimeError('Regression comparison requires identical workload implementation')
-    for key in ('php', 'php_binary_sha256', 'icu', 'sources', 'conversion_reference'):
+    for key in ('php', 'php_binary_sha256', 'icu', 'sources', 'conversion_reference', 'memory_limit'):
         if old['worker_identity']['php'][key] != current['worker_identity']['php'][key]:
             raise RuntimeError(f'Regression comparison requires matching PHP semantic baseline {key}')
     prior_build = old['worker_identity']['native']['capabilities']['binding_build']

@@ -1,8 +1,8 @@
 # Release and candidate gates
 
 All five native kernels are implemented and have owner-corpus replay, bounded ABI execution,
-consumer builds and memory/security CI. `0.0.0-dev` identifies an implementation candidate;
-ABI 1 is not frozen and no native release has been published. Implementation completion does
+consumer builds and memory/security CI. `1.0.0` is the proposed first release;
+ABI 1 is frozen and no publication is inferred from that source version. Implementation completion does
 not establish release verification or App acceleration.
 
 `resources/contracts.json` records exact published semantic-owner tags, commits and corpus paths.
@@ -22,9 +22,8 @@ before the first stable Engine release. The later Computation adapter successor 
 for the verified Engine and extension releases; candidate cross-builds do not close
 that ordering requirement.
 
-The remaining release gates are the independently verified semantic release barrier, accepted
-ABI compatibility/freeze, a final supported-platform run, representative whole-boundary performance
-acceptance, and signed source/artifact provenance. The retained benchmark evidence includes slower
+The remaining release gates are the independently verified semantic release barrier, the frozen ABI compatibility fixture, a final supported-platform run, published representative whole-boundary performance
+evidence, and signed source/artifact provenance. The retained benchmark evidence includes slower
 native document, preparation and canonical workloads; a faster inner kernel cannot close that gap.
 Repeat the complete PHP/Zend comparison on the final artifact after optimization. No App cutover
 or capacity claim follows from passing the native test suite.
@@ -82,7 +81,7 @@ the source tree nor its archive contains its own final identity. The tool refuse
 tracked edits, unsafe archive paths, links, caches, credential-like files and PHP oracles.
 
 `--require-stable` is an additional source-state check for the stable release stage.
-It refuses the current development version, unfrozen ABI, draft contract matrix and
+It refuses development versions, unfrozen ABIs, draft contract matrices and
 unverified semantic releases, and an absent or incomplete portable Computation baseline.
 The baseline record must have `state: release-verified`, the exact `kumwe/computation`
 version/tag/commit and source archive SHA256, public API and capability manifest SHA256s,

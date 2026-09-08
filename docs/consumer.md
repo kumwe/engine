@@ -14,10 +14,10 @@ The exact framing and golden binary results are in [ABI](abi.md), `tests/support
 `tests/engine_test.cpp` and `tools/fuzz-seeds.mjs`. Only `tests/consumer` is a supported integration
 example; internal C++ headers are private implementation details.
 
-Do not integrate this draft with App or PHP yet. The next reviewed native steps are complete E1
-formula/document semantics and corpora, E2 report/canonical modules, E3 freeze/hardening, exact
-candidate cross-build in `kumwe/kumwe-engine`, human Engine merge/release, independent stable release
-verification, then the thin Zend/PIE binding. The binding must own its source-embedded immutable
-Engine archive, use this C ABI alone and clean handles under every PHP lifecycle path. No algorithm
-or fallback belongs in the binding. App provisioning and Computation-owned runtime cutover follow
-separately; App's existing execution and tests remain until that cutover.
+Use an independently verified immutable Engine release for production bindings. ABI 1
+now has a frozen initial header/client compatibility gate; all five kernel corpora and
+owned behavior/boundary tests remain mandatory. The exact candidate archive must pass
+the independent Zend cross-build before Engine publication, followed by external release
+verification. The binding embeds that exact unmodified archive and owns only Zend
+marshalling/lifecycle; it contains no algorithm or fallback. App provisioning and the
+Computation-owned runtime cutover follow separately, after verified native publication.

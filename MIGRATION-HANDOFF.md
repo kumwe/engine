@@ -60,22 +60,22 @@ ownership:
   public_manifests:
     -
       path: "resources/abi-manifest.json"
-      sha256: "1719425b31e5c15f222db18c45c87aef2b288ddf363a13f4c940c86224fa4543"
+      sha256: "40e27d2a8e7b8f619274e1bce2525a220d704f5e86a4e46f68d53fc6dafd4fb9"
     -
       path: "resources/abi-symbols.txt"
       sha256: "62cf59b8d6feb369f0d801b59b69796ea569570177e02b903c0bec6b01e04d21"
     -
       path: "resources/capabilities.json"
-      sha256: "6d4d8a1126e2a3970ce127fa96d231c9002ba065a40304c838c4698773b5b995"
+      sha256: "37cb2409bf96234993cf7ff2f2b8a46d17cb699aac7eb47374bf9b0a1811083f"
     -
       path: "resources/contracts.json"
-      sha256: "2ae40600a569d2656a7fb84f21fd5de1e659a19ae7efb6c0ee55a9c54aa01264"
+      sha256: "2eab83eb528a2a13cb5a151e494e937ae71e61a426fef57564eff45e489d2193"
     -
       path: "tests/ownership.json"
-      sha256: "04034d0c586e0427a5641c87c336575b8898fb2def48ab87b2d01c44ef70c73e"
+      sha256: "7fb2450f345d7546b8ff1f425bf9fcc4dc8efb5b25a340fad513cf13c4370f04"
     -
       path: "include/kumwe/engine/engine.h"
-      sha256: "ec031a4636a87ebc80e653513df1a8db228efc1d500c25c122702c69389280ee"
+      sha256: "d7ebdaa0c03bca629a5370ebbcdd6297ea6e99afa0229c9c13c2907676a94b2f"
   intentionally_excluded:
     - "No App classes, dependency adoption or test removal."
     - "No PHP binding implementation is owned here; the separate kumwe/kumwe-engine candidate consumes this exact source."
@@ -111,7 +111,7 @@ native_cpp:
       - "kumwe_engine_v1_view: naturally aligned 24 bytes on supported 64-bit targets; struct_size 24..4096 and ABI 1."
     enums_and_codes:
       - "0 success; 1 invalid_input; 2 unsupported_version; 3 incompatible_capability; 4 incompatible_corpus; 5 invalid_program; 6 exhausted_limit; 7 cancelled; 8 internal_failure."
-      - "ABI/layout/status vocabulary is a development proposal, not frozen ABI 1."
+      - "ABI 1 layout/status/lifetimes are frozen; initial fixed-header dynamic client passes all 295 assertions."
     opaque_handles:
       -
         name: "kumwe_engine_v1_buffer"

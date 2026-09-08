@@ -124,7 +124,7 @@ void abi_boundaries() {
     auto caps = std::string("KEC1"); test::integer(caps, 1, 4); test::integer(caps, 1, 4);
     input = test::view(caps);
     check(kumwe_engine_v1_capabilities(&input, &output.buffer) == 0, "capability handshake");
-    check(output.bytes().find("unstable-development") != std::string::npos, "development identity");
+    check(output.bytes().find("\"abi_status\": \"frozen\"") != std::string::npos, "frozen ABI identity");
     kumwe_engine_v1_buffer_release(&output.buffer);
     caps[8] = 2;
     check(kumwe_engine_v1_capabilities(&input, &output.buffer) == 3, "unknown capability");

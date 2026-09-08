@@ -1,6 +1,6 @@
-# Draft C boundary
+# Frozen C ABI 1
 
-Status: development proposal, not frozen ABI 1. The implemented surface includes exact decimal
+Status: frozen ABI 1.0, introduced by Engine 1.0.0. The implemented surface includes exact decimal
 batches, immutable formula/document/report plans, cooperative cancellation, and canonical encoding/digests.
 
 Only the public C header is installed. All records use natural platform alignment: view offsets
@@ -17,7 +17,7 @@ No C++ exception escapes. Errors contain no caller data and produce no partial b
 `capabilities` accepts ASCII `KEC1` followed by little-endian u32 required ABI (1) and u32 required
 capability mask (bit 0 decimal batch; zero permits discovery). Unknown bits refuse with
 incompatible_capability and any other ABI refuses with unsupported_version. It returns bounded JSON metadata describing this
-DEVELOPMENT build, implemented draft capability, source profile and corpus digest. This is not
+identified build, implemented capability, source profile and corpus digest. This is not
 an assertion that the upstream release was independently verified.
 
 `decimal_batch` accepts binary `KED1`, then little-endian u32 row count (1..4096), u32 caller
@@ -119,7 +119,7 @@ The result is `{ "output": "..." }`, `{ "sha256": "..." }`, or a semantic `{ "fi
 Malformed tags/envelopes return an ABI status. Canonical transport expansion has its own finite
 64 MiB/2,000,000-node/512-depth envelope; it does not broaden the semantic profile's budgets.
 
-The same `canonical` entry point also accepts the candidate KEC1 binary value transport.
+The same `canonical` entry point also accepts the KEC1 binary value transport.
 Its header is four ASCII bytes `KEC1`, a little-endian u32 metadata length, the JSON metadata,
 then exactly one value frame. Metadata contains the same wire version, corpus, profile,
 operation and optional limits, omits `input`, and permits no extra keys. Metadata is bounded
@@ -145,3 +145,22 @@ Use `-` for one JSON input from standard input. Native refusals emit `{"status":
 success emits the Engine response. File/usage errors go to stderr. Input reads are bounded to 64 MiB.
 The existing positional decimal TSV corpus replay remains available. This executable is a diagnostic
 consumer of the same C ABI; the PHP application uses the extension directly.
+
+## Compatibility commitment
+
+ABI 1 freezes the installed C symbols, numeric statuses, 24-byte view layout, natural
+alignment, ownership/lifetime rules and documented envelope admission/refusal behavior.
+New capabilities must be explicitly negotiated; breaking layout, symbol, ownership or
+established output changes require ABI 2. Internal C++ layouts and VM instructions are
+private. The historical profile identifiers containing `-draft/1` and their imported
+version identifiers remain unchanged; the exact owner corpus identifies their semantics.
+An Engine version does not silently rename or supersede an owner contract.
+
+The separately snapshotted header and C11 client under `tests/abi-v1` establish the
+initial ABI 1 baseline. On Linux every candidate dynamically links and runs that unchanged
+client against the current export-restricted library, including under ASan/UBSan. The
+fixture covers all 12 exports and 295 assertions. There was no earlier stable Engine
+release; this is the forward compatibility gate retained for subsequent ABI 1 releases.
+Stable publication still requires independently verified semantic releases, candidate
+cross-build and source/provenance evidence. ABI freeze alone does not assert publication
+or App performance acceptance.

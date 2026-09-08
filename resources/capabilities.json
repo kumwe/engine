@@ -1,8 +1,8 @@
 {
   "engine": "kumwe/engine",
-  "version": "0.0.0-dev",
+  "version": "1.0.0",
   "abi_major": 1,
-  "abi_status": "unstable-development",
+  "abi_status": "frozen",
   "capabilities": [
     "decimal-batch-draft/1",
     "formula-draft/1",
@@ -18,9 +18,9 @@
   "corpus_sha256": "635db251898707828e24f12b1abb672273552f5f633186a725cc9f50ac08140c",
   "computation": {
     "wire_version": 1,
-    "engine_version": "0.0.0",
+    "engine_version": "1.0.0",
     "abi_major": 1,
-    "api_version": "0.0.0",
+    "api_version": "1.0.0",
     "build_digest": "@ENGINE_BUILD_DIGEST@",
     "features": [
       {

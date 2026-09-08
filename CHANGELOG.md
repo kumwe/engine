@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- Freeze the initial C ABI 1 boundary for the proposed 1.0.0 release without
+  changing symbols, statuses, view layout, lifetimes, envelopes or semantic outputs.
+  Preserve a separately hashed historical C11 client/header and dynamically replay
+  its 295 assertions against every Linux candidate and sanitizer build.
+- Permit truthful independently verified semantic-input metadata while continuing to
+  reject unverified source publication. Semantic owner and portable Computation
+  attestations remain required before stable source admission.
+
 - Candidate canonical KEC1 framing removes tagged JSON/base64 expansion inside the existing
   ABI and PHP API; identical semantic corpus, limits and finding order are retained.
 - Reuse exact incremental document output totals at finalization. Fuse UTF-8 admission and
