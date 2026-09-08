@@ -8,8 +8,11 @@ release-verified under the v2 protocol.
 `resources/conformance/decimal-v1.tsv` in [Conversion PR 5](https://github.com/kumwe/conversion/pull/5),
 exact corpus source commit `ef3f2bae09ddab839497b2d296141581d70ba059`.
 SHA-256: `635db251898707828e24f12b1abb672273552f5f633186a725cc9f50ac08140c`.
-This corpus is not present in the v0.1.2 release; it captures that implementation's behavior
-for a forthcoming reviewed release. No claim of an immutable released corpus is made.
+This corpus was not present in the v0.1.2 release. The identical bytes are now part of
+independently verified Conversion `v0.1.5`, source
+`b291f3a31314644fd88150dc9a9e911fe0617fe7`. The actual source archive, canonical manifests
+and immutable external receipt are recorded in `resources/contracts.json`; this later
+release admission preserves the corpus's original construction and behavior provenance.
 
 The UTF-8 TSV has one header, final LF and nine columns: id, operation, left_hex, right_hex,
 precision, scale, rounding, outcome, expected_hex. Byte strings are lowercase hexadecimal;

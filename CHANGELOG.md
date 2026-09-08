@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Record the corrected durable semantic-owner verification receipts and complete manifest
+  and corpus identities. Preserve Reporting 0.1.3's published source as explicitly unverified
+  until its clean consumer can resolve the missing Access Control package registration.
+
 - Freeze the initial C ABI 1 boundary for the proposed 1.0.0 release without
   changing symbols, statuses, view layout, lifetimes, envelopes or semantic outputs.
   Preserve a separately hashed historical C11 client/header and dynamically replay
