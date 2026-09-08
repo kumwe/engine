@@ -11,16 +11,14 @@ remain a separate requirement: publication and a matching hash alone do not esta
 owner release passed every programme acceptance gate. Updates must retain an exact coordinate;
 never use a moving branch, `latest`, or an unconstrained range for embedded native sources.
 
-The separate Computation Phase 1A prerequisite is currently unresolved. The inspected
-published `v0.2.0` and `v0.2.1` packages require `ext-kumwe_engine: 0.0.0-dev`; the
-`0.3.0` adapter candidate also has a native requirement. None establishes the required
-portable-only baseline. Untagged portable source can inform reconstruction, but cannot
-supply an immutable release or its external verification. `resources/contracts.json`
-records this missing baseline explicitly, with unknown release facts left null.
-A portable contract-baseline release must be published and independently verified
-before the first stable Engine release. The later Computation adapter successor waits
-for the verified Engine and extension releases; candidate cross-builds do not close
-that ordering requirement.
+The separate Computation Phase 1A prerequisite is now the independently verified portable-only
+`v0.1.1` release at `fc9d049f8b675c8e19fd1672d49b5e206c9ad52a`. Its actual source archive,
+API, capability, portable corpus and external attestation identities are recorded in
+`resources/contracts.json`. The independent SDK workflow34250329345 checked the original
+published archive, full package gates and a fresh offline authoritative consumer with no native
+extension or binding classes. This closes the pre-Engine contract-baseline prerequisite.
+The later Computation native adapter successor still waits for verified Engine and extension
+releases; its publication and App adoption are separate steps.
 
 The remaining release gates are the independently verified semantic release barrier, the frozen ABI compatibility fixture, a final supported-platform run, published representative whole-boundary performance
 evidence, and signed source/artifact provenance. The retained benchmark evidence includes slower

@@ -171,7 +171,8 @@
   "architecture": [
     "tools/check-architecture.sh",
     "tools/check-symbols.sh",
-    "tests/abi-v1/baseline.json"
+    "tests/abi-v1/baseline.json",
+    "tests/pcre2_policy.c"
   ],
   "host": {
     "repository": "kumwe/app",

@@ -3,7 +3,7 @@
   "repository": "https://github.com/PCRE2Project/pcre2",
   "tag": "pcre2-10.42",
   "commit": "26eb5f6712f2d2e6d3d012b273c53f7b4d420379",
-  "selection": "Static 8-bit PCRE2 with Unicode and JIT; complete pinned SLJIT architecture source closure, no system or network dependency.",
+  "selection": "Static 8-bit PCRE2 with Unicode and qualified x86_64/AArch64 JIT; legacy AArch64 SIMD optimization disabled by scoped compiler guards. Complete pinned SLJIT source closure, no system or network dependency.",
   "files": {
     "AUTHORS": "430c8e1ae1c643cef5b14af882ada140bd8f675198d704cf88aa65addac3ab78",
     "LICENCE": "87d884eceb7fc54611470ce9f74280d28612b0c877adfc767e9676892a638987",

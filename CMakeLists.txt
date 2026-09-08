@@ -129,6 +129,12 @@ if(BUILD_TESTING)
   target_include_directories(engine-tests PRIVATE src)
   target_link_libraries(engine-tests PRIVATE Kumwe::Engine)
   add_test(NAME behavior-boundary COMMAND engine-tests)
+  add_executable(pcre2-policy-test tests/pcre2_policy.c)
+  target_include_directories(pcre2-policy-test PRIVATE "${PCRE_BINARY}")
+  target_compile_definitions(pcre2-policy-test PRIVATE KUMWE_EXPECTED_PCRE2_JIT=${KUMWE_PCRE2_JIT})
+  target_link_libraries(pcre2-policy-test PRIVATE Kumwe::Engine)
+  set_target_properties(pcre2-policy-test PROPERTIES LINKER_LANGUAGE CXX)
+  add_test(NAME pcre2-target-jit-policy COMMAND pcre2-policy-test)
   add_test(NAME conversion-corpus COMMAND kumwe-engine-conformance "${CMAKE_CURRENT_SOURCE_DIR}/corpus/decimal/decimal-v1.tsv")
   add_test(NAME diagnostic-cli COMMAND "${CMAKE_COMMAND}"
     "-DCLI=$<TARGET_FILE:kumwe-engine-conformance>"

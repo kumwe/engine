@@ -57,7 +57,19 @@ set(PCRE_SOURCES
 add_library(kumwe_pcre2 OBJECT ${PCRE_SOURCES})
 set_target_properties(kumwe_pcre2 PROPERTIES POSITION_INDEPENDENT_CODE ON C_VISIBILITY_PRESET hidden)
 target_include_directories(kumwe_pcre2 PRIVATE "${PCRE_SOURCE}/src" "${PCRE_BINARY}")
-target_compile_definitions(kumwe_pcre2 PRIVATE HAVE_CONFIG_H PCRE2_STATIC PCRE2_CODE_UNIT_WIDTH=8 SUPPORT_PCRE2_8 SUPPORT_UNICODE SUPPORT_JIT HAVE_MEMMOVE HAVE_STDINT_H HAVE_INTTYPES_H HAVE_STDLIB_H HAVE_STRING_H HAVE_STRERROR)
+target_compile_definitions(kumwe_pcre2 PRIVATE HAVE_CONFIG_H PCRE2_STATIC PCRE2_CODE_UNIT_WIDTH=8 SUPPORT_PCRE2_8 SUPPORT_UNICODE HAVE_MEMMOVE HAVE_STDINT_H HAVE_INTTYPES_H HAVE_STDLIB_H HAVE_STRING_H HAVE_STRERROR)
+# Preserve the JIT's frozen recursion semantics. Upstream cannot backport the
+# legacy AArch64 SIMD implementation's safety fixes: disable only that optional
+# implementation through its exact preprocessor guards, scoped to PCRE2 sources.
+set(KUMWE_PCRE2_JIT 1)
+target_compile_definitions(kumwe_pcre2 PRIVATE SUPPORT_JIT)
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64|amd64)$")
+  # Qualified x86_64 implementation.
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64|ARM64)$")
+  target_compile_options(kumwe_pcre2 PRIVATE -U__ARM_NEON -U__ARM_NEON__)
+else()
+  message(FATAL_ERROR "PCRE2 JIT is qualified only on x86_64 and AArch64; other targets require separate security/corpus qualification")
+endif()
 target_compile_options(kumwe_pcre2 PRIVATE -fstack-protector-strong)
 if(KUMWE_ENGINE_SANITIZERS)
   target_compile_options(kumwe_pcre2 PRIVATE -fsanitize=address,undefined -fno-omit-frame-pointer)

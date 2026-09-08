@@ -39,7 +39,7 @@ source:
       sha256: "84d21b12e7a2bfd752356d9a6e664bcb332e209d19017e7634e7485a4fa4e250"
   examined_dependencies:
     - "Conversion v0.1.3 ExactDecimal, ExactDecimalArithmetic and six Money/Quantity rounding modes; no PHP source copied."
-    - "Computation portable program, batch, findings and capability contracts; exact candidate compiler/executor and canonical adapter verified through the Zend binding. This candidate evidence does not establish a published, independently verified portable Phase 1A baseline."
+    - "Computation portable-only Phase 1A version0.1.1 at fc9d049f8b675c8e19fd1672d49b5e206c9ad52a independently verified in SDK workflow34250329345; exact archive, API, capability, corpus and external attestation identities are recorded in resources/contracts.json."
   active_related_pull_requests: []
 target:
   repository: "https://github.com/kumwe/engine"
@@ -69,10 +69,10 @@ ownership:
       sha256: "37cb2409bf96234993cf7ff2f2b8a46d17cb699aac7eb47374bf9b0a1811083f"
     -
       path: "resources/contracts.json"
-      sha256: "2eab83eb528a2a13cb5a151e494e937ae71e61a426fef57564eff45e489d2193"
+      sha256: "d4b76178e5b5bb0910a5d7606f44c4ab6497956a58987332af564eb2459b11e4"
     -
       path: "tests/ownership.json"
-      sha256: "7fb2450f345d7546b8ff1f425bf9fcc4dc8efb5b25a340fad513cf13c4370f04"
+      sha256: "2a8b54da277777706b6c65430cbf08d4e24b28b313a57e2f4f29212929aae4e3"
     -
       path: "include/kumwe/engine/engine.h"
       sha256: "d7ebdaa0c03bca629a5370ebbcdd6297ea6e99afa0229c9c13c2907676a94b2f"
@@ -257,7 +257,7 @@ decisions:
   - "Preserve exact semantic owners and never advertise unavailable native operations."
   - "No production publishing workflow is supplied before the accepted immutable-release gate."
 blockers:
-  - "Computation Phase 1A portable-only baseline release remains unresolved: published v0.2.0/v0.2.1 and the 0.3.0 adapter candidate require the native extension; none supplies the required independent pre-Engine contract release and attestation."
+  - "Computation Phase 1A portable-only baseline0.1.1 is independently verified. The later native adapter still waits for verified Engine and binding releases."
   - "Final exact-head native checks and independent binding archive verification precede release review."
   - "Exact published semantic source/corpus bytes are matched; independent owner release attestations, ABI freeze and final candidate cross-build acceptance remain outstanding."
   - "No stable Engine or extension release, App cutover or performance objective is claimed."
