@@ -29,6 +29,7 @@ class Fixture(Publisher):
         self.tag, self.release = None, None
         self.head = self.branch_head = self.sha
         self.signature_valid, self.stable, self.ancestor = True, True, True
+        self.candidate_valid = True
         self.fail_upload, self.extra_before_finalize, self.advance_before_finalize = None, False, False
         self.context_calls = 0
         self.quality = {'head_sha': self.sha, 'head_branch': self.branch,
@@ -43,6 +44,10 @@ class Fixture(Publisher):
     def command(self, *args, cwd=None, data=None, check=True):
         self.calls.append(('command', args))
         output = b''
+        if args[0] == 'node' and args[1].endswith('/candidate-gate.mjs'):
+            if not self.candidate_valid:
+                raise ReleaseError('Missing or invalid external candidate attestation')
+            output = json.dumps({'status': 'passed', 'merged_engine_commit': self.sha}).encode()
         if args[:3] == ('git', 'rev-parse', 'HEAD'):
             output = self.head.encode()
         if args[:3] == ('git', 'merge-base', '--is-ancestor') and not self.ancestor:
@@ -139,6 +144,30 @@ class NativePublicationTests(unittest.TestCase):
 
     def publish(self):
         self.publisher.publish(self.bundle, self.signature)
+
+    def test_missing_candidate_gate_cannot_prepare_or_publish_engine(self):
+        self.publisher.candidate_valid = False
+        with self.assertRaisesRegex(ReleaseError, 'candidate attestation'):
+            self.prepare()
+        self.assertEqual([], self.publisher.mutations())
+        self.publisher.candidate_valid = True
+        self.publisher.source_bundle('prepare', self.root / 'another-bundle')
+        self.publisher.candidate_valid = False
+        with self.assertRaisesRegex(ReleaseError, 'candidate attestation'):
+            self.publish()
+        self.assertEqual([], self.publisher.mutations())
+
+    def test_release_notes_bind_actual_source_and_semantic_materials(self):
+        (self.root / 'CHANGELOG.md').write_text('# Changes\n\n## Unreleased\n\n- Security fixture change.\n')
+        record = {'identity': {'version': '1.0.0'}, 'source': {'commit': SHA},
+                  'dependencies': [{'repository': 'kumwe/conversion', 'version': '0.1.5',
+                    'commit': OTHER, 'api_digest': 'c' * 64, 'corpus_path': 'resources/corpus/v1.json',
+                    'corpus_sha256': 'd' * 64}]}
+        notes = self.publisher.release_notes(record)
+        for expected in (SHA, OTHER, 'kumwe/conversion', '0.1.5', 'c' * 64, 'd' * 64,
+                         'Security fixture change.', 'Independent published-release verification remains separate'):
+            self.assertIn(expected, notes)
+        self.assertNotIn('/blob/main/', notes)
 
     def test_actual_http_status_required(self):
         self.assertIsNone(MODULE.decode_http(b'HTTP/2.0 404 Not Found\r\n\r\n{"message":"missing"}', 1, True))

@@ -5,6 +5,7 @@ on:
       - '.github/workflows/release.yml'
       - 'tools/release-native.py'
       - 'tools/release-native-test.py'
+      - 'tools/release-validation/**'
   workflow_run:
     workflows: ['Native quality']
     types: [completed]
@@ -14,6 +15,14 @@ on:
         description: Successful Native quality run for this exact default-branch commit
         type: string
         required: true
+      candidate_attestation_uri:
+        description: Immutable SDK raw YAML URI, or omit to read the exact merged PR reference
+        type: string
+        required: false
+      candidate_attestation_sha256:
+        description: SHA256 of the external candidate YAML bytes
+        type: string
+        required: false
 permissions:
   contents: read
 concurrency:
@@ -29,6 +38,11 @@ jobs:
           persist-credentials: false
       - name: Verify source publication identity, provenance and immutable retry guards
         run: python3 tools/release-native-test.py
+      - name: Install exact candidate schema validator dependencies
+        working-directory: tools/release-validation
+        run: npm ci --ignore-scripts --no-audit
+      - name: Verify full candidate schema and cross-build refusal cases
+        run: node --test tools/release-validation/candidate-gate.test.mjs
   publish:
     needs: publisher-tests
     if: >-
@@ -51,6 +65,8 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
       QUALITY_RUN_ID: ${{ github.event.workflow_run.id || inputs.quality_run_id }}
+      ENGINE_CANDIDATE_ATTESTATION_URI: ${{ inputs.candidate_attestation_uri }}
+      ENGINE_CANDIDATE_ATTESTATION_SHA256: ${{ inputs.candidate_attestation_sha256 }}
     steps:
       - name: Check out the exact trusted workflow source with complete tag history
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -58,6 +74,9 @@ jobs:
           ref: ${{ github.sha }}
           fetch-depth: 0
           persist-credentials: false
+      - name: Install exact candidate schema validator dependencies before publication verification
+        working-directory: tools/release-validation
+        run: npm ci --ignore-scripts --no-audit
       - name: Require exact full CI and all stable source prerequisites
         id: source
         run: python3 tools/release-native.py prepare "$RUNNER_TEMP/native-source-bundle"

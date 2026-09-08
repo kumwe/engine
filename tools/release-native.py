@@ -144,6 +144,66 @@ class Publisher:
             raise ReleaseError('Only a recorded stable native version may publish.')
         return record
 
+    def candidate_gate(self):
+        if self.repo != 'kumwe/engine':
+            return
+        result = self.command('node', str(self.root / 'tools/release-validation/candidate-gate.mjs'),
+                              str(self.root), self.sha)
+        proof = json.loads(result.stdout)
+        if proof.get('status') != 'passed' or proof.get('merged_engine_commit') != self.sha:
+            raise ReleaseError('The external candidate gate did not verify this merged Engine source.')
+
+    def release_notes(self, record):
+        source_url = f'https://github.com/{self.repo}/blob/{self.sha}'
+        lines = [f"Source release {record['identity']['version']} from `{self.sha}`.", '',
+                 'The attached source archive, complete SPDX inventory and checksums have verified '
+                 'GitHub OIDC source provenance. Independent published-release verification remains separate.', '',
+                 f'[Release procedure]({source_url}/docs/releasing.md) · '
+                 f'[Security policy]({source_url}/SECURITY.md) · [Source changes]({source_url}/CHANGELOG.md)', '',
+                 '### Exact dependencies and semantic contracts', '']
+        for dependency in record.get('dependencies', []):
+            version = dependency.get('version') or dependency.get('release') or 'recorded source'
+            lines.append(f"- `{dependency.get('repository', 'unknown')}` {version}, source `{dependency['commit']}`.")
+            for field in ('archive_sha256', 'api_digest', 'capability_digest', 'service_map_digest'):
+                if dependency.get(field):
+                    lines.append(f"  - {field}: `{dependency[field]}`.")
+            corpora = dict(dependency.get('corpus_digests', {}))
+            if dependency.get('corpus_path'):
+                corpora[dependency['corpus_path']] = dependency['corpus_sha256']
+            for corpus, digest in sorted(corpora.items()):
+                lines.append(f'  - Corpus `{corpus}`: `{digest}`.')
+        baseline = record.get('computation_baseline')
+        if baseline:
+            lines += ['', f"Portable-only prerequisite: `{baseline['repository']}` {baseline['version']} "
+                      f"at `{baseline['commit']}`; its exact manifests/corpora and independent evidence are retained in `source.json`."]
+        if self.repo == 'kumwe/engine':
+            capabilities = json.loads((self.root / 'resources/capabilities.json').read_text()) if (self.root / 'resources/capabilities.json').is_file() else {}
+            lines += ['', '### Capabilities and limits', '',
+                      'C ABI 1 retains its fixed header, twelve exports, status codes and ownership contract. '
+                      'The bounded protocols require explicit profiles, corpus identities and resource budgets.', '',
+                      *['- `' + profile + '`' for profile in capabilities.get('capabilities', [])], '',
+                      f'[Exact ABI limits and ownership]({source_url}/docs/abi.md) · '
+                      f'[Supported platforms and responsibilities]({source_url}/CHARTER.md)', '',
+                      'Historical draft/0.0.0 semantic profile tokens retain their original meaning. '
+                      'Database, authorization, normalization outside the declared profiles, rendering and delivery stay with their owners.']
+        else:
+            lines += ['', '### Supported binding and limits', '',
+                      'PHP 8.5 NTS, Linux x86_64/glibc, exact PHP patch and configured build tuple. '
+                      'A Runtime owns at most 64 plans and 16 MiB encoded source; released and foreign IDs refuse. '
+                      'Other PHP versions, ZTS and platforms are unsupported.', '',
+                      f'[Complete native PHP API]({source_url}/resources/api/v1.json) · '
+                      f'[Handle ownership and transport limits]({source_url}/docs/memory.md)']
+        lines += ['', 'Whole-boundary measurements retain slower native workloads as well as speedups. '
+                  'Source qualification does not claim universal acceleration, App integration or production capacity.', '',
+                  '### Source changes and security', '']
+        changelog = self.root / 'CHANGELOG.md'
+        if changelog.is_file():
+            text = changelog.read_text()
+            section = re.search(r'^## Unreleased\s*\n(.*?)(?=^## |\Z)', text, flags=re.M | re.S)
+            if section:
+                lines.append(section.group(1).strip())
+        return '\n'.join(lines).rstrip() + '\n'
+
     def tag_commit(self, tag: str):
         observed = self.api('git/ref/tags/' + tag, missing=True)
         if observed is None:
@@ -234,6 +294,8 @@ class Publisher:
         already_published = existing is not None and existing.get('draft') is False
         if already_published:
             self.verify_published(tag, existing, expected_version=version)
+        else:
+            self.candidate_gate()
         return {'version': version, 'tag': tag, 'already_published': str(already_published).lower()}
 
     def publish(self, destination: Path, signature: Path):
@@ -244,6 +306,7 @@ class Publisher:
         if existing is not None and existing.get('draft') is False:
             self.verify_published(tag, existing, expected_version=version)
             return
+        self.candidate_gate()
         self.verify_signatures(destination, signature, self.sha)
         target = self.tag_commit(tag)
         if target is not None and target != self.sha:
@@ -261,8 +324,7 @@ class Publisher:
         if existing is None:
             existing = self.api('releases', method='POST', payload={
                 'tag_name': tag, 'target_commitish': self.sha, 'name': tag, 'draft': True, 'prerelease': False,
-                'body': ('Verified stable source, complete SPDX inventory, reproducible checksums and GitHub OIDC '
-                         'build provenance. See docs/releasing.md. Independent release verification remains separate.'),
+                'body': self.release_notes(record),
             })
         self.require_draft(existing, tag)
         release_id = existing.get('id')
