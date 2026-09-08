@@ -4,7 +4,7 @@
   "completion_claim": false,
   "abi_frozen": true,
   "computation_baseline": {
-    "state": "release-verified",
+    "state": "awaiting-corrected-release-attestation",
     "repository": "kumwe/computation",
     "release": "v0.1.1",
     "version": "0.1.1",
@@ -20,13 +20,7 @@
       "php-64bit": "^8.5"
     },
     "native_bindings_present": false,
-    "attestation": {
-      "uri": "https://github.com/kumwe/extension-sdk/actions/runs/34250329345/artifacts/10065724495",
-      "sha256": "0b92a8f8d87eb33764be035962cb15a5b3a2a5a276c81e4a43961a53422d230c",
-      "member": "RELEASE-ATTESTATION.yaml",
-      "member_sha256": "3e6f2ada771266adfaa6575eaf052bb3712e8a9ea3add2a4ca95819b7987bd08",
-      "workflow_run": "https://github.com/kumwe/extension-sdk/actions/runs/34250329345"
-    }
+    "attestation": null
   },
   "modules": [
     {
@@ -56,7 +50,7 @@
         "kumwe/business-definition",
         "kumwe/computation"
       ],
-      "status": "draft_implemented",
+      "status": "implemented_awaiting_release_verification",
       "required": "Owner formula/condition/invariant envelope, ordered findings, corpus and verified releases",
       "profile": "formula-draft/1",
       "corpus": "corpus/definition/formula-v1.json",
@@ -64,13 +58,14 @@
       "release_verified": false,
       "semantic_release": {
         "repository": "kumwe/business-definition",
-        "version": "0.1.0",
-        "tag": "v0.1.0",
-        "commit": "f3b86f8af1469066637fd1b4b8f71c4df634adf8",
+        "version": "0.1.2",
+        "tag": "v0.1.2",
+        "commit": "1cb59229f311067e8cfdd773a34e34cfeb501791",
         "corpus_path": "resources/corpus/formula-v1.json",
         "corpus_sha256": "11033679b018fdc9a192e954ef11089444a00a1d89c6279d3c192be9252cf42f",
         "publication": "published",
-        "external_attestation": null
+        "external_attestation": null,
+        "archive_sha256": "68de06e87d006f48315402018325a134e51c0b1d6663871ff8c597fe90a10872"
       }
     },
     {
@@ -138,7 +133,7 @@
       "owners": [
         "kumwe/canonical-json"
       ],
-      "status": "draft_implemented",
+      "status": "implemented_awaiting_release_verification",
       "required": "Exact verified canonical profile and corpus, after formula/document milestone",
       "profile": "kumwe-canonical-json/generic-v1",
       "corpus": "corpus/canonical/generic-v1.json",
@@ -152,7 +147,8 @@
         "corpus_path": "resources/corpus/v1.json",
         "corpus_sha256": "84d21b12e7a2bfd752356d9a6e664bcb332e209d19017e7634e7485a4fa4e250",
         "publication": "published",
-        "external_attestation": null
+        "external_attestation": null,
+        "archive_sha256": "06ee813d1b917d32563670fa113f21931f85b1e3b282aed8c8a1cef364812c09"
       }
     }
   ]

@@ -29,6 +29,8 @@ jobs:
       CXX: ${{ matrix.cxx }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DKUMWE_ENGINE_BENCHMARKS=ON
       - run: cmake --build build --parallel 4
       - run: ctest --test-dir build --output-on-failure
@@ -56,6 +58,8 @@ jobs:
       UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DKUMWE_ENGINE_SANITIZERS=ON -DKUMWE_ENGINE_FUZZ=ON
       - run: cmake --build build --parallel 4
       - run: ctest --test-dir build --output-on-failure
@@ -64,7 +68,7 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
-          name: fuzz-regressions-${{ github.sha }}
+          name: fuzz-regressions-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             artifacts/fuzz-seeds
             artifacts/fuzz-regressions
@@ -78,6 +82,8 @@ jobs:
       TSAN_OPTIONS: halt_on_error=1:exitcode=97
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Record compiler and configure TSan shadow address range
         run: |
           clang --version
@@ -96,7 +102,7 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
-          name: thread-sanitizer-${{ github.sha }}
+          name: thread-sanitizer-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             build-tsan/CMakeCache.txt
             build-tsan/Testing/Temporary/LastTest.log
@@ -104,7 +110,10 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-      - run: bash tools/check-archive.sh
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Build exact archive consumer with networking disabled
+        run: sudo unshare --net --setuid "$(id -u)" --setgid "$(id -g)" -- bash tools/check-archive.sh
       - run: bash tools/check-fault-seeds.sh
       - run: node tools/source-sbom.mjs > artifacts/source.spdx.json
       - name: Verify deterministic candidate source-release preparation
@@ -114,7 +123,7 @@ jobs:
           python3 tools/release-source.py verify "$RUNNER_TEMP/native-source-bundle" --expected-commit "$(git rev-parse HEAD)"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: development-source-${{ github.sha }}
+          name: development-source-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             artifacts/kumwe-engine-source.tar.gz
             artifacts/SHA256SUMS
