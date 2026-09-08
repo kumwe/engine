@@ -46,7 +46,7 @@ target:
   artifact_identity: "CMake Kumwe::Engine"
   canonical_namespace_or_abi: "kumwe::engine / kumwe_engine_v1_"
   branch: "codex/extraction-readiness-20260907"
-  pull_request: "https://github.com/kumwe/engine/pull/6"
+  pull_request: "https://github.com/kumwe/engine/pull/7"
 ownership:
   responsibility: "Standalone exact decimal, compiled formula/document/report execution and generic canonical encoding/digests through one owned C ABI."
   non_responsibilities:
