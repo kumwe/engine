@@ -1,6 +1,6 @@
 # Kumwe Engine
 
-Standalone C++20 execution engine with a coarse C ABI. The development candidate implements exact
+Standalone C++20 execution engine with a coarse C ABI. The Engine 1.0.0 source candidate implements exact
 decimals, immutable formula plans, complete normalized document preparation and validation,
 report materialization, and generic canonical encoding with streaming SHA-256.
 
@@ -28,8 +28,9 @@ Read [CHARTER](CHARTER.md), [ABI](docs/abi.md), [architecture](docs/architecture
 [consumer integration](docs/consumer.md), [testing/ownership](docs/testing.md),
 [security](SECURITY.md), [benchmarking](docs/benchmarking.md) and [release gates](docs/releasing.md).
 
-All five modules have executable owner-corpus tests. ABI 1 remains a development proposal;
-Engine 1.0.0, immutable release verification and App acceleration are not claimed. The final exact
-source archive must pass the independent binding cross-build before release review.
+All five modules have executable owner-corpus tests. ABI 1 is frozen with an independent
+fixed-header dynamic consumer regression gate. Engine 1.0.0 publication and immutable release
+verification remain gated on verified semantic inputs and the exact independent binding
+cross-build. App acceleration acceptance remains a separate measured integration outcome.
 
 The explicit PCRE2 dependency and normalized validator/decimal transport are documented in [document validators](docs/document-validators.md). Upstream maintained10.42 security backports, per-file hashes and licenses are packaged; installation never selects a system PCRE library.

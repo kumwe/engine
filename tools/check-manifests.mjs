@@ -21,7 +21,8 @@ const abiManifest = JSON.parse(read('resources/abi-manifest.json'));
 assert.equal(abiManifest.schema, 'kumwe-engine-abi/v1');
 assert.equal(abiManifest.abi_major, 1);
 assert.equal(abiManifest.abi_minor, 0);
-assert.equal(abiManifest.status, 'unstable-development');
+assert.ok(['unstable-development', 'frozen'].includes(abiManifest.status));
+const frozenAbi = abiManifest.status === 'frozen';
 assert.equal(abiManifest.paths_relative_to, 'source_archive_root');
 assert.deepEqual(Object.keys(abiManifest.files), ['include/kumwe/engine/engine.h', 'resources/abi-symbols.txt', 'resources/abi-symbols.map', 'docs/abi.md']);
 for (const [path, digest] of Object.entries(abiManifest.files)) {
@@ -30,7 +31,7 @@ for (const [path, digest] of Object.entries(abiManifest.files)) {
 }
 const abiManifestDigest = createHash('sha256').update(readFileSync('resources/abi-manifest.json')).digest('hex');
 const statuses = [...read('include/kumwe/engine/engine.h').matchAll(/#define KUMWE_ENGINE_V1_(\w+) UINT32_C\((\d+)\)/g)].map(match => [match[1],Number(match[2])]);
-assert.deepEqual(statuses, [['OK',0],['INVALID_INPUT',1],['UNSUPPORTED_VERSION',2],['INCOMPATIBLE_CAPABILITY',3],['INCOMPATIBLE_CORPUS',4],['INVALID_PROGRAM',5],['EXHAUSTED_LIMIT',6],['CANCELLED',7],['INTERNAL_FAILURE',8]], 'Draft status registry must change deliberately');
+assert.deepEqual(statuses, [['OK',0],['INVALID_INPUT',1],['UNSUPPORTED_VERSION',2],['INCOMPATIBLE_CAPABILITY',3],['INCOMPATIBLE_CORPUS',4],['INVALID_PROGRAM',5],['EXHAUSTED_LIMIT',6],['CANCELLED',7],['INTERNAL_FAILURE',8]], 'Frozen ABI 1 status registry must not change');
 const handoff = read('MIGRATION-HANDOFF.md').match(/\n  public_manifests:\n([\s\S]*?)\n  intentionally_excluded:/)?.[1];
 assert.ok(handoff, 'Native handoff must bind the public manifests');
 const handoffEntries = [...handoff.matchAll(/path: \"([^\"]+)\"\n\s+sha256: \"([a-f0-9]{64})\"/g)];
@@ -58,7 +59,7 @@ function checkOwnership(data) {
   assert.ok(Array.isArray(data.architecture) && data.architecture.length > 0);
   assert.match(data.host.baseline, /^[a-f0-9]{40}$/);
   assert.ok(nonempty(data.host.repository));
-  assert.ok(Array.isArray(data.host.transfers) && data.host.transfers.length === 0, 'This draft has no App adoption');
+  assert.ok(Array.isArray(data.host.transfers) && data.host.transfers.length === 0, 'This native package has no App adoption');
   assert.ok(Array.isArray(data.host.retained_responsibilities) && data.host.retained_responsibilities.length > 0);
   assert.ok(data.host.retained_responsibilities.every(nonempty));
 }
@@ -87,18 +88,20 @@ try {
   assert.throws(() => checkOwnership(changed), 'Intermediate symlink cannot establish repository test ownership');
 } finally { rmSync(fixture, {recursive:true,force:true}); }
 const contracts = JSON.parse(read('resources/contracts.json'));
-assert.equal(contracts.completion_claim, false); assert.equal(contracts.abi_frozen, false);
+assert.equal(contracts.completion_claim, false); assert.equal(contracts.abi_frozen, frozenAbi);
 assert.deepEqual(contracts.modules.map(module => module.module), ['decimal','definition_vm','document_batch','report','canonical_streaming']);
 const decimal = contracts.modules[0];
 assert.equal(createHash('sha256').update(readFileSync(decimal.corpus)).digest('hex'), decimal.corpus_sha256);
 const capabilities = JSON.parse(read('resources/capabilities.json'));
 assert.equal(capabilities.corpus_sha256, decimal.corpus_sha256);
 assert.equal(capabilities.semantic_source, decimal.semantic_source);
-assert.equal(capabilities.semantic_release_verified, false);
+assert.equal(capabilities.abi_status, abiManifest.status);
+assert.equal(capabilities.semantic_release_verified, contracts.computation_baseline?.state === 'release-verified'
+  && contracts.modules.every(module => module.release_verified === true));
 assert.deepEqual(capabilities.capabilities, ['decimal-batch-draft/1', ...contracts.modules.slice(1).flatMap(module => module.profiles ?? [module.profile])]);
 for (const module of contracts.modules) {
   assert.equal(createHash('sha256').update(readFileSync(module.corpus)).digest('hex'), module.corpus_sha256);
-  assert.equal(module.release_verified, false);
+  assert.equal(typeof module.release_verified, 'boolean');
   const release = module.semantic_release;
   assert.ok(release && typeof release === 'object', `Missing published semantic coordinate: ${module.module}`);
   assert.ok((module.owners ?? [module.owner]).includes(release.repository));
@@ -108,7 +111,13 @@ for (const module of contracts.modules) {
   assert.match(release.corpus_path, /^resources\/(?:conformance|corpus)\/[a-z0-9-]+\.(?:json|tsv)$/);
   assert.equal(release.corpus_sha256, module.corpus_sha256);
   assert.equal(release.publication, 'published');
-  assert.equal(release.external_attestation, null, 'Source provenance must not invent independent release acceptance');
+  if (module.release_verified) {
+    assert.ok(release.external_attestation && typeof release.external_attestation === 'object');
+    assert.match(release.external_attestation.uri, /^https:\/\/[^\s/]+\/[^\s]+$/);
+    assert.match(release.external_attestation.sha256, /^[a-f0-9]{64}$/);
+  } else {
+    assert.equal(release.external_attestation, null, 'Unverified source cannot invent release acceptance');
+  }
 }
 assert.deepEqual(capabilities.corpora.map(corpus => corpus.path), ownership.conformance.corpora,
   'Every advertised corpus must have exactly one conformance owner');
@@ -141,7 +150,7 @@ for (const contract of capabilities.computation.contracts) {
 const runtime = JSON.parse(execFileSync(resolve(process.argv[2] ?? 'build', 'kumwe-engine-conformance'), [], {encoding:'utf8'}));
 assert.match(runtime.computation.build_digest, /^[a-f0-9]{64}$/);
 assert.equal(runtime.completion_claim, false);
-assert.equal(runtime.semantic_release_verified, false);
+assert.equal(runtime.semantic_release_verified, capabilities.semantic_release_verified);
 assert.equal(runtime.abi_major, abiManifest.abi_major);
 assert.equal(runtime.abi_minor, abiManifest.abi_minor);
 assert.equal(runtime.abi_manifest_sha256, abiManifestDigest);

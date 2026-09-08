@@ -28,13 +28,17 @@ class AdmissionTest(unittest.TestCase):
         metadata = {'machine': {}, 'php_sha256': 'php', 'corpus_hashes': {'corpus': 'fixed'},
                     'harness_hashes': {'worker.php': 'workload'},
                     'worker_identity': {'php': {key: 'fixed' for key in
-                        ('php', 'php_binary_sha256', 'icu', 'sources', 'conversion_reference')},
+                        ('php', 'php_binary_sha256', 'icu', 'sources', 'conversion_reference', 'memory_limit')},
                     'native': {'capabilities': {'binding_build': {key: 'fixed' for key in
                         ('architecture', 'compiler', 'engine_flags', 'extension_flags', 'libc',
                          'sanitizers', 'thread_model', 'zend_module_api', 'debug')}}}}}
         runner.require_comparable_metadata(metadata, copy.deepcopy(metadata))
         altered = copy.deepcopy(metadata)
         altered['harness_hashes']['worker.php'] = 'changed-work'
+        with self.assertRaises(RuntimeError):
+            runner.require_comparable_metadata(metadata, altered)
+        altered = copy.deepcopy(metadata)
+        altered['worker_identity']['php']['memory_limit'] = 'different'
         with self.assertRaises(RuntimeError):
             runner.require_comparable_metadata(metadata, altered)
         for key in ('engine_flags', 'compiler', 'sanitizers'):

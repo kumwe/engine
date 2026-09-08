@@ -35,6 +35,11 @@ final serialization. Cold timings include host definition construction, native c
 release. Formula/document/preparation workloads use native batches of at most 64 documents. Report
 materialization uses the complete row set in one call. These boundaries are part of the measured cost.
 
+Both PHP workers use the same finite 1GiB memory budget. The widest document oracle and final
+serialization exceed the common 128MiB CLI default; this is a benchmark setting, not an Engine
+execution-limit change. Worker identity records the effective setting, and comparisons reject a
+changed budget. PHP fatal diagnostics go to the retained worker stderr files.
+
 Current bindings advertise `opaque-compiled-results/1`. The caller requests `result_format: opaque`
 when available, matching Computation's consumption of the original `result_json` bytes; the caller
 still decodes those bytes and performs identical final serialization. Earlier comparison modules

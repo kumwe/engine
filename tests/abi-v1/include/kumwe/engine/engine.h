@@ -9,7 +9,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-/* Frozen ABI 1: see docs/abi.md for ownership, bounds, framing and compatibility. */
+/* Draft ABI: see docs/abi.md for ownership, bounds, framing and compatibility. */
 typedef struct kumwe_engine_v1_view {
     uint32_t struct_size;
     uint32_t abi_major;

@@ -1,0 +1,11 @@
+{
+  "schema": "kumwe-abi-client-baseline/v1",
+  "abi_major": 1,
+  "baseline_source_commit": "db28497ee2bc083a8eaba76574c4b0f9af425daf",
+  "baseline_source_repository": "https://github.com/kumwe/engine",
+  "purpose": "Frozen initial ABI 1 consumer/header; no earlier stable release is claimed.",
+  "files": {
+    "tests/abi-v1/include/kumwe/engine/engine.h": "ec031a4636a87ebc80e653513df1a8db228efc1d500c25c122702c69389280ee",
+    "tests/abi-v1/client.c": "062aa4425bad85919f77783cc80dab31800b596fc8bcc66b0600b92f7f8c15ec"
+  }
+}

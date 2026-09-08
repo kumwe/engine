@@ -5,9 +5,10 @@ conformance replay, fuzzing, sanitizers and diagnostic measurement. Its approved
 contains exact decimal, compiled definition VM, whole-document batch, report and canonical
 streaming modules, sharing bounded values, plans and buffers.
 
-The development candidate implements all five modules against frozen owner semantics, including
+The Engine 1.0.0 source candidate implements all five modules against frozen owner semantics, including
 typed normalized document values, preparation, computed-field normalization and ordered findings.
-It does not claim an ABI freeze, stable release or measured App performance improvement.
+ABI 1 is frozen with a separately preserved header/client compatibility baseline. Publication,
+independent release verification and measured App improvement require their separate evidence.
 
 Semantic meaning belongs to the framework package owning each contract. Exact published source
 coordinates and matching corpus hashes are recorded in resources/contracts.json; independent
@@ -20,7 +21,8 @@ The diagnostic executable is a test tool. Installed consumers receive a static C
 public C header; the internal C++ implementation has no stability promise.
 
 Development targets are 64-bit Linux GCC/Clang and macOS AppleClang, tested in CI. Windows,
-32-bit targets and stable binary ABI compatibility are not claimed. Linux TSan covers the shared
+32-bit targets are not supported. ABI 1 fixes the documented C boundary on supported targets;
+Linux additionally tests an independent frozen C11 client against the candidate dynamic library. Linux TSan covers the shared
 immutable-plan test; the separate PHP binding runs its own candidate compatibility matrix. Every supported source consumer builds offline from the pinned dependency source closure.
 
 All native behavior, boundary, conformance, architecture, lifecycle and robustness tests belong
@@ -28,7 +30,7 @@ here. Binding tests own PHP marshalling/lifecycle parity; App retains only compo
 authority, provisioning/recovery, acceptance and measured full-path performance evidence.
 
 First App-eligible release is Engine 1.0.0 with frozen ABI 1, all five modules and the complete
-v2 release gates. Publication is separate from the development candidate. Modules
+v2 release gates. Publication is separate from source-candidate readiness. Modules
 remain in one repository until an independent consumer, independent cadence, stable contract and
 measured benefit justify a split.
 

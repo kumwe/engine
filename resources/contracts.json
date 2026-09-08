@@ -1,8 +1,8 @@
 {
   "schema": "kumwe-engine-contract-matrix/v1",
-  "state": "draft_runtime_kernels",
+  "state": "awaiting-semantic-release-verification",
   "completion_claim": false,
-  "abi_frozen": false,
+  "abi_frozen": true,
   "computation_baseline": {
     "state": "unresolved",
     "repository": "kumwe/computation",

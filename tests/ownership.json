@@ -170,7 +170,8 @@
   },
   "architecture": [
     "tools/check-architecture.sh",
-    "tools/check-symbols.sh"
+    "tools/check-symbols.sh",
+    "tests/abi-v1/baseline.json"
   ],
   "host": {
     "repository": "kumwe/app",
