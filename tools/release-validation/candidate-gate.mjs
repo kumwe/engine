@@ -15,6 +15,19 @@ const requiredJobs = ['source-release-preparation', 'binding', 'address-undefine
 const requireFact = (condition, reason) => { if (!condition) throw new Error(reason); };
 const commit = value => typeof value === 'string' && /^[a-f0-9]{40}$/.test(value);
 
+export function semanticInputs(contracts) {
+  const inputs = contracts.modules.flatMap(module => {
+    const r = module.semantic_release;
+    return [...new Set([r.corpus_sha256, r.api_digest, r.capability_digest, r.service_map_digest,
+      ...Object.values(r.corpus_digests || {})].filter(Boolean))].map(digest => ({ owner: r.repository, version: r.version, sha256: digest }));
+  });
+  const baseline = contracts.computation_baseline;
+  for (const digest of new Set([baseline.api_digest, baseline.capability_digest, baseline.service_map_digest,
+    ...Object.values(baseline.corpus_digests)].filter(Boolean)))
+    inputs.push({ owner: baseline.repository, version: baseline.version, sha256: digest });
+  return inputs;
+}
+
 export function candidateReference(value) {
   requireFact(value && Object.keys(value).sort().join(',') === 'sha256,uri', 'Candidate reference must contain only uri and sha256.');
   requireFact(typeof value.uri === 'string' && /^https:\/\/raw\.githubusercontent\.com\/kumwe\/extension-sdk\/[a-f0-9]{40}\/evidence\/[A-Za-z0-9_./-]+\.ya?ml$/.test(value.uri)
@@ -167,14 +180,7 @@ export async function verifyCandidate(root, mergedCommit) {
   }
   actual.artifact = await request(`https://api.github.com/repos/kumwe/kumwe-engine/actions/artifacts/${artifactMatch[2]}`);
   const contracts = JSON.parse(fs.readFileSync(path.join(root, 'resources/contracts.json')));
-  actual.semanticInputs = contracts.modules.flatMap(module => {
-    const r = module.semantic_release;
-    return [...new Set([r.corpus_sha256, r.api_digest, r.capability_digest, r.service_map_digest,
-      ...Object.values(r.corpus_digests || {})].filter(Boolean))].map(digest => ({ owner: r.repository, version: r.version, sha256: digest }));
-  });
-  const baseline = contracts.computation_baseline;
-  for (const digest of new Set([baseline.api_digest, baseline.capability_digest, ...Object.values(baseline.corpus_digests)]))
-    actual.semanticInputs.push({ owner: baseline.repository, version: baseline.version, sha256: digest });
+  actual.semanticInputs = semanticInputs(contracts);
   validateObserved(record, actual);
   return { schema: 'kumwe-candidate-publication-gate/v1', status: 'passed', reference,
     tested_engine_commit: engine.tested_commit, tested_engine_tree: engine.tested_tree,

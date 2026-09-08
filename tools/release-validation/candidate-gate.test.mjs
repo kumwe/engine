@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {candidateReference, referenceFromPulls, validateRecord, validateObserved} from './candidate-gate.mjs';
+import {candidateReference, referenceFromPulls, validateRecord, validateObserved, semanticInputs} from './candidate-gate.mjs';
 const engine='a'.repeat(40),tree='b'.repeat(40),binding='c'.repeat(40),bindingTree='d'.repeat(40),sha='e'.repeat(64);
 const reference={uri:`https://raw.githubusercontent.com/kumwe/extension-sdk/${'f'.repeat(40)}/evidence/native/candidate.yaml`,sha256:sha};
 const block='<!-- kumwe-engine-candidate/v1\n'+JSON.stringify(reference)+'\n-->';
@@ -26,6 +26,16 @@ test('valid schema and original candidate identities survive an identical-tree m
 });
 test('only immutable exact SDK evidence coordinates qualify',()=>{
  for(const value of [null,{}, {...reference,uri:reference.uri.replace('f'.repeat(40),'main')}, {...reference,uri:reference.uri.replace('kumwe/extension-sdk','other/extension-sdk')}, {...reference,uri:reference.uri.replace('/native/','/../')},{...reference,sha256:'pending'},{...reference,extra:true}])assert.throws(()=>candidateReference(value));
+});
+test('portable service-map identity cannot be omitted from an otherwise complete candidate record',()=>{
+ const {record,actual}=fixture();
+ const serviceDigest='1'.repeat(64);
+ actual.semanticInputs=semanticInputs({modules:[],computation_baseline:{repository:'kumwe/computation',version:'0.1.1',
+  api_digest:sha,capability_digest:sha,service_map_digest:serviceDigest,corpus_digests:{'resources/conformance/v1.json':sha}}});
+ record.semantic_inputs=[{owner:'kumwe/computation',version:'0.1.1',manifest_or_corpus_sha256:sha}];
+ assert.throws(()=>validateObserved(record,actual),/Candidate semantic evidence/);
+ record.semantic_inputs.push({owner:'kumwe/computation',version:'0.1.1',manifest_or_corpus_sha256:serviceDigest});
+ validateObserved(record,actual);
 });
 test('missing, unrelated, duplicated or malformed merged PR references cannot authorize publication',()=>{
  const good={merged_at:'2026-09-08',merge_commit_sha:engine,base:{ref:'main',repo:{full_name:'kumwe/engine'}},head:{sha:engine,repo:{full_name:'kumwe/engine'}},body:block};
