@@ -13,36 +13,36 @@ source:
     capability_index_sha256: null
   semantic_inputs:
   - owner: kumwe/conversion
-    version_or_commit: v0.1.3 at e95d5633722929e77b73005f8c44cfe4d99ac8c3
+    version_or_commit: v0.1.5 at b291f3a31314644fd88150dc9a9e911fe0617fe7
     manifest_or_corpus: resources/conformance/decimal-v1.tsv (published source; schema-valid durable independent
-      release attestation pending)
+      release attestation recorded in resources/contracts.json)
     sha256: 635db251898707828e24f12b1abb672273552f5f633186a725cc9f50ac08140c
   - owner: kumwe/business-definition
     version_or_commit: v0.1.2 at 1cb59229f311067e8cfdd773a34e34cfeb501791
     manifest_or_corpus: resources/corpus/formula-v1.json (published source; schema-valid durable independent release
-      attestation pending)
+      attestation recorded in resources/contracts.json)
     sha256: 11033679b018fdc9a192e954ef11089444a00a1d89c6279d3c192be9252cf42f
   - owner: kumwe/record-model
-    version_or_commit: v0.1.0 at d7955e6beae2c3a9fa30052aea5ec3478af7dffc
-    manifest_or_corpus: resources/conformance/document-profile-v1.json (published source; schema-valid durable independent
-      release attestation pending)
+    version_or_commit: v0.1.3 at 8d20cf75ee6ab915102bbf6a17567087971e9dfe
+    manifest_or_corpus: resources/conformance/document-profile-v1.json (published source; schema-valid durable
+      independent release attestation recorded in resources/contracts.json)
     sha256: 84b6c2e55ae591c921536aa755cbb5a9a40a7a19847fe47415e55dce2614c177
   - owner: kumwe/reporting
-    version_or_commit: v0.1.0 at d8cae56726170d39cd6e95e45b0ffcb085920849
-    manifest_or_corpus: resources/conformance/report-materialization-v1.json (published source; schema-valid durable
-      independent release attestation pending)
+    version_or_commit: v0.1.3 at b521b3113bd97afc2de6ab74fcb71a36fe7d0890
+    manifest_or_corpus: resources/conformance/report-materialization-v1.json (published source; independent release
+      verification blocked by the missing Access Control package registration)
     sha256: 975116dc897a0bfdee4a08f9065eb10ccfec06a32f4eb93a48015b08af408c01
   - owner: kumwe/canonical-json
     version_or_commit: v0.1.1 at e7006a2580a49a1c8ab507b0d7b9c3403b4f9f58
     manifest_or_corpus: resources/corpus/v1.json (published source; schema-valid durable independent release attestation
-      pending)
+      recorded in resources/contracts.json)
     sha256: 84d21b12e7a2bfd752356d9a6e664bcb332e209d19017e7634e7485a4fa4e250
   examined_dependencies:
-  - Conversion v0.1.3 ExactDecimal, ExactDecimalArithmetic and six Money/Quantity rounding modes; no PHP source
-    copied.
-  - Computation portable-only Phase 1A version 0.1.1 at fc9d049f8b675c8e19fd1672d49b5e206c9ad52a is published. Its
-    exact archive, API, capability and corpus facts remain recorded; schema-valid durable independent release attestation
-    is pending.
+  - Conversion v0.1.5 ExactDecimal, ExactDecimalArithmetic and six Money/Quantity rounding modes; unchanged corpus,
+    no PHP source copied.
+  - Computation portable-only Phase 1A version 0.1.1 at fc9d049f8b675c8e19fd1672d49b5e206c9ad52a is independently
+    verified. Its exact archive, canonical manifests, portable corpus and schema-valid durable release attestation
+    are recorded in resources/contracts.json.
   active_related_pull_requests:
   - https://github.com/kumwe/kumwe-engine/pull/4
 target:
@@ -59,8 +59,8 @@ ownership:
   - Database, network, authorization, transactions, trust, rendering and delivery.
   allowed_dependency_ceiling:
   - C++20 standard library and exact language-neutral semantic corpus data.
-  - Statically embedded maintained PCRE2 10.42 source closure and licensed Unicode 17 casing / 15.1 NFC data; exact
-    hashes, no build downloads or system selection.
+  - Statically embedded maintained PCRE2 10.42 source closure and licensed Unicode 17 casing / 15.1 NFC data;
+    exact hashes, no build downloads or system selection.
   implementation_owner: kumwe/engine
   next_consumer: kumwe/kumwe-engine
   public_manifests:
@@ -69,16 +69,17 @@ ownership:
   - path: "resources/abi-symbols.txt"
     sha256: "62cf59b8d6feb369f0d801b59b69796ea569570177e02b903c0bec6b01e04d21"
   - path: "resources/capabilities.json"
-    sha256: "37cb2409bf96234993cf7ff2f2b8a46d17cb699aac7eb47374bf9b0a1811083f"
+    sha256: "e796bb0474d57d04aaaacd973845aa6f5fe3bb98c489a985f24e36c62ecf2c16"
   - path: "resources/contracts.json"
-    sha256: "83e75d028b3d7159ffc5fe494269cb68abfda8b1c7c551a19854d218c7907c5c"
+    sha256: "c9972276ea1e62b4d681318dd48f12476adcc95c56d46fc549e69f7e1d775188"
   - path: "tests/ownership.json"
     sha256: "2a8b54da277777706b6c65430cbf08d4e24b28b313a57e2f4f29212929aae4e3"
   - path: "include/kumwe/engine/engine.h"
     sha256: "d7ebdaa0c03bca629a5370ebbcdd6297ea6e99afa0229c9c13c2907676a94b2f"
   intentionally_excluded:
   - No App classes, dependency adoption or test removal.
-  - No PHP binding implementation is owned here; the separate kumwe/kumwe-engine candidate consumes this exact source.
+  - No PHP binding implementation is owned here; the separate kumwe/kumwe-engine candidate consumes this exact
+    source.
 framework_php: null
 native_cpp:
   cpp_namespace: kumwe::engine
@@ -108,8 +109,8 @@ native_cpp:
     - kumwe_engine_v1_cancellation_request
     - kumwe_engine_v1_cancellation_release
     structs:
-    - 'kumwe_engine_v1_view: naturally aligned 24 bytes on supported 64-bit targets; struct_size 24..4096 and ABI
-      1.'
+    - 'kumwe_engine_v1_view: naturally aligned 24 bytes on supported 64-bit targets; struct_size 24..4096 and
+      ABI 1.'
     enums_and_codes:
     - 0 success; 1 invalid_input; 2 unsupported_version; 3 incompatible_capability; 4 incompatible_corpus; 5 invalid_program;
       6 exhausted_limit; 7 cancelled; 8 internal_failure.
@@ -152,27 +153,27 @@ native_cpp:
   - kumwe-canonical-json/generic-v1
   corpora:
   - owner: kumwe/conversion
-    version: 0.1.3 at e95d5633722929e77b73005f8c44cfe4d99ac8c3; release attestation pending
+    version: 0.1.5 at b291f3a31314644fd88150dc9a9e911fe0617fe7; independently release-verified
     profile: decimal-batch-draft/1
     sha256: 635db251898707828e24f12b1abb672273552f5f633186a725cc9f50ac08140c
   - owner: kumwe/business-definition
-    version: 0.1.2 at 1cb59229f311067e8cfdd773a34e34cfeb501791; release attestation pending
+    version: 0.1.2 at 1cb59229f311067e8cfdd773a34e34cfeb501791; independently release-verified
     profile: formula-draft/1
     sha256: 11033679b018fdc9a192e954ef11089444a00a1d89c6279d3c192be9252cf42f
   - owner: kumwe/record-model
-    version: 0.1.0 at d7955e6beae2c3a9fa30052aea5ec3478af7dffc; release attestation pending
+    version: 0.1.3 at 8d20cf75ee6ab915102bbf6a17567087971e9dfe; independently release-verified
     profile: normalized-document-draft/1
     sha256: 84b6c2e55ae591c921536aa755cbb5a9a40a7a19847fe47415e55dce2614c177
   - owner: kumwe/reporting
-    version: 0.1.0 at d8cae56726170d39cd6e95e45b0ffcb085920849; release attestation pending
+    version: 0.1.3 at b521b3113bd97afc2de6ab74fcb71a36fe7d0890; release attestation pending
     profile: report-materialization-draft/1
     sha256: 975116dc897a0bfdee4a08f9065eb10ccfec06a32f4eb93a48015b08af408c01
   - owner: kumwe/canonical-json
-    version: 0.1.1 at e7006a2580a49a1c8ab507b0d7b9c3403b4f9f58; release attestation pending
+    version: 0.1.1 at e7006a2580a49a1c8ab507b0d7b9c3403b4f9f58; independently release-verified
     profile: kumwe-canonical-json/generic-v1
     sha256: 84d21b12e7a2bfd752356d9a6e664bcb332e209d19017e7634e7485a4fa4e250
   - owner: kumwe/record-model
-    version: 0.1.0; release attestation pending
+    version: 0.1.3 at 8d20cf75ee6ab915102bbf6a17567087971e9dfe; independently release-verified
     profile: normalized-preparation-draft/1
     sha256: 4eb1543929fcf5470eb8cae882127556cd57c02518109545483d8780266b561a
   limits_and_errors:
@@ -299,16 +300,18 @@ governance:
   - NRM-2026-044
   completion_claim: false
 decisions:
-- All five kernels have implementation and corpus coverage. ABI 1 header, layout, status and lifetime behavior are
-  frozen; the fixed historical C11 client runs against the current shared library.
-- Preserve exact semantic owners and report all whole-boundary performance results honestly, including slower native
-  workloads. Production App workload acceptance is a later independent step.
+- All five kernels have implementation and corpus coverage. ABI 1 header, layout, status and lifetime behavior
+  are frozen; the fixed historical C11 client runs against the current shared library.
+- Preserve exact semantic owners and report all whole-boundary performance results honestly, including slower
+  native workloads. Production App workload acceptance is a later independent step.
 - The immutable source publisher requires exact default-branch quality success, stable-source admission and verified
   GitHub OIDC provenance; it never creates an independent candidate or release attestation.
 blockers:
-- Final schema-valid durable semantic owner and portable Computation release attestations must be recorded before
-  stable source admission.
-- Final exact-source native and binding checks plus independent candidate archive verification precede release review.
+- Reporting 0.1.3 independent release verification is blocked by the missing Access Control package registration.
+  Its source and unchanged corpus are recorded, but its external attestation remains null and stable-source admission
+  refuses.
+- Final exact-source native and binding checks plus independent candidate archive verification precede release
+  review.
 - Published Engine and binding releases must be independently verified before stable native Composer consumption.
   No App integration is performed here.
 ---

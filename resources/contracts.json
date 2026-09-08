@@ -1,10 +1,10 @@
 {
   "schema": "kumwe-engine-contract-matrix/v1",
-  "state": "awaiting-semantic-release-verification",
+  "state": "awaiting-reporting-release-verification",
   "completion_claim": false,
   "abi_frozen": true,
   "computation_baseline": {
-    "state": "awaiting-corrected-release-attestation",
+    "state": "release-verified",
     "repository": "kumwe/computation",
     "release": "v0.1.1",
     "version": "0.1.1",
@@ -20,28 +20,42 @@
       "php-64bit": "^8.5"
     },
     "native_bindings_present": false,
-    "attestation": null
+    "attestation": {
+      "uri": "https://raw.githubusercontent.com/kumwe/extension-sdk/42d3c9e353aa6fb3e4b6931bb78b260b2682dc15/evidence/releases/framework-php/computation/0.1.1/34255198879/RELEASE-ATTESTATION.yaml",
+      "sha256": "cec2e39c5b402870c56d9a4de3c06f310f25c63b1030864e975a1b2417347020"
+    },
+    "service_map_digest": "63d04ed230e1f70b88910aa27b11f09e50458d8d8a9722c5f30feb6954fb9fce"
   },
   "modules": [
     {
       "module": "decimal",
       "owner": "kumwe/conversion",
-      "semantic_source": "e95d5633722929e77b73005f8c44cfe4d99ac8c3",
-      "semantic_version": "0.1.3",
+      "semantic_source": "b291f3a31314644fd88150dc9a9e911fe0617fe7",
+      "semantic_version": "0.1.5",
       "corpus": "corpus/decimal/decimal-v1.tsv",
       "corpus_sha256": "635db251898707828e24f12b1abb672273552f5f633186a725cc9f50ac08140c",
-      "status": "draft_implemented",
-      "release_verified": false,
-      "corpus_source_commit": "e95d5633722929e77b73005f8c44cfe4d99ac8c3",
+      "status": "implemented_semantic_release_verified",
+      "release_verified": true,
+      "corpus_source_commit": "b291f3a31314644fd88150dc9a9e911fe0617fe7",
       "semantic_release": {
         "repository": "kumwe/conversion",
-        "version": "0.1.3",
-        "tag": "v0.1.3",
-        "commit": "e95d5633722929e77b73005f8c44cfe4d99ac8c3",
+        "version": "0.1.5",
+        "tag": "v0.1.5",
+        "commit": "b291f3a31314644fd88150dc9a9e911fe0617fe7",
         "corpus_path": "resources/conformance/decimal-v1.tsv",
         "corpus_sha256": "635db251898707828e24f12b1abb672273552f5f633186a725cc9f50ac08140c",
         "publication": "published",
-        "external_attestation": null
+        "external_attestation": {
+          "uri": "https://raw.githubusercontent.com/kumwe/extension-sdk/42d3c9e353aa6fb3e4b6931bb78b260b2682dc15/evidence/releases/framework-php/conversion/0.1.5/34255198879/RELEASE-ATTESTATION.yaml",
+          "sha256": "e550d7dad380dee77640bd8ff153b8b102d87dc80c5c884d2d55421e835699d8"
+        },
+        "archive_sha256": "4e538016d6a946f8a36ac27e8adebfa45ca959242ad6e83cd65efb2898de1532",
+        "api_digest": "e2e3c0e3fb5127d38b382cb4779ff7d0343ab0ee0c3ea48264472e75b30298e3",
+        "capability_digest": "fd7946e41e724ee071dc619105cd06ac6c29f90e159e40b5ad5267d3d6c4237b",
+        "service_map_digest": "bc9a36835e305643cc24af4e698551726750425c1869fc525411f561c73fc4d7",
+        "corpus_digests": {
+          "resources/conformance/decimal-v1.tsv": "635db251898707828e24f12b1abb672273552f5f633186a725cc9f50ac08140c"
+        }
       }
     },
     {
@@ -50,12 +64,12 @@
         "kumwe/business-definition",
         "kumwe/computation"
       ],
-      "status": "implemented_awaiting_release_verification",
+      "status": "implemented_semantic_release_verified",
       "required": "Owner formula/condition/invariant envelope, ordered findings, corpus and verified releases",
       "profile": "formula-draft/1",
       "corpus": "corpus/definition/formula-v1.json",
       "corpus_sha256": "11033679b018fdc9a192e954ef11089444a00a1d89c6279d3c192be9252cf42f",
-      "release_verified": false,
+      "release_verified": true,
       "semantic_release": {
         "repository": "kumwe/business-definition",
         "version": "0.1.2",
@@ -64,8 +78,19 @@
         "corpus_path": "resources/corpus/formula-v1.json",
         "corpus_sha256": "11033679b018fdc9a192e954ef11089444a00a1d89c6279d3c192be9252cf42f",
         "publication": "published",
-        "external_attestation": null,
-        "archive_sha256": "68de06e87d006f48315402018325a134e51c0b1d6663871ff8c597fe90a10872"
+        "external_attestation": {
+          "uri": "https://raw.githubusercontent.com/kumwe/extension-sdk/42d3c9e353aa6fb3e4b6931bb78b260b2682dc15/evidence/releases/framework-php/business-definition/0.1.2/34255198879/RELEASE-ATTESTATION.yaml",
+          "sha256": "7595ffeb2b2651094c4fb9badc2ccf3230d5bd2f3d67a0b674b56ca7b982ca1e"
+        },
+        "archive_sha256": "68de06e87d006f48315402018325a134e51c0b1d6663871ff8c597fe90a10872",
+        "api_digest": "3df7be6ece4d1e4641cb1f4bea82d14c09a646b17e965ffb9a294f93d8575fbf",
+        "capability_digest": "7fcdbf45a74c50036f4b3250e3367d16546f7d0d45cf4a1bdee5849232d57455",
+        "service_map_digest": "de7d6161f1aa527a44d746ecdc04d02859bab27adf8b7125f580eda7d580856f",
+        "corpus_digests": {
+          "resources/corpus/formula-v1.json": "11033679b018fdc9a192e954ef11089444a00a1d89c6279d3c192be9252cf42f",
+          "resources/corpus/definition-v1.json": "3d5b5c2d218e95aa9f8310d88b88b373ccd31c16b03d303fa1432c72dc533b4e",
+          "resources/corpus/provenance-v1.json": "74c05b98eb9d13ced22092d819b5a1ed54e986f2502800192bd5397a3118dd7f"
+        }
       }
     },
     {
@@ -75,12 +100,12 @@
         "kumwe/record-values",
         "kumwe/record-model"
       ],
-      "status": "draft_normalized_document_implemented",
+      "status": "implemented_semantic_release_verified",
       "required": "Exact owner corpora for normalized preparation, computed fields, values, validators and ordered findings; verified immutable releases",
       "profile": "normalized-document-draft/1",
       "corpus": "corpus/document/document-profile-v1.json",
       "corpus_sha256": "84b6c2e55ae591c921536aa755cbb5a9a40a7a19847fe47415e55dce2614c177",
-      "release_verified": false,
+      "release_verified": true,
       "profiles": [
         "normalized-document-draft/1",
         "normalized-preparation-draft/1"
@@ -93,13 +118,31 @@
       ],
       "semantic_release": {
         "repository": "kumwe/record-model",
-        "version": "0.1.0",
-        "tag": "v0.1.0",
-        "commit": "d7955e6beae2c3a9fa30052aea5ec3478af7dffc",
+        "version": "0.1.3",
+        "tag": "v0.1.3",
+        "commit": "8d20cf75ee6ab915102bbf6a17567087971e9dfe",
         "corpus_path": "resources/conformance/document-profile-v1.json",
         "corpus_sha256": "84b6c2e55ae591c921536aa755cbb5a9a40a7a19847fe47415e55dce2614c177",
         "publication": "published",
-        "external_attestation": null
+        "external_attestation": {
+          "uri": "https://raw.githubusercontent.com/kumwe/extension-sdk/42d3c9e353aa6fb3e4b6931bb78b260b2682dc15/evidence/releases/framework-php/record-model/0.1.3/34255198879/RELEASE-ATTESTATION.yaml",
+          "sha256": "38174c5651658489465ce1554303bcca81d26e7550e1e4b0e7c860966534041b"
+        },
+        "archive_sha256": "3e27ec64f6e1dffcb164af2a17d2b124afe7334224710eb049468d2d02a8ba40",
+        "api_digest": "119608b245415e8f6af68d8faaf71c7fe4bdd19a9ac5821ae1d483f8d4bcd8c8",
+        "capability_digest": "539e33fa84b18ded21cd7bf09dab9cbc35baab3f1b789d26eeebe9d1b9dc973b",
+        "service_map_digest": "f18271ca0ea9271870f1081d9f7f29f6486289557dfe34a956fd12f9d8cc5458",
+        "corpus_digests": {
+          "resources/conformance/v1.json": "7e7baa8fdcda9c5b08619742b7ff52ef8f86a59a1c5afbf58a62241e83d9f07d",
+          "resources/conformance/document-computed-normalization-v1.json": "6949c2763e05a1b76ea4f6c29cc7c2df57eb25d80ee625078a1d16545a8b41f4",
+          "resources/conformance/document-normalized-values-v1.json": "752f41632d2ad38d74c5c61db5ff5f373b9427596d7766449b84398ddb15bce2",
+          "resources/conformance/document-preparation-v1.json": "4eb1543929fcf5470eb8cae882127556cd57c02518109545483d8780266b561a",
+          "resources/conformance/document-profile-v1.json": "84b6c2e55ae591c921536aa755cbb5a9a40a7a19847fe47415e55dce2614c177",
+          "resources/conformance/document-validation-v1.json": "fce91bfe3c9614ec3862b50c0defc10a9b69ed021671f8382d774d8cb0a20668",
+          "resources/conformance/document-validator-edges-v1.json": "65cde051396085a01e9723a120460c8e00519eb63acff80d7425533983f011b0",
+          "resources/conformance/document-validator-extension-v1.json": "dbc005bd77fdd764c873bdde57261bc6cb79a8463164fb83e0da8cbe7603161c",
+          "resources/conformance/unicode-normalization-oracle-v1.json": "8a1c1dce8686d09ca5e53d7b1971620e887237c6019a1189549bd873ec6a87da"
+        }
       }
     },
     {
@@ -108,7 +151,7 @@
         "kumwe/reporting",
         "kumwe/record-query"
       ],
-      "status": "draft_materialization_implemented",
+      "status": "implemented_awaiting_release_verification",
       "required": "Bounded computation-only report contract and verified corpus",
       "profile": "report-materialization-draft/1",
       "corpus": "corpus/reporting/materialization-v1.json",
@@ -119,13 +162,21 @@
       ],
       "semantic_release": {
         "repository": "kumwe/reporting",
-        "version": "0.1.0",
-        "tag": "v0.1.0",
-        "commit": "d8cae56726170d39cd6e95e45b0ffcb085920849",
+        "version": "0.1.3",
+        "tag": "v0.1.3",
+        "commit": "b521b3113bd97afc2de6ab74fcb71a36fe7d0890",
         "corpus_path": "resources/conformance/report-materialization-v1.json",
         "corpus_sha256": "975116dc897a0bfdee4a08f9065eb10ccfec06a32f4eb93a48015b08af408c01",
         "publication": "published",
-        "external_attestation": null
+        "external_attestation": null,
+        "archive_sha256": "a93df74e67654f6803e40fcb9c731b7931a75c95ff9d09b109f911870e642ece",
+        "api_digest": "a14a790c2beea8e8619638247cb9fa2e617bdbe072f7de1dac8fdadbb59d3e4b",
+        "capability_digest": "6860bc73ae12a00e503aa1dd106c79822deb0a9eff98f5ee889bc15ac3e00f09",
+        "service_map_digest": "7eab401833f8eb4629c13e9bd3771a54ed32a5dd5921ceaafe62470b6cef82e8",
+        "corpus_digests": {
+          "resources/conformance/report-materialization-v1.json": "975116dc897a0bfdee4a08f9065eb10ccfec06a32f4eb93a48015b08af408c01",
+          "resources/conformance/v1.json": "4a22b8a01c2ef012f6709cdfe0aa530dc2174ddaf94e96b17ed34ceb934b63b0"
+        }
       }
     },
     {
@@ -133,12 +184,12 @@
       "owners": [
         "kumwe/canonical-json"
       ],
-      "status": "implemented_awaiting_release_verification",
+      "status": "implemented_semantic_release_verified",
       "required": "Exact verified canonical profile and corpus, after formula/document milestone",
       "profile": "kumwe-canonical-json/generic-v1",
       "corpus": "corpus/canonical/generic-v1.json",
       "corpus_sha256": "84d21b12e7a2bfd752356d9a6e664bcb332e209d19017e7634e7485a4fa4e250",
-      "release_verified": false,
+      "release_verified": true,
       "semantic_release": {
         "repository": "kumwe/canonical-json",
         "version": "0.1.1",
@@ -147,8 +198,18 @@
         "corpus_path": "resources/corpus/v1.json",
         "corpus_sha256": "84d21b12e7a2bfd752356d9a6e664bcb332e209d19017e7634e7485a4fa4e250",
         "publication": "published",
-        "external_attestation": null,
-        "archive_sha256": "06ee813d1b917d32563670fa113f21931f85b1e3b282aed8c8a1cef364812c09"
+        "external_attestation": {
+          "uri": "https://raw.githubusercontent.com/kumwe/extension-sdk/4dc365e35460eb598d8616aa71e6ae396c75627e/evidence/releases/framework-php/canonical-json/0.1.1/34255667176/RELEASE-ATTESTATION.yaml",
+          "sha256": "4180a78d2480dee8734acae414379eda3a3b1e25ef668e84fccf97df7ff6e1b4"
+        },
+        "archive_sha256": "06ee813d1b917d32563670fa113f21931f85b1e3b282aed8c8a1cef364812c09",
+        "api_digest": "43b126b3215555482b3d439cc2521808f16d252a99e0036138d6607a3c3a3465",
+        "capability_digest": "fba51564639daa35180b354084649bacff466728ba531c2104b0a93d5136143b",
+        "service_map_digest": "a9426334ed36972ab82781a64ace58bbac058aed884d5aa091354bbeb82e4108",
+        "corpus_digests": {
+          "resources/corpus/v1.json": "84d21b12e7a2bfd752356d9a6e664bcb332e209d19017e7634e7485a4fa4e250",
+          "resources/corpus/v1.sha256": "b7c340b7d8df32bacd2b16a8f575a43b99052642b2c38cd7896370acbc947350"
+        }
       }
     }
   ]

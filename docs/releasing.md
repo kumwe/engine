@@ -11,6 +11,12 @@ remain a separate requirement: publication and a matching hash alone do not esta
 owner release passed every programme acceptance gate. Updates must retain an exact coordinate;
 never use a moving branch, `latest`, or an unconstrained range for embedded native sources.
 
+The current pending input is Reporting `v0.1.3`: its published source and unchanged
+materialization corpus are recorded, but its original-archive clean consumer cannot resolve
+the unregistered Access Control package. Its external attestation remains null, the report
+module remains unverified, and stable-source preparation refuses publication. Registering
+that dependency must be followed by actual independent verification before these flags change.
+
 The separate Computation Phase 1A prerequisite uses the published portable-only
 `v0.1.1` release at `fc9d049f8b675c8e19fd1672d49b5e206c9ad52a`. Its actual source archive,
 API, capability, portable corpus and external attestation identities are recorded in
