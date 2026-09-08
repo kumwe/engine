@@ -4,18 +4,29 @@
   "completion_claim": false,
   "abi_frozen": true,
   "computation_baseline": {
-    "state": "unresolved",
+    "state": "release-verified",
     "repository": "kumwe/computation",
-    "release": null,
-    "version": null,
-    "commit": null,
-    "archive_sha256": null,
-    "api_digest": null,
-    "capability_digest": null,
-    "corpus_digests": null,
-    "runtime_requirements": null,
-    "native_bindings_present": null,
-    "attestation": null
+    "release": "v0.1.1",
+    "version": "0.1.1",
+    "commit": "fc9d049f8b675c8e19fd1672d49b5e206c9ad52a",
+    "archive_sha256": "2d132618efa233ec3bf0c648234c4892b7eb3d5cc1c378ea91a757a91617c223",
+    "api_digest": "bb0a1630682953413acc20a540471b9308cf14c62cdb9162d5fa1bd5b55af9a4",
+    "capability_digest": "b0b5a5df7f527685a3f069c3f1ff8418dbb29f51850ee074d2ab849e834ae7e7",
+    "corpus_digests": {
+      "resources/conformance/v1.json": "30a64cf682a46c38ca99544d5abcad43cda7071bb9702621226bf297411b8bfc"
+    },
+    "runtime_requirements": {
+      "php": "^8.5",
+      "php-64bit": "^8.5"
+    },
+    "native_bindings_present": false,
+    "attestation": {
+      "uri": "https://github.com/kumwe/extension-sdk/actions/runs/34250329345/artifacts/10065724495",
+      "sha256": "0b92a8f8d87eb33764be035962cb15a5b3a2a5a276c81e4a43961a53422d230c",
+      "member": "RELEASE-ATTESTATION.yaml",
+      "member_sha256": "3e6f2ada771266adfaa6575eaf052bb3712e8a9ea3add2a4ca95819b7987bd08",
+      "workflow_run": "https://github.com/kumwe/extension-sdk/actions/runs/34250329345"
+    }
   },
   "modules": [
     {

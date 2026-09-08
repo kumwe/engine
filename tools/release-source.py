@@ -161,6 +161,14 @@ def computation_baseline_blockers(baseline):
     return blockers
 
 
+def external_attestation_present(value):
+    """A recorded external identity is required; signature verification is separate."""
+    return (isinstance(value, dict) and isinstance(value.get('uri'), str)
+            and re.fullmatch(r'https://[^\s/]+/[^\s]+', value['uri']) is not None
+            and isinstance(value.get('sha256'), str)
+            and re.fullmatch('[a-f0-9]{64}', value['sha256']) is not None)
+
+
 def engine_materials(files, prefix=''):
     caps = read_json(files, prefix + 'resources/capabilities.json')
     abi = read_json(files, prefix + 'resources/abi-manifest.json')
@@ -190,6 +198,9 @@ def engine_materials(files, prefix=''):
         module.get('release_verified') is not True for module in contracts['modules']
     ):
         blockers.append('Independent semantic-owner release verification is incomplete.')
+    if any(not external_attestation_present(module['semantic_release'].get('external_attestation'))
+           for module in contracts['modules']):
+        blockers.append('Every semantic-owner release requires an external attestation URI and SHA256 identity.')
     return caps, abi, contracts, blockers
 
 
@@ -221,6 +232,8 @@ def source_facts(files, package_kind):
             blockers.append('Extension compatibility metadata does not permit publication.')
         if lock.get('release_verified') is not True or not lock.get('release'):
             blockers.append('The embedded immutable Engine release has not been independently verified.')
+        if not external_attestation_present(lock.get('external_attestation')):
+            blockers.append('The embedded Engine requires an external release-attestation URI and SHA256 identity.')
         if (re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+', compatibility.get('version', '')) is None
                 or compatibility.get('version') == '0.0.0'):
             blockers.append('The extension version is not stable.')

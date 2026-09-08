@@ -216,6 +216,31 @@ class ComputationBaselineTests(unittest.TestCase):
                 'runtime_requirements': {'php': '^8.5'}, 'native_bindings_present': False,
                 'attestation': {'uri': 'https://example.invalid/evidence/baseline.yaml', 'sha256': 'f' * 64}}
 
+    def test_verified_flags_cannot_replace_external_owner_evidence(self):
+        # Synthetic gate fixture: a boolean alone must never authorize publication.
+        release = {'commit': 'a' * 40, 'corpus_sha256': 'b' * 64}
+        contracts = {'state': 'release-verified', 'abi_frozen': True,
+                     'computation_baseline': self.fixture(),
+                     'modules': [{'release_verified': True, 'corpus_sha256': 'b' * 64,
+                                  'semantic_release': release}]}
+        files = {'resources/capabilities.json': RELEASE.encode({
+                     'version': '1.0.0', 'abi_status': 'frozen',
+                     'semantic_release_verified': True, 'corpora': []}),
+                 'resources/abi-manifest.json': RELEASE.encode({'status': 'frozen', 'files': {}})}
+        for evidence in (None, {}, {'uri': 'https://example.invalid/evidence'},
+                         {'uri': 'file:///private/evidence', 'sha256': 'c' * 64},
+                         {'uri': 'https://example.invalid/evidence', 'sha256': 'not-a-digest'}):
+            with self.subTest(evidence=evidence):
+                release['external_attestation'] = evidence
+                files['resources/contracts.json'] = RELEASE.encode(contracts)
+                blockers = RELEASE.engine_materials(files)[3]
+                self.assertEqual(len(blockers), 1)
+                with self.assertRaisesRegex(RELEASE.ReleaseError, 'external attestation URI and SHA256'):
+                    RELEASE.require_stable({'stable_source_blockers': blockers})
+        release['external_attestation'] = {'uri': 'https://example.invalid/evidence', 'sha256': 'c' * 64}
+        files['resources/contracts.json'] = RELEASE.encode(contracts)
+        self.assertEqual(RELEASE.engine_materials(files)[3], [])
+
     def test_missing_baseline_alone_refuses_otherwise_stable_engine_and_embedding(self):
         # All older source-state gates are satisfied: the new prerequisite must stand alone.
         for prefix in ('', 'vendor/engine/'):
