@@ -246,6 +246,9 @@ jobs:
   notify-binding:
     name: Trigger the PHP binding sync
     needs: release
+    # A completion run skips the quality lanes; the default success() condition would skip this job with
+    # them. The dispatch follows every published release.
+    if: ${{ !cancelled() && needs.release.result == 'success' }}
     runs-on: ubuntu-24.04
     env:
       DISPATCH_TOKEN: ${{ secrets.KUMWE_BINDING_DISPATCH_TOKEN }}
