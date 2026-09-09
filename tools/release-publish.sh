@@ -2,6 +2,8 @@
 # Tag the exact tested commit and publish the assembled source bundle as a GitHub release.
 # Tags are never moved and assets are never replaced; a rerun verifies existing bytes and
 # uploads only what is missing. Requires gh with GH_TOKEN (contents: write).
+# gh names the repository explicitly (GITHUB_REPOSITORY, or the canonical repository) and runs from this
+# checkout; it never infers the repository from the working directory, so bundle paths are passed in full.
 # Exit status 3 means the tag was published from another commit while this run was in flight;
 # the workflow then starts a fresh run on the default branch, which declares the next patch.
 set -euo pipefail
@@ -10,6 +12,8 @@ bundle="${1:?usage: release-publish.sh BUNDLE_DIRECTORY [PROVENANCE_BUNDLE]}"
 provenance="${2:-}"
 fail() { printf '%s\n' "$*" >&2; exit 1; }
 cd "$root"
+repository="${GITHUB_REPOSITORY:-kumwe/engine}"
+case "$bundle" in *"#"*) fail "The bundle directory must not contain #: gh reads it as an asset label separator" ;; esac
 record="$bundle/source.json"
 version="$(jq -er '.version' "$record")"
 tag="$(jq -er '.tag' "$record")"
@@ -42,14 +46,16 @@ else
   printf '%s already identifies %s\n' "$tag" "$commit"
 fi
 
-if ! gh release view "$tag" --json id > /dev/null 2>&1; then
+paths=()
+for asset in "${assets[@]}"; do paths+=("$bundle/$asset"); done
+if ! gh release view "$tag" --repo "$repository" --json id > /dev/null 2>&1; then
   notes="$(mktemp)"
   bash tools/release-notes.sh "$bundle" > "$notes"
-  (cd "$bundle" && gh release create "$tag" --verify-tag --title "Kumwe Engine $version" --notes-file "$notes" "${assets[@]}")
+  gh release create "$tag" --repo "$repository" --verify-tag --title "Kumwe Engine $version" --notes-file "$notes" "${paths[@]}"
   printf 'Published release %s\n' "$tag"
 else
   printf 'Release %s exists; verifying its assets\n' "$tag"
-  existing="$(gh release view "$tag" --json assets --jq '.assets[].name')"
+  existing="$(gh release view "$tag" --repo "$repository" --json assets --jq '.assets[].name')"
   scratch="$(mktemp -d)"
   for asset in "${assets[@]}"; do
     if printf '%s\n' "$existing" | grep -qx "$asset"; then
@@ -58,13 +64,13 @@ else
         printf 'Provenance bundle already attached; keeping the published one\n'
         continue
       fi
-      gh release download "$tag" --pattern "$asset" --dir "$scratch/$asset.d"
+      gh release download "$tag" --repo "$repository" --pattern "$asset" --dir "$scratch/$asset.d"
       cmp "$scratch/$asset.d/$asset" "$bundle/$asset" || fail "Published asset $asset differs from this bundle; assets are never replaced"
     else
-      (cd "$bundle" && gh release upload "$tag" "$asset")
+      gh release upload "$tag" --repo "$repository" "$bundle/$asset"
       printf 'Uploaded missing asset %s\n' "$asset"
     fi
   done
   rm -rf "$scratch"
 fi
-gh release view "$tag" --json tagName,isDraft,isPrerelease,url --jq '"Release " + .tagName + " published=" + (.isDraft | not | tostring) + " " + .url'
+gh release view "$tag" --repo "$repository" --json tagName,isDraft,isPrerelease,url --jq '"Release " + .tagName + " published=" + (.isDraft | not | tostring) + " " + .url'

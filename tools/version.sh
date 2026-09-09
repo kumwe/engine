@@ -30,7 +30,7 @@ remote_tag_commit() {
 # Whether the GitHub release for a tag exists; without gh or a token this reports "no" and the
 # idempotent publisher then verifies or completes the release itself.
 release_exists() {
-  command -v gh > /dev/null 2>&1 && gh release view "$1" --json id > /dev/null 2>&1
+  command -v gh > /dev/null 2>&1 && gh release view "$1" --repo "${GITHUB_REPOSITORY:-kumwe/engine}" --json id > /dev/null 2>&1
 }
 
 set_version() {
