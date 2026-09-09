@@ -1,6 +1,6 @@
 {
   "engine": "kumwe/engine",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "abi_major": 1,
   "abi_status": "frozen",
   "capabilities": [
@@ -18,7 +18,7 @@
   "corpus_sha256": "635db251898707828e24f12b1abb672273552f5f633186a725cc9f50ac08140c",
   "computation": {
     "wire_version": 1,
-    "engine_version": "1.0.0",
+    "engine_version": "1.0.1",
     "abi_major": 1,
     "api_version": "1.0.0",
     "build_digest": "@ENGINE_BUILD_DIGEST@",

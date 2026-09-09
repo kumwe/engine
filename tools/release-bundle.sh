@@ -6,7 +6,9 @@
 #   SHA256SUMS                  digests of the three files above
 # It never tags, signs or publishes; the workflow does that after every quality lane passes.
 set -euo pipefail
-root="$(cd "$(dirname "$0")/.." && pwd)"
+# KUMWE_ROOT points the tooling at another checkout of this repository: the workflow completes a release
+# for an older tagged commit with the current scripts by checking that commit out separately.
+root="${KUMWE_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
 out="${1:?usage: release-bundle.sh NEW_DIRECTORY}"
 fail() { printf '%s\n' "$*" >&2; exit 1; }
 [ ! -e "$out" ] || fail "Refusing to overwrite $out"

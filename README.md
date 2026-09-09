@@ -34,14 +34,17 @@ Read [CHARTER](CHARTER.md), [ABI](docs/abi.md), [architecture](docs/architecture
 
 ## Releases
 
-Every merge to `main` that passes the complete `Native quality` workflow is tagged and
-published as an immutable source release `vMAJOR.MINOR.PATCH` with a reproducible archive,
-SPDX inventory, checksums and GitHub OIDC build provenance. The declared version lives in
-`resources/capabilities.json`; when a merge does not change it the workflow bumps the patch
-automatically, and minor or major releases are declared in the pull request with
-`bash tools/version.sh set X.Y.Z`. Each release notifies `kumwe/kumwe-engine`, which embeds
-the exact archive and publishes the PHP extension under the same version. Consume a
-published tag, never a moving branch.
+Releases are fully automated; people only merge. The declared version lives in
+`resources/capabilities.json`, and every change to released source (everything the source
+archive exports) declares a new version in the same change with
+`bash tools/version.sh set X.Y.Z`; the pull-request check refuses a released-source change
+that keeps an already published version. When a merge to `main` passes the complete `Native
+quality` workflow, the declared version is tagged and published as an immutable source
+release `vMAJOR.MINOR.PATCH` with a reproducible archive, SPDX inventory, checksums and
+GitHub OIDC build provenance; a release an earlier run left unfinished is completed by the
+next run, and nobody ever creates, moves or deletes a tag by hand. Each release notifies
+`kumwe/kumwe-engine`, which embeds the exact archive and publishes the PHP extension under the
+same version. Consume a published tag, never a moving branch.
 
 All five modules have executable owner-corpus tests. ABI 1 is frozen with an independent
 fixed-header dynamic consumer regression gate. `resources/contracts.json` records the exact

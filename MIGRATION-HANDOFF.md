@@ -69,7 +69,7 @@ ownership:
   - path: "resources/abi-symbols.txt"
     sha256: "62cf59b8d6feb369f0d801b59b69796ea569570177e02b903c0bec6b01e04d21"
   - path: "resources/capabilities.json"
-    sha256: "e796bb0474d57d04aaaacd973845aa6f5fe3bb98c489a985f24e36c62ecf2c16"
+    sha256: "a6ddbc4307e75b27f45b1e76ac1de2e29ddc7df750eb563203cc9ed8765c924c"
   - path: "resources/contracts.json"
     sha256: "c9972276ea1e62b4d681318dd48f12476adcc95c56d46fc549e69f7e1d775188"
   - path: "tests/ownership.json"
@@ -234,8 +234,8 @@ documentation:
   changelog_record: CHANGELOG.md / Unreleased
 release_expectations:
   version_policy: Every default-branch commit that passes the complete Native quality workflow is tagged and published
-    as vMAJOR.MINOR.PATCH from the version declared in resources/capabilities.json; an already-published version is
-    patch-bumped automatically. The binding is published under the same version (docs/releasing.md).
+    as vMAJOR.MINOR.PATCH from the version declared in resources/capabilities.json; every change to released
+    source declares its version, and the workflow completes any release an earlier run left unfinished. The binding is published under the same version (docs/releasing.md).
   expected_artifact_types:
   - CMake source archive
   - Checksums

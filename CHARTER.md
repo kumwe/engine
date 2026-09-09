@@ -8,8 +8,8 @@ streaming modules, sharing bounded values, plans and buffers.
 The Engine 1.0.0 source candidate implements all five modules against frozen owner semantics, including
 typed normalized document values, preparation, computed-field normalization and ordered findings.
 ABI 1 is frozen with a separately preserved header/client compatibility baseline. Every
-default-branch commit that passes the complete quality workflow is published as a versioned
-source release (docs/releasing.md); independent downstream verification and measured App
+default-branch commit that changes released source declares its version and is published as a
+versioned source release once the complete quality workflow passes (docs/releasing.md); independent downstream verification and measured App
 improvement remain separate evidence.
 
 Semantic meaning belongs to the framework package owning each contract. Exact published source
