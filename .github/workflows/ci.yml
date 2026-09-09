@@ -29,6 +29,9 @@ jobs:
       release: ${{ steps.resolve.outputs.release }}
       followup: ${{ steps.resolve.outputs.followup }}
       bump: ${{ steps.resolve.outputs.bump }}
+      # false only when this run completes an older tag's missing release: that commit passed every lane
+      # before it was tagged, and this workflow's lanes belong to this tree, not to that one.
+      test: ${{ steps.resolve.outputs.test }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -49,6 +52,7 @@ jobs:
         run: bash tools/version.sh resolve
   native:
     needs: version
+    if: needs.version.outputs.test == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -85,6 +89,7 @@ jobs:
             benchmark-metadata.json
   sanitizers-fuzz:
     needs: version
+    if: needs.version.outputs.test == 'true'
     runs-on: ubuntu-24.04
     env:
       CC: clang
@@ -110,6 +115,7 @@ jobs:
             build/Testing/Temporary/LastTest.log
   thread-sanitizer:
     needs: version
+    if: needs.version.outputs.test == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
@@ -144,6 +150,7 @@ jobs:
             build-tsan/Testing/Temporary/LastTest.log
   archive-and-faults:
     needs: version
+    if: needs.version.outputs.test == 'true'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -165,7 +172,9 @@ jobs:
   release:
     name: Publish source release
     needs: [version, native, sanitizers-fuzz, thread-sanitizer, archive-and-faults]
-    if: needs.version.outputs.release == 'true'
+    # Runs after every lane passed, and also when the lanes were skipped because this run completes an
+    # older tag's missing release (that commit passed every lane before it was tagged). Never after a failure.
+    if: ${{ !cancelled() && needs.version.outputs.release == 'true' && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     concurrency:

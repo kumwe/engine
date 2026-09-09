@@ -10,3 +10,4 @@
 /tools/release-publish.sh export-ignore
 /tools/source-archive.sh export-ignore
 /tools/check-archive.sh export-ignore
+/tools/test-version.sh export-ignore

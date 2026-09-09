@@ -10,7 +10,7 @@
 #   version.sh next          print the next patch above the declared version and every published vMAJOR.MINOR.* tag
 #   version.sh digest [REV]  print the released-source identity of a commit (exported paths with their blob ids)
 #   version.sh check         pull requests: fail when released source changed without declaring a new version
-#   version.sh resolve       GitHub Actions default branch: write sha/version/tag/release/followup outputs;
+#   version.sh resolve       GitHub Actions default branch: write sha/version/tag/release/followup/bump/test outputs;
 #                            complete a tag whose GitHub release is missing, release the declared version when
 #                            it is unreleased, and declare a patch bump when released source changed without one
 set -euo pipefail
@@ -165,7 +165,7 @@ adopt_pending_bump() {
 }
 
 resolve() {
-  local version sha head tag release=false followup=false published dangling
+  local version sha head tag release=false followup=false test=true published dangling
   version="$(declared)"
   require_semver "$version"
   head="$(git -C "$root" rev-parse HEAD)"
@@ -187,6 +187,8 @@ resolve() {
       if [ "$sha" = "$head" ]; then
         notice "$tag identifies this exact commit but its GitHub release is not published; the release job completes it."
       else
+        # The tagged commit passed every lane before it was tagged; the current lanes belong to this tree.
+        test=false
         followup=true
         notice "$tag identifies $sha but its GitHub release is not published (an earlier run failed after tagging). This run completes that release from the tagged commit; a follow-up run then evaluates this commit ($head)."
       fi
@@ -217,6 +219,7 @@ resolve() {
     printf 'release=%s\n' "$release"
     printf 'followup=%s\n' "$followup"
     printf 'bump=%s\n' "${FORCE_BUMP:-false}"
+    printf 'test=%s\n' "$test"
   } >> "${GITHUB_OUTPUT:-/dev/stdout}"
 }
 
