@@ -1,2 +1,12 @@
 /tests/oracle export-ignore
 /benchmarks/e2e export-ignore
+/.github export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/tools/*.mjs export-ignore
+/tools/version.sh export-ignore
+/tools/release-bundle.sh export-ignore
+/tools/release-notes.sh export-ignore
+/tools/release-publish.sh export-ignore
+/tools/source-archive.sh export-ignore
+/tools/check-archive.sh export-ignore

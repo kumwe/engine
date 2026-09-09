@@ -14,10 +14,11 @@ The exact framing and golden binary results are in [ABI](abi.md), `tests/support
 `tests/engine_test.cpp` and `tools/fuzz-seeds.mjs`. Only `tests/consumer` is a supported integration
 example; internal C++ headers are private implementation details.
 
-Use an independently verified immutable Engine release for production bindings. ABI 1
-now has a frozen initial header/client compatibility gate; all five kernel corpora and
-owned behavior/boundary tests remain mandatory. The exact candidate archive must pass
-the independent Zend cross-build before Engine publication, followed by external release
-verification. The binding embeds that exact unmodified archive and owns only Zend
-marshalling/lifecycle; it contains no algorithm or fallback. App provisioning and the
-Computation-owned runtime cutover follow separately, after verified native publication.
+Consume a published release tag, never a moving branch. Every `vMAJOR.MINOR.PATCH` release
+ships `kumwe-engine-source.tar.gz` with checksums, an SPDX inventory and GitHub OIDC build
+provenance (see [releasing](releasing.md)); verify the digest and attestation before building.
+ABI 1 has a frozen header/client compatibility gate; all five kernel corpora and owned
+behavior/boundary tests are mandatory for every release. The PHP binding
+(`kumwe/kumwe-engine`) embeds that exact unmodified archive, owns only Zend
+marshalling/lifecycle, contains no algorithm or fallback, and is published under the same
+version. App provisioning and the Computation-owned runtime cutover follow separately.

@@ -30,5 +30,6 @@ budget semantics. Other architectures require separate qualification and are rej
 Recheck [upstream lifecycle guidance](https://github.com/PCRE2Project/pcre2/blob/main/SUPPORT-LIFECYCLE.md)
 and advisories for every release. Licensed Unicode and semantic-owner corpus inputs retain their
 recorded provenance and are included in the source SPDX inventory. Source locks do not establish
-ongoing advisory coverage. Release qualification still requires signed source provenance, exact
-candidate binding safety, sanitizers, retained fuzz evidence and stable ABI compatibility.
+ongoing advisory coverage. Every release is cut only from a default-branch commit that passed the
+sanitizer, fuzz, ThreadSanitizer, frozen-ABI client and archive consumer lanes, and ships with
+GitHub OIDC build provenance; the binding verifies that provenance before embedding the archive.

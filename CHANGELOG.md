@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+- Publish every default-branch commit that passes the complete quality workflow as an
+  immutable source release: the declared version in `resources/capabilities.json` is the
+  single source of truth (CMake reads it), an already-published version is patch-bumped
+  automatically, the tested commit is tagged, and the reproducible archive, SPDX inventory,
+  checksums and GitHub OIDC build provenance are attached. Each release dispatches
+  `engine-release` to `kumwe/kumwe-engine`, which embeds the exact archive and publishes the
+  PHP extension under the same version. The former external attestation gate, the
+  candidate-reference pull request block and the separate publisher workflow are removed;
+  semantic-owner verification receipts remain recorded metadata.
+- Remove all Python tooling. The Unicode table generator is now the C++ program
+  `tools/generate-unicode-data.cpp` built and checked by CTest; the fault-seed mutation is
+  pure Bash; the release tooling is Bash, `jq` and Node; the whole-boundary benchmark
+  harness moved to the binding repository, where its PHP orchestrator already lives.
+  The published source archive now excludes `.github` and the Node release scripts.
+
 - Record the corrected durable semantic-owner verification receipts and complete manifest
   and corpus identities. Preserve Reporting 0.1.3's published source as explicitly unverified
   until its clean consumer can resolve the missing Access Control package registration.
