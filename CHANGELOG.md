@@ -1,6 +1,23 @@
 # Changelog
 
-## Unreleased
+## 1.0.1
+
+- Make the release pipeline complete without people. Every change to released source
+  (everything the source archive exports) declares a new version in
+  `resources/capabilities.json` in the same change, and the pull-request check
+  (`tools/version.sh check`) refuses a released-source change that keeps a published version.
+  On `main` the workflow completes any tag whose GitHub release is missing from the commit the
+  tag identifies (with the current tooling, then re-evaluates the tip in a follow-up run),
+  releases an unreleased declared version, publishes nothing when only export-ignored files
+  changed, and declares the next patch itself only as a fallback. Tags are never moved or
+  deleted; a draft left by an interrupted publish is promoted, never recreated. The
+  `tools/test-version.sh` self-test runs in every workflow.
+- Fix the release publisher: `gh` now names the repository on every call and runs from the
+  checkout, so publishing no longer depends on the working directory. The first 1.0.0 release
+  run tagged `v1.0.0` and then failed at `gh release create`; the fixed workflow publishes
+  that release from the tagged commit.
+
+## 1.0.0
 
 - Publish every default-branch commit that passes the complete quality workflow as an
   immutable source release: the declared version in `resources/capabilities.json` is the
