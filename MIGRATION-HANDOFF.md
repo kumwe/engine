@@ -187,12 +187,13 @@ native_cpp:
     required_extension_smoke_surface:
     - Thin Zend capability/ABI/corpus handshake, all supported coarse calls, bounds, ownership and exception cleanup.
     required_platform_and_php_matrix:
-    - 'Engine standalone CMake: Linux x86_64 GCC/Clang and macOS ARM64 Clang. Binding: PHP 8.5 NTS Linux x86_64
-      only, with exact patch/build tuple recorded.'
+    - 'Engine standalone CMake: Linux x86_64 GCC/Clang and macOS ARM64 Clang. Binding: PHP 8.5 NTS and ZTS, Linux
+      x86_64, with exact patch/build tuple recorded.'
     required_abi_capability_corpus_checks:
-    - All five completed modules, exact verified semantic inputs, frozen ABI/header/exports, cross-layer corpus
+    - All five completed modules, exact recorded semantic inputs, frozen ABI/header/exports, cross-layer corpus
       and lifecycle evidence.
-    attestation_schema: kumwe-engine-candidate-attestation/v1
+    attestation_schema: kumwe-engine-source-release/v1 (source.json attached to every release, signed by GitHub OIDC
+      build provenance)
     attestation_storage: GitHub OIDC build provenance attached to every published Engine release; no external
       candidate record gates publication.
     publishing_permitted: true
@@ -248,13 +249,13 @@ release_expectations:
   required_registry_or_installer: null
   required_external_attestation: false
 next_task:
-  phase_name: Verify final ABI 1 source, semantic release receipts and exact non-publishing binding cross-build.
+  phase_name: Publish the first Engine release from the default branch and let the binding embed it.
   permitted_only_when:
   - Draft implementation uses reviewed owner semantics and exact corpus/source identity.
-  - Candidate cross-build and release readiness wait for all five modules plus verified immutable semantic releases.
+  - Every Native quality lane passes on the default-branch commit (the workflow then tags and publishes it).
   consumer_repository: https://github.com/kumwe/engine
-  dependency_or_native_change: Accept the final independent candidate attestation, publish and independently verify
-    immutable Engine 1.0.0, then re-embed that exact release in the binding. App integration remains a later task.
+  dependency_or_native_change: Merge to the default branch; the workflow publishes Engine 1.0.0 with GitHub OIDC
+    provenance and dispatches the binding sync, which embeds that exact release. App integration remains a later task.
   namespace_or_api_replacements: []
   files_to_update:
   - src
@@ -337,12 +338,12 @@ Engine owns semantic corpus replay, C ABI layout/export/fixed-client checks, own
 
 ## Next-task execution notes
 
-Follow [release procedure](docs/releasing.md). Replace provisional semantic references only with actual independently verified immutable releases and schema-valid durable evidence. Run all exact-head native quality lanes, then embed that exact candidate in the separate binding and complete its PHP/sanitizer/offline PIE/whole-boundary jobs. Store the independent candidate attestation outside both source trees. After accepted candidate verification, publish Engine from the reviewed merged source, independently verify its actual assets and provenance, and re-embed those exact release bytes in the binding for final stable qualification. App integration is not part of this task.
+Follow [versioning and releases](docs/releasing.md). Semantic-owner coordinates, corpus digests and any independent verification receipts stay recorded in `resources/contracts.json` and are printed in every release's notes; they do not gate publication. Merging to the default branch runs every native quality lane on the exact commit; when all pass, the same workflow tags and publishes the source release with GitHub OIDC build provenance and dispatches `engine-release` to the binding, which embeds those exact release bytes and publishes the extension under the same version. App integration is not part of this task.
 
 ## Drift check
 
-Manifest/corpus locks, ABI header hashes, complete SPDX source inventory and deterministic raw/published archive hashes detect changed inputs. Frozen ABI tests compile from the preserved original client header. New source requires a new exact candidate cross-build and external record; current-source records cannot inherit passing status from a predecessor commit. Released tags and assets are immutable; corrections require a new release. Owner corpus or API changes are routed through their owning package and a new reviewed Engine release.
+Manifest/corpus locks, ABI header hashes, complete SPDX source inventory and deterministic raw/published archive hashes detect changed inputs. Frozen ABI tests compile from the preserved original client header. Every default-branch commit is qualified on its own; a run never inherits passing status from a predecessor commit, and the release job tags only the commit its lanes tested. Released tags and assets are immutable; corrections require a new release. Owner corpus or API changes are routed through their owning package and a new Engine release.
 
 ## Validation recipe and observed local results
 
-Run the frontmatter verification commands and [release procedure](docs/releasing.md). Local release builds pass all 23 CTest cases and manifest/ownership checks, including the fixed 295-assertion ABI client. Hosted predecessor qualification passed Linux GCC/Clang, ARM64 Clang, fault/consumer and thread-sanitizer lanes. The binding predecessor completed all six whole-boundary workload families with 176 matrix cases, 48 capacity and 12 allocation probes. These are repair evidence; the final exact-source workflow, complete toolchain tuples, archives, corpus/handoff digests and independent attestations remain external and must be regenerated after any source change. The final archive CMake consumer and PIE installation run in actual network namespaces with networking disabled.
+Run the frontmatter verification commands and [versioning and releases](docs/releasing.md). Local release builds pass all 23 CTest cases and manifest/ownership checks, including the fixed 295-assertion ABI client, and the release bundle assembled by `tools/release-bundle.sh` builds and passes the same suite from the extracted archive alone. Hosted qualification runs Linux GCC/Clang, ARM64 Clang, fault/consumer, sanitizer/fuzz and thread-sanitizer lanes on every commit. The binding's whole-boundary lane measures all six workload families (176 matrix cases, 48 capacity and 12 allocation probes) against each tested module. The archive CMake consumer and the binding's PIE installation run in network namespaces with networking disabled.

@@ -47,8 +47,17 @@ bash tools/version.sh next         # next patch above the declared version and p
    with Contents: read and write on `kumwe/kumwe-engine`). Without it the job fails with
    that instruction; the binding also polls the latest Engine release on a schedule.
 
-A `workflow_dispatch` run on `main` follows the same rules, so it can be used to cut a
-patch release of the current `main` on demand.
+A `workflow_dispatch` run on `main` follows the same rules. To cut a patch release of a
+`main` tip that is already released (for example to ship a binding-only change, because
+the binding version is hard-linked to the Engine version), start the run with the `bump`
+input enabled: the version job then declares the next patch, pushes the bump commit and
+releases it after the lanes pass.
+
+Reruns are safe: a tag that exists on the tested commit without its GitHub release is
+completed (`version.sh` checks `gh release view`), a "Release vX.Y.Z" bump commit pushed
+by an earlier run on top of the rerun commit is adopted instead of stacked, and a tag that
+another run published first makes the release job start a fresh run on the `main` tip,
+which declares the next patch.
 
 ## Release assets
 
@@ -75,8 +84,12 @@ gh attestation verify kumwe-engine-source.tar.gz --repo kumwe/engine
   pull request avoids the push entirely.
 - Bump and tag commits are authored as `Lemuel <lemuel@vdm.to>` unless repository
   variables `KUMWE_RELEASE_AUTHOR_NAME` and `KUMWE_RELEASE_AUTHOR_EMAIL` override them.
-- Actions must be allowed to create releases (default `GITHUB_TOKEN` permissions are
-  requested per job; no personal token is needed for the release itself).
+- Actions must be allowed to create releases and to start this workflow (`contents: write`
+  and `actions: write` are requested per job; no personal token is needed for the release
+  itself).
+- Default-branch runs use a per-commit concurrency group, so quick successive merges each
+  keep their run; the release job serialises tagging, and a version published first by a
+  neighbouring run is handled as described above.
 
 ## Tooling
 

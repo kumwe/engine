@@ -4,10 +4,17 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      bump:
+        description: Declare and publish the next patch even when the current default-branch commit is already released
+        type: boolean
+        required: false
+        default: false
 permissions:
   contents: read
+# Pull requests replace their in-flight run; default-branch runs are keyed by commit so none is dropped.
 concurrency:
-  group: native-${{ github.workflow }}-${{ github.ref }}
+  group: native-${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   version:
@@ -28,8 +35,10 @@ jobs:
       - name: Read the declared version; on the default branch, declare a patch bump when it is already published
         id: resolve
         env:
+          GH_TOKEN: ${{ github.token }}
           RELEASE_BRANCH: ${{ github.event.repository.default_branch }}
           RELEASE_ENABLED: ${{ github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+          FORCE_BUMP: ${{ github.event_name == 'workflow_dispatch' && inputs.bump == true }}
           GIT_AUTHOR_NAME: ${{ vars.KUMWE_RELEASE_AUTHOR_NAME || 'Lemuel' }}
           GIT_AUTHOR_EMAIL: ${{ vars.KUMWE_RELEASE_AUTHOR_EMAIL || 'lemuel@vdm.to' }}
         run: bash tools/version.sh resolve
@@ -160,6 +169,7 @@ jobs:
       contents: write
       id-token: write
       attestations: write
+      actions: write
     env:
       GH_TOKEN: ${{ github.token }}
       GIT_AUTHOR_NAME: ${{ vars.KUMWE_RELEASE_AUTHOR_NAME || 'Lemuel' }}
@@ -190,7 +200,16 @@ jobs:
             ${{ runner.temp }}/release/source.json
             ${{ runner.temp }}/release/source.spdx.json
       - name: Tag the tested commit and publish the immutable release
-        run: bash tools/release-publish.sh "$RUNNER_TEMP/release" "${{ steps.provenance.outputs.bundle-path }}"
+        run: |
+          status=0
+          bash tools/release-publish.sh "$RUNNER_TEMP/release" "${{ steps.provenance.outputs.bundle-path }}" || status=$?
+          if [ "$status" -eq 3 ]; then
+            # Another run published this version first. The current default-branch tip declares the next patch.
+            gh workflow run ci.yml --ref '${{ github.event.repository.default_branch }}'
+            echo "::notice::Started a new run on ${{ github.event.repository.default_branch }} to release its tip under the next patch version."
+            exit 0
+          fi
+          exit "$status"
   notify-binding:
     name: Trigger the PHP binding sync
     needs: release

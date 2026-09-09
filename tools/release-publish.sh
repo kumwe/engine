@@ -2,6 +2,8 @@
 # Tag the exact tested commit and publish the assembled source bundle as a GitHub release.
 # Tags are never moved and assets are never replaced; a rerun verifies existing bytes and
 # uploads only what is missing. Requires gh with GH_TOKEN (contents: write).
+# Exit status 3 means the tag was published from another commit while this run was in flight;
+# the workflow then starts a fresh run on the default branch, which declares the next patch.
 set -euo pipefail
 root="$(cd "$(dirname "$0")/.." && pwd)"
 bundle="${1:?usage: release-publish.sh BUNDLE_DIRECTORY [PROVENANCE_BUNDLE]}"
@@ -15,15 +17,16 @@ commit="$(jq -er '.source.commit' "$record")"
 [ "$(git rev-parse HEAD)" = "$commit" ] || fail "The checkout ($(git rev-parse HEAD)) is not the bundled commit $commit"
 (cd "$bundle" && sha256sum --check --strict SHA256SUMS)
 assets=(kumwe-engine-source.tar.gz SHA256SUMS source.json source.spdx.json)
+signature='build-provenance.sigstore.json'
 if [ -n "$provenance" ]; then
   [ -f "$provenance" ] || fail "Missing provenance bundle $provenance"
-  cp "$provenance" "$bundle/build-provenance.sigstore.json"
-  assets+=(build-provenance.sigstore.json)
+  cp "$provenance" "$bundle/$signature"
+  assets+=("$signature")
 fi
 
 peeled() {
   git ls-remote --tags origin "refs/tags/$1" "refs/tags/$1^{}" \
-    | awk '$2 ~ /\^\{\}$/ { peeled = $1 } $2 !~ /\^\{\}$/ { plain = $1 }
+    | awk '$2 ~ /\^\{\}$/ { peeled = $1 } $2 !~ /\^\{\}$/ && $2 != "" { plain = $1 }
            END { if (peeled != "") print peeled; else if (plain != "") print plain }'
 }
 published="$(peeled "$tag")"
@@ -33,7 +36,8 @@ if [ -z "$published" ]; then
   git push origin "refs/tags/$tag"
   printf 'Created %s at %s\n' "$tag" "$commit"
 elif [ "$published" != "$commit" ]; then
-  fail "$tag already identifies $published; a published tag is never moved"
+  printf '::warning::%s already identifies %s; it was published while this run tested %s, which is superseded. A published tag is never moved.\n' "$tag" "$published" "$commit"
+  exit 3
 else
   printf '%s already identifies %s\n' "$tag" "$commit"
 fi
@@ -49,6 +53,11 @@ else
   scratch="$(mktemp -d)"
   for asset in "${assets[@]}"; do
     if printf '%s\n' "$existing" | grep -qx "$asset"; then
+      if [ "$asset" = "$signature" ]; then
+        # Every attestation run signs fresh bytes; the first published bundle is the record.
+        printf 'Provenance bundle already attached; keeping the published one\n'
+        continue
+      fi
       gh release download "$tag" --pattern "$asset" --dir "$scratch/$asset.d"
       cmp "$scratch/$asset.d/$asset" "$bundle/$asset" || fail "Published asset $asset differs from this bundle; assets are never replaced"
     else
