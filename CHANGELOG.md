@@ -25,12 +25,12 @@
   changing symbols, statuses, view layout, lifetimes, envelopes or semantic outputs.
   Preserve a separately hashed historical C11 client/header and dynamically replay
   its 295 assertions against every Linux candidate and sanitizer build.
-- Permit truthful independently verified semantic-input metadata while continuing to
-  reject unverified source publication. Semantic owner and portable Computation
-  attestations remain required before stable source admission.
-- Require a schema-valid external candidate attestation before any new Engine tag
-  or source publication. Prove the original candidate archive and handoff, unchanged
-  merged source tree, exact binding embedding and all five binding quality lanes.
+- Record truthful independently verified semantic-input metadata in
+  `resources/contracts.json`. (The semantic-owner and candidate attestation gates that
+  this and the following entry once introduced are superseded: publication is now gated
+  by the quality workflow alone, as described in the first entry above.)
+- Superseded: a schema-valid external candidate attestation is no longer required before
+  a new Engine tag or source publication.
 - Run the standalone archived CMake consumer inside a network namespace and bind
   every qualification checkout to the exact candidate head.
 - Retain the maintained PCRE2 10.42 source and upstream security backports. Disable

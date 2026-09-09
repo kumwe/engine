@@ -7,8 +7,10 @@ streaming modules, sharing bounded values, plans and buffers.
 
 The Engine 1.0.0 source candidate implements all five modules against frozen owner semantics, including
 typed normalized document values, preparation, computed-field normalization and ordered findings.
-ABI 1 is frozen with a separately preserved header/client compatibility baseline. Publication,
-independent release verification and measured App improvement require their separate evidence.
+ABI 1 is frozen with a separately preserved header/client compatibility baseline. Every
+default-branch commit that passes the complete quality workflow is published as a versioned
+source release (docs/releasing.md); independent downstream verification and measured App
+improvement remain separate evidence.
 
 Semantic meaning belongs to the framework package owning each contract. Exact published source
 coordinates and matching corpus hashes are recorded in resources/contracts.json; independent
@@ -30,7 +32,7 @@ here. Binding tests own PHP marshalling/lifecycle parity; App retains only compo
 authority, provisioning/recovery, acceptance and measured full-path performance evidence.
 
 First App-eligible release is Engine 1.0.0 with frozen ABI 1, all five modules and the complete
-v2 release gates. Publication is separate from source-candidate readiness. Modules
+quality workflow; later releases follow every green default-branch merge. Modules
 remain in one repository until an independent consumer, independent cadence, stable contract and
 measured benefit justify a split.
 
