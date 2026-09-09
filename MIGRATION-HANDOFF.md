@@ -193,9 +193,9 @@ native_cpp:
     - All five completed modules, exact verified semantic inputs, frozen ABI/header/exports, cross-layer corpus
       and lifecycle evidence.
     attestation_schema: kumwe-engine-candidate-attestation/v1
-    attestation_storage: External immutable CI/check artifact outside both tested trees, linked from Engine PR;
-      no passing attestation exists yet.
-    publishing_permitted: false
+    attestation_storage: GitHub OIDC build provenance attached to every published Engine release; no external
+      candidate record gates publication.
+    publishing_permitted: true
 php_extension: null
 tests:
   moved_or_added:
@@ -232,22 +232,21 @@ documentation:
   - tests/support.hpp
   changelog_record: CHANGELOG.md / Unreleased
 release_expectations:
-  version_policy: No release before candidate and immutable-source release gates pass. First App-eligible Engine
-    release requires exactly identified 1.0.0 and frozen ABI 1 after all v2 gates.
+  version_policy: Every default-branch commit that passes the complete Native quality workflow is tagged and published
+    as vMAJOR.MINOR.PATCH from the version declared in resources/capabilities.json; an already-published version is
+    patch-bumped automatically. The binding is published under the same version (docs/releasing.md).
   expected_artifact_types:
   - CMake source archive
   - Checksums
   - SPDX SBOM
   - Signed provenance
-  - External candidate and stable release attestations
   required_checks:
   - E1 formula/document and E2 report/canonical are implemented; verify E3 hardening/freeze on the final source.
-  - Verified immutable semantic releases and corpora, including the separate portable-only Computation Phase 1A
-    contract baseline before the first stable Engine release.
+  - Exact published semantic-owner sources and corpora recorded in resources/contracts.json, with any independent
+    verification receipts retained as metadata.
   - Native behavior/boundary/conformance/fuzz/sanitizer/lifecycle/ABI/consumer/benchmark/supply-chain gates.
-  - Non-publishing exact Engine/extension candidate cross-build before ready-for-review status.
   required_registry_or_installer: null
-  required_external_attestation: true
+  required_external_attestation: false
 next_task:
   phase_name: Verify final ABI 1 source, semantic release receipts and exact non-publishing binding cross-build.
   permitted_only_when:
@@ -304,15 +303,13 @@ decisions:
   are frozen; the fixed historical C11 client runs against the current shared library.
 - Preserve exact semantic owners and report all whole-boundary performance results honestly, including slower
   native workloads. Production App workload acceptance is a later independent step.
-- The immutable source publisher requires exact default-branch quality success, stable-source admission and verified
-  GitHub OIDC provenance; it never creates an independent candidate or release attestation.
+- The release job publishes every default-branch commit that passes all quality lanes, with GitHub OIDC build
+  provenance and no external attestation gate; it never moves a tag or replaces an asset.
 blockers:
-- Reporting 0.1.3 independent release verification is blocked by the missing Access Control package registration.
-  Its source and unchanged corpus are recorded, but its external attestation remains null and stable-source admission
-  refuses.
-- Final exact-source native and binding checks plus independent candidate archive verification precede release
-  review.
-- Published Engine and binding releases must be independently verified before stable native Composer consumption.
+- Reporting 0.1.3 independent release verification remains open because of the missing Access Control package
+  registration. Its source and unchanged corpus are recorded and its receipt stays null as metadata; this no longer
+  blocks source publication.
+- Independent downstream verification of published Engine and binding releases remains a separate activity.
   No App integration is performed here.
 ---
 

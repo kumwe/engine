@@ -38,6 +38,7 @@ outside measured complete-call timing and are included in the process-wide Callg
 These findings motivated bounded KEC1 canonical and KEB1/KER2 compiled transports.
 
 Compressed raw files use deterministic gzip metadata; `digests.json` records compressed and
-uncompressed SHA256 values. `../../interleaved.py` is the reusable current interleaved driver;
-`../../run.py` owns the complete warm/cold, hostile, capacity and allocation matrix. Re-run both
-against the exact final artifact before accepting performance for a supported deployment tuple.
+uncompressed SHA256 values. The current harness is the PHP orchestrator
+`tools/benchmark-runtime.php` in `kumwe/kumwe-engine`, which owns the complete warm/cold,
+hostile, capacity and allocation matrix. Re-run it against the exact final artifact before
+accepting performance for a supported deployment tuple.
