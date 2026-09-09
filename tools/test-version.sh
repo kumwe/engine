@@ -132,6 +132,7 @@ expect 'unreleased release' "$(output release)" 'true'
 expect 'unreleased sha' "$(output sha)" "$(head_sha)"
 expect 'unreleased tag' "$(output tag)" 'v1.0.0'
 expect 'unreleased followup' "$(output followup)" 'false'
+expect 'unreleased test' "$(output test)" 'true'
 ok 'resolve releases an unreleased declared version from the tested commit'
 
 fresh
@@ -147,6 +148,7 @@ resolve > /dev/null
 expect 'dangling here release' "$(output release)" 'true'
 expect 'dangling here sha' "$(output sha)" "$(head_sha)"
 expect 'dangling here followup' "$(output followup)" 'false'
+expect 'dangling here test' "$(output test)" 'true'
 ok 'resolve completes a tag on this commit whose release is missing'
 
 fresh
@@ -162,6 +164,7 @@ expect 'dangling older sha' "$(output sha)" "$tagged"
 expect 'dangling older version' "$(output version)" '1.0.0'
 expect 'dangling older tag' "$(output tag)" 'v1.0.0'
 expect 'dangling older followup' "$(output followup)" 'true'
+expect 'dangling older test' "$(output test)" 'false'
 grep -q 'a follow-up run then evaluates this commit' "$work/resolve.log" || fail 'missing follow-up notice'
 release v1.0.0 true
 resolve > /dev/null

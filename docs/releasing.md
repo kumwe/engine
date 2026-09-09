@@ -42,7 +42,9 @@ Every push to `main` (and every `workflow_dispatch` on it) runs the complete wor
 1. **A tag without a published release is completed first.** If an earlier run tagged a version
    and then failed before its GitHub release was published (or left a draft), this run releases
    that tag from the commit it identifies, with the current release tooling, and then starts a
-   follow-up run so the tip of `main` is evaluated afresh. Tags are never moved or deleted.
+   follow-up run so the tip of `main` is evaluated afresh. The quality lanes are not repeated
+   for that older commit: a tag is only ever created after every lane passed on it, and this
+   workflow's lanes belong to the current tree. Tags are never moved or deleted.
 2. **An unreleased declared version is released.** If tag `vVERSION` does not exist, this
    commit is released as that version once every quality lane passes.
 3. **A published version whose released source is unchanged releases nothing.** If the tag

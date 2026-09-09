@@ -7,7 +7,8 @@
   `resources/capabilities.json` in the same change, and the pull-request check
   (`tools/version.sh check`) refuses a released-source change that keeps a published version.
   On `main` the workflow completes any tag whose GitHub release is missing from the commit the
-  tag identifies (with the current tooling, then re-evaluates the tip in a follow-up run),
+  tag identifies (with the current tooling and without repeating the lanes that passed before
+  it was tagged, then re-evaluates the tip in a follow-up run),
   releases an unreleased declared version, publishes nothing when only export-ignored files
   changed, and declares the next patch itself only as a fallback. Tags are never moved or
   deleted; a draft left by an interrupted publish is promoted, never recreated. The
