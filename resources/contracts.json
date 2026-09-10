@@ -1,6 +1,6 @@
 {
   "schema": "kumwe-engine-contract-matrix/v1",
-  "state": "awaiting-reporting-release-verification",
+  "state": "semantic-inputs-release-verified",
   "completion_claim": false,
   "abi_frozen": true,
   "computation_baseline": {
@@ -151,12 +151,12 @@
         "kumwe/reporting",
         "kumwe/record-query"
       ],
-      "status": "implemented_awaiting_release_verification",
+      "status": "implemented_semantic_release_verified",
       "required": "Bounded computation-only report contract and verified corpus",
       "profile": "report-materialization-draft/1",
       "corpus": "corpus/reporting/materialization-v1.json",
       "corpus_sha256": "975116dc897a0bfdee4a08f9065eb10ccfec06a32f4eb93a48015b08af408c01",
-      "release_verified": false,
+      "release_verified": true,
       "excluded": [
         "Host authorization, retrieval, projection, rendering and delivery"
       ],
@@ -168,7 +168,10 @@
         "corpus_path": "resources/conformance/report-materialization-v1.json",
         "corpus_sha256": "975116dc897a0bfdee4a08f9065eb10ccfec06a32f4eb93a48015b08af408c01",
         "publication": "published",
-        "external_attestation": null,
+        "external_attestation": {
+          "uri": "https://raw.githubusercontent.com/kumwe/extension-sdk/d21879b98737883b38ee8c97d3c5a2e50186f867/evidence/releases/framework-php/reporting/0.1.3/34515947985/RELEASE-ATTESTATION.yaml",
+          "sha256": "58c9cf8462709304de7eb649e30f77c1da4344c12fc5aa56801ee96ef70b1acb"
+        },
         "archive_sha256": "a93df74e67654f6803e40fcb9c731b7931a75c95ff9d09b109f911870e642ece",
         "api_digest": "a14a790c2beea8e8619638247cb9fa2e617bdbe072f7de1dac8fdadbb59d3e4b",
         "capability_digest": "6860bc73ae12a00e503aa1dd106c79822deb0a9eff98f5ee889bc15ac3e00f09",
