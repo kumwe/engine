@@ -29,8 +29,8 @@ source:
     sha256: 84b6c2e55ae591c921536aa755cbb5a9a40a7a19847fe47415e55dce2614c177
   - owner: kumwe/reporting
     version_or_commit: v0.1.3 at b521b3113bd97afc2de6ab74fcb71a36fe7d0890
-    manifest_or_corpus: resources/conformance/report-materialization-v1.json (published source; independent release
-      verification blocked by the missing Access Control package registration)
+    manifest_or_corpus: resources/conformance/report-materialization-v1.json (published source; schema-valid durable
+      independent release attestation recorded in resources/contracts.json)
     sha256: 975116dc897a0bfdee4a08f9065eb10ccfec06a32f4eb93a48015b08af408c01
   - owner: kumwe/canonical-json
     version_or_commit: v0.1.1 at e7006a2580a49a1c8ab507b0d7b9c3403b4f9f58
@@ -69,9 +69,9 @@ ownership:
   - path: "resources/abi-symbols.txt"
     sha256: "62cf59b8d6feb369f0d801b59b69796ea569570177e02b903c0bec6b01e04d21"
   - path: "resources/capabilities.json"
-    sha256: "a6ddbc4307e75b27f45b1e76ac1de2e29ddc7df750eb563203cc9ed8765c924c"
+    sha256: "d6e0a75af2fec3f9ef05e81f94abe43a05b827d2c19ffab05450e38adcd5b5a0"
   - path: "resources/contracts.json"
-    sha256: "c9972276ea1e62b4d681318dd48f12476adcc95c56d46fc549e69f7e1d775188"
+    sha256: "089f7e9a40f6da991654ca33937a864d6e28a5325b57b8da457c9d4492b818f0"
   - path: "tests/ownership.json"
     sha256: "2a8b54da277777706b6c65430cbf08d4e24b28b313a57e2f4f29212929aae4e3"
   - path: "include/kumwe/engine/engine.h"
@@ -165,7 +165,7 @@ native_cpp:
     profile: normalized-document-draft/1
     sha256: 84b6c2e55ae591c921536aa755cbb5a9a40a7a19847fe47415e55dce2614c177
   - owner: kumwe/reporting
-    version: 0.1.3 at b521b3113bd97afc2de6ab74fcb71a36fe7d0890; release attestation pending
+    version: 0.1.3 at b521b3113bd97afc2de6ab74fcb71a36fe7d0890; independently release-verified
     profile: report-materialization-draft/1
     sha256: 975116dc897a0bfdee4a08f9065eb10ccfec06a32f4eb93a48015b08af408c01
   - owner: kumwe/canonical-json
@@ -192,8 +192,7 @@ native_cpp:
     required_abi_capability_corpus_checks:
     - All five completed modules, exact recorded semantic inputs, frozen ABI/header/exports, cross-layer corpus
       and lifecycle evidence.
-    attestation_schema: kumwe-engine-source-release/v1 (source.json attached to every release, signed by GitHub OIDC
-      build provenance)
+    attestation_schema: kumwe-engine-candidate-attestation/v1
     attestation_storage: GitHub OIDC build provenance attached to every published Engine release; no external
       candidate record gates publication.
     publishing_permitted: true
@@ -307,9 +306,6 @@ decisions:
 - The release job publishes every default-branch commit that passes all quality lanes, with GitHub OIDC build
   provenance and no external attestation gate; it never moves a tag or replaces an asset.
 blockers:
-- Reporting 0.1.3 independent release verification remains open because of the missing Access Control package
-  registration. Its source and unchanged corpus are recorded and its receipt stays null as metadata; this no longer
-  blocks source publication.
 - Independent downstream verification of published Engine and binding releases remains a separate activity.
   No App integration is performed here.
 ---

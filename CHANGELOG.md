@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.2
+
+- Restore the migration handoff's exact candidate attestation schema identifier while
+  retaining the separate source-release provenance and publication policy.
+- Record the independently verified Reporting 0.1.3 receipt from SDK run 34515947985
+  after its clean Packagist consumer and offline lock replay passed. All semantic-owner
+  source, API, corpus and archive commitments remain unchanged; native semantics and ABI
+  remain unchanged.
+
 ## 1.0.1
 
 - Make the release pipeline complete without people. Every change to released source
