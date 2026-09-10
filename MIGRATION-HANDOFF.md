@@ -69,7 +69,7 @@ ownership:
   - path: "resources/abi-symbols.txt"
     sha256: "62cf59b8d6feb369f0d801b59b69796ea569570177e02b903c0bec6b01e04d21"
   - path: "resources/capabilities.json"
-    sha256: "d6e0a75af2fec3f9ef05e81f94abe43a05b827d2c19ffab05450e38adcd5b5a0"
+    sha256: "db66fbb32eb87711a179b07a26f63dcc373f3d7fcbec08c4fbd4a0ca87d14401"
   - path: "resources/contracts.json"
     sha256: "089f7e9a40f6da991654ca33937a864d6e28a5325b57b8da457c9d4492b818f0"
   - path: "tests/ownership.json"
