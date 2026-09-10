@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.3
+
+- Declare the next immutable Engine source release so the corrected PHP binding metadata
+  generator can synchronize and publish the matching 1.0.3 release. Runtime semantics, ABI,
+  semantic-owner receipts and corpus commitments remain unchanged.
+
 ## 1.0.2
 
 - Restore the migration handoff's exact candidate attestation schema identifier while
