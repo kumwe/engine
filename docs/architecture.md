@@ -22,14 +22,14 @@ confined to the generic canonical profile and frozen PHP numeric-string comparis
 and formula arithmetic never uses it.
 
 `resources/contracts.json` records all five module owners and truthful implementation states.
-`resources/capabilities.json` advertises implemented development profiles and exact corpus digests.
+`resources/capabilities.json` advertises implemented semantic profiles and exact corpus digests.
 `src/document` owns normalized preparation, typed value projections, computed-field normalization,
 bounded validators and ordered findings. `src/reporting` owns computation-only materialization and
 converted value validation. `src/canonical` owns generic canonical bytes and streaming digests.
 `src/plan` binds immutable profile plans to explicit limits, cancellation and portable batch findings.
 Native semantic input never includes database queries, authorization, raw secrets or callbacks.
 
-The draft buffer-release pointer-to-owner-slot convention intentionally refines Computation's proposal:
-release clears the owning slot, supporting repeated exception cleanup. A copied raw pointer remains
-non-owning and cannot safely be released. The candidate extension follows this ownership agreement. Joint ABI review and old-client
-compatibility evidence must freeze it before stable publication.
+The buffer-release pointer-to-owner-slot convention clears the owning slot, supporting repeated
+exception cleanup. A copied raw pointer remains non-owning and cannot safely be released. The
+PHP binding follows this ownership agreement; the frozen ABI contract and independent old-client
+compatibility gate preserve it across ABI 1 releases.

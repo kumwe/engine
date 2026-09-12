@@ -157,10 +157,8 @@ version identifiers remain unchanged; the exact owner corpus identifies their se
 An Engine version does not silently rename or supersede an owner contract.
 
 The separately snapshotted header and C11 client under `tests/abi-v1` establish the
-initial ABI 1 baseline. On Linux every candidate dynamically links and runs that unchanged
+initial ABI 1 baseline. On Linux every tested source dynamically links and runs that unchanged
 client against the current export-restricted library, including under ASan/UBSan. The
-fixture covers all 12 exports and 295 assertions. There was no earlier stable Engine
-release; this is the forward compatibility gate retained for subsequent ABI 1 releases.
-Stable publication still requires independently verified semantic releases, candidate
-cross-build and source/provenance evidence. ABI freeze alone does not assert publication
-or App performance acceptance.
+fixture covers all 12 exports and 295 assertions and remains the forward compatibility gate
+for ABI 1 releases. Publication requires the complete quality workflow and immutable source
+provenance. Consumer verification and Core workload acceptance qualify the deployment separately.

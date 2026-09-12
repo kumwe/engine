@@ -1,9 +1,17 @@
 # Kumwe Engine
 
+[![Release](https://img.shields.io/github/v/release/kumwe/engine)](https://github.com/kumwe/engine/releases)
+[![Native quality](https://github.com/kumwe/engine/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kumwe/engine/actions/workflows/ci.yml)
+[![C++20](https://img.shields.io/badge/C%2B%2B-20-blue)](#build)
+[![Linux and macOS](https://img.shields.io/badge/platform-Linux%20%7C%20macOS-blue)](CHARTER.md)
+[![License: Apache-2.0](https://img.shields.io/github/license/kumwe/engine)](LICENSE)
+
 Standalone C++20 execution engine with a coarse C ABI. Engine 1.x implements exact
 decimals, immutable formula plans, complete normalized document preparation and validation,
 report materialization, and generic canonical encoding with streaming SHA-256 behind the
 frozen C ABI 1.
+
+## Build
 
 ```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
@@ -18,7 +26,7 @@ CMake 3.25+, a C++20 compiler and a 64-bit Linux/macOS environment are required.
 conformance executable and C consumer build offline with the standard library and the exact
 vendored PCRE2 source closure. Bash and Node are test and release tooling only and the Node
 scripts are not part of the published source archive; PHP, Composer and App are neither build
-nor runtime dependencies. No Python is used anywhere in this repository.
+nor runtime dependencies.
 
 Installed downstream usage:
 
@@ -30,7 +38,8 @@ target_link_libraries(my_consumer PRIVATE Kumwe::Engine)
 Read [CHARTER](CHARTER.md), [ABI](docs/abi.md), [architecture](docs/architecture.md),
 [consumer integration](docs/consumer.md), [testing/ownership](docs/testing.md),
 [security](SECURITY.md), [benchmarking](docs/benchmarking.md) and
-[versioning and releases](docs/releasing.md).
+[versioning and releases](docs/releasing.md), [Core contract](docs/core-contract.md) and
+[release record](docs/release-record.md).
 
 ## Releases
 

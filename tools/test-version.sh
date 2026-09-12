@@ -49,12 +49,12 @@ tag_head() { git tag --annotate --message "Kumwe Engine ${1#v}" "$1" HEAD && git
 change_released() { printf 'int main(void) { return %s; }\n' "$1" > src.c && git commit --quiet --all --message "Change released source ($1)"; }
 change_ignored() { mkdir -p .github && printf 'lane: %s\n' "$1" > .github/ci.yml && git add .github && git commit --quiet --message "Change ignored source ($1)"; }
 
-# Seed repository: the real version.sh, a declared version, the handoff digest line and export rules.
+# Seed repository: the real version.sh, a declared version, the record digest line and export rules.
 git init --quiet --initial-branch=main "$work/seed"
 cd "$work/seed"
-mkdir -p resources tools
+mkdir -p resources tools docs
 printf '{\n  "version": "1.0.0",\n  "computation": {\n    "engine_version": "1.0.0"\n  }\n}\n' > resources/capabilities.json
-printf '  public_manifests:\n  - path: "resources/capabilities.json"\n    sha256: "%064d"\n' 0 > MIGRATION-HANDOFF.md
+printf '  public_manifests:\n  - path: "resources/capabilities.json"\n    sha256: "%064d"\n' 0 > docs/release-record.md
 printf '/.github export-ignore\n/.gitattributes export-ignore\n/tools/version.sh export-ignore\n' > .gitattributes
 cp "$here/tools/version.sh" tools/version.sh
 printf 'int main(void) { return 0; }\n' > src.c
@@ -80,9 +80,9 @@ expect 'get' "$(bash tools/version.sh get)" '1.0.0'
 bash tools/version.sh set 1.2.3 > /dev/null
 expect 'set version' "$(jq -r .version resources/capabilities.json)" '1.2.3'
 expect 'set engine_version' "$(jq -r .computation.engine_version resources/capabilities.json)" '1.2.3'
-expect 'set handoff digest' "$(grep -o '[a-f0-9]\{64\}' MIGRATION-HANDOFF.md)" "$(sha256sum resources/capabilities.json | cut -d ' ' -f 1)"
+expect 'set record digest' "$(grep -o '[a-f0-9]\{64\}' docs/release-record.md)" "$(sha256sum resources/capabilities.json | cut -d ' ' -f 1)"
 git checkout --quiet -- .
-ok 'set declares the version in capabilities.json and refreshes the handoff digest'
+ok 'set declares the version in capabilities.json and refreshes the record digest'
 
 before="$(bash tools/version.sh digest)"
 change_ignored one

@@ -1,9 +1,8 @@
 ---
-schema: kumwe-migration-handoff/v2
+schema: kumwe-package-release-record/v1
 artifact_kind: native_cpp
 migration_id: KUMWE-MIG-2026-011
 change_set: KUMWE-CS-2026-011
-state: draft_pr_open
 source:
   app:
     repository: https://github.com/kumwe/app
@@ -40,17 +39,13 @@ source:
   examined_dependencies:
   - Conversion v0.1.5 ExactDecimal, ExactDecimalArithmetic and six Money/Quantity rounding modes; unchanged corpus,
     no PHP source copied.
-  - Computation portable-only Phase 1A version 0.1.1 at fc9d049f8b675c8e19fd1672d49b5e206c9ad52a is independently
+  - Computation portable contracts version 0.1.1 at fc9d049f8b675c8e19fd1672d49b5e206c9ad52a is independently
     verified. Its exact archive, canonical manifests, portable corpus and schema-valid durable release attestation
     are recorded in resources/contracts.json.
-  active_related_pull_requests:
-  - https://github.com/kumwe/kumwe-engine/pull/4
 target:
   repository: https://github.com/kumwe/engine
   artifact_identity: CMake Kumwe::Engine
   canonical_namespace_or_abi: kumwe::engine / kumwe_engine_v1_
-  branch: codex/stable-native-readiness-20260908
-  pull_request: https://github.com/kumwe/engine/pull/8
 ownership:
   responsibility: Standalone exact decimal, compiled formula/document/report execution and generic canonical encoding/digests
     through one owned C ABI.
@@ -65,11 +60,11 @@ ownership:
   next_consumer: kumwe/kumwe-engine
   public_manifests:
   - path: "resources/abi-manifest.json"
-    sha256: "40e27d2a8e7b8f619274e1bce2525a220d704f5e86a4e46f68d53fc6dafd4fb9"
+    sha256: "c34277b1bf5b74a61bcf5a78d1e6452c6c2525634789333c990298bdb70665c0"
   - path: "resources/abi-symbols.txt"
     sha256: "62cf59b8d6feb369f0d801b59b69796ea569570177e02b903c0bec6b01e04d21"
   - path: "resources/capabilities.json"
-    sha256: "db66fbb32eb87711a179b07a26f63dcc373f3d7fcbec08c4fbd4a0ca87d14401"
+    sha256: "82f8b8c1efc1d5f38a945e319e51983af6b94d613d0310ce2843449805a1baf6"
   - path: "resources/contracts.json"
     sha256: "089f7e9a40f6da991654ca33937a864d6e28a5325b57b8da457c9d4492b818f0"
   - path: "tests/ownership.json"
@@ -78,8 +73,7 @@ ownership:
     sha256: "d7ebdaa0c03bca629a5370ebbcdd6297ea6e99afa0229c9c13c2907676a94b2f"
   intentionally_excluded:
   - No App classes, dependency adoption or test removal.
-  - No PHP binding implementation is owned here; the separate kumwe/kumwe-engine candidate consumes this exact
-    source.
+  - No PHP binding implementation is owned here; kumwe/kumwe-engine consumes the exact published source archive.
 framework_php: null
 native_cpp:
   cpp_namespace: kumwe::engine
@@ -202,8 +196,7 @@ tests:
   - Engine-owned behavior/boundary, shared semantic corpus replay, C ABI, 10000 lifecycle cycles, concurrent reads,
     plain C, archive/install consumers, architecture/export checks, fault seeds and sanitizer/fuzz CI.
   remain_in_app_or_consumer:
-  - App retains current execution tests until verified Computation cutover, then composition/security/storage/provisioning/recovery/acceptance
-    and measured end-to-end performance.
+  - Core owns composition, security, storage, provisioning, recovery, acceptance and measured end-to-end performance.
   - Binding owns PHP/Zend lifecycle and cross-layer marshalling/corpus tests.
   split_tests: []
   prohibited_duplicates:
@@ -230,7 +223,7 @@ documentation:
   examples:
   - tests/consumer/main.c
   - tests/support.hpp
-  changelog_record: CHANGELOG.md / Unreleased
+  changelog_record: CHANGELOG.md
 release_expectations:
   version_policy: Every default-branch commit that passes the complete Native quality workflow is tagged and published
     as vMAJOR.MINOR.PATCH from the version declared in resources/capabilities.json; every change to released
@@ -241,36 +234,29 @@ release_expectations:
   - SPDX SBOM
   - Signed provenance
   required_checks:
-  - E1 formula/document and E2 report/canonical are implemented; verify E3 hardening/freeze on the final source.
+  - All five module corpora and frozen ABI checks must pass on the exact released source.
   - Exact published semantic-owner sources and corpora recorded in resources/contracts.json, with any independent
     verification receipts retained as metadata.
   - Native behavior/boundary/conformance/fuzz/sanitizer/lifecycle/ABI/consumer/benchmark/supply-chain gates.
   required_registry_or_installer: null
   required_external_attestation: false
-next_task:
-  phase_name: Publish the first Engine release from the default branch and let the binding embed it.
+consumer_contract:
   permitted_only_when:
-  - Draft implementation uses reviewed owner semantics and exact corpus/source identity.
-  - Every Native quality lane passes on the default-branch commit (the workflow then tags and publishes it).
-  consumer_repository: https://github.com/kumwe/engine
-  dependency_or_native_change: Merge to the default branch; the workflow publishes Engine 1.0.0 with GitHub OIDC
-    provenance and dispatches the binding sync, which embeds that exact release. App integration remains a later task.
+  - Verify published archive checksums and GitHub OIDC build provenance.
+  - Qualify the exact source, ABI, capabilities, corpora and supported platform tuple before deployment.
+  consumer_repository: https://github.com/kumwe/kumwe-engine
+  dependency_or_native_change: Embed the immutable Engine source archive in the PHP binding and publish both under the same version.
   namespace_or_api_replacements: []
-  files_to_update:
-  - src
-  - tests
-  - resources/contracts.json
-  - resources/capabilities.json
-  - MIGRATION-HANDOFF.md
+  files_to_update: []
   files_to_remove: []
   tests_to_remove: []
   tests_to_retain_or_add:
-  - Retain all five kernel corpora and ABI/ownership/bounds tests in Engine; downstream binding tests cover PHP-specific
-    behavior.
+  - Retain native semantic corpora, ABI, lifetime, bounds, sanitizer, fuzz and installed-consumer tests.
+  - Core retains composition, authorization, persistence, provisioning, recovery and acceptance coverage.
   di_or_provisioning_changes: []
   capability_index_changes: []
   changelog_and_evidence_changes:
-  - CHANGELOG.md; NRM-2026-013 remains enabling evidence with completion_claim false.
+  - Release source records and independent verification bind exact commits and artifact digests.
   verification_commands:
   - cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
   - cmake --build build --parallel 4
@@ -278,25 +264,7 @@ next_task:
   - node tools/check-manifests.mjs build
   - bash tools/check-archive.sh
   - bash tools/check-fault-seeds.sh
-concurrency:
-  likely_conflict_files:
-  - resources/contracts.json
-  - resources/capabilities.json
-  - include/kumwe/engine/engine.h
-  - MIGRATION-HANDOFF.md
-  related_migrations:
-  - KUMWE-MIG-2026-008
-  - KUMWE-MIG-2026-010
-  ownership_conflicts: []
-  integration_train: null
-  resolution_rule: semantic-preservation
 governance:
-  roadmap_source_sha256: a202155ef1a65f5ab293d4f8397ebf4ac430db7f1e877c776bbe7851e6fe18d8
-  roadmap_refs: []
-  non_roadmap_refs:
-  - NRM-2026-013
-  - NRM-2026-042
-  - NRM-2026-044
   completion_claim: false
 decisions:
 - All five kernels have implementation and corpus coverage. ABI 1 header, layout, status and lifetime behavior
@@ -305,41 +273,39 @@ decisions:
   native workloads. Production App workload acceptance is a later independent step.
 - The release job publishes every default-branch commit that passes all quality lanes, with GitHub OIDC build
   provenance and no external attestation gate; it never moves a tag or replaces an asset.
-blockers:
-- Independent downstream verification of published Engine and binding releases remains a separate activity.
-  No App integration is performed here.
+blockers: []
 ---
 
-# Native implementation handoff
+# Native Engine release record
 
-## Migration/implementation summary
+## Package contract
 
-Engine implements exact decimal batches, immutable formula plans, normalized document preparation/computation/validation, typed value and source-instance handling, normalized report materialization including converted values, and GenericV1 canonical encoding with streaming SHA256. This standalone delivery serves NRM-2026-013/042/044. App source, adapters, configuration and tests remain with their existing owners.
+Engine owns bounded deterministic execution behind C ABI 1. See [Core contract](core-contract.md). The retained migration and change-set IDs identify existing independent attestations; they do not describe pending extraction work.
 
 ## Public API and responsibility
 
-[ABI contract](docs/abi.md), [public header](include/kumwe/engine/engine.h), [ABI manifest](resources/abi-manifest.json) and [capabilities](resources/capabilities.json) define all twelve ABI 1 exports, status codes, handle ownership and bounded transport. C++ implementation types are private. The original fixed-header C11 client exercises the current shared library without compiling against the new public header. [Architecture](docs/architecture.md) defines the source and dependency boundaries.
+The [public header](../include/kumwe/engine/engine.h), [ABI](abi.md) and [manifest](../resources/abi-manifest.json) define the supported surface. Internal C++ types are private.
 
-## Capability reuse/semantic input review
+## Dependencies and semantic inputs
 
-[Contracts matrix](resources/contracts.json) identifies each semantic owner's exact immutable source, corpus digest and external release evidence. Corpus bytes remain owner-defined; profile strings retain their historical identities even when they contain draft or 0.0.0 tokens. The separate portable-only Computation Phase 1A is a stable-release prerequisite; later native Computation cannot substitute for it. PCRE2 is statically embedded at its reviewed maintained source commit with all applicable backports; ARM64 uses scalar JIT because the legacy SIMD fixes are not backportable. Unicode input and license digests are committed. No host PCRE2/ICU selection or build download is allowed.
+The [contracts matrix](../resources/contracts.json) pins semantic-owner sources, corpus digests and verification evidence. PCRE2 and Unicode source closures are pinned and built offline.
 
-## Consumer inventory
+## Consumer contract
 
-The binding consumes the exact exported Engine source archive and links the C ABI statically. Standalone CMake consumers use Kumwe::Engine and the installed C header. Computation owns PHP semantic adapters, and App owns authority, persistence, reference resolution, deployment provisioning and business-runtime cutover. The unchanged App/SDK benchmark oracle is external measurement input and is never imported into Engine runtime.
+The PHP binding embeds the exact released source; standalone CMake consumers link Kumwe::Engine. Core owns authority, persistence, reference resolution, transactions, provisioning and recovery. Package publication does not establish Core integration or workload acceptance.
 
 ## Test ownership
 
-Engine owns semantic corpus replay, C ABI layout/export/fixed-client checks, ownership, deterministic budgets, hostile/refusal recovery, threads, sanitizers, fuzz seeds, reproducible source closure and installed CMake consumers. Binding owns PHP-specific marshalling/lifetimes and cross-layer tests. App retains its current tests pending a separately authorized integration. The benchmark compares complete boundary calls and reports all measured results, including slower operations; it claims no automatic production acceleration.
+Engine owns semantic replay, C ABI, frozen client, lifetime, bounds, concurrency, sanitizers, fuzzing and reproducible installed-consumer checks. The binding owns PHP-specific coverage.
 
-## Next-task execution notes
+## Consumer verification
 
-Follow [versioning and releases](docs/releasing.md). Semantic-owner coordinates, corpus digests and any independent verification receipts stay recorded in `resources/contracts.json` and are printed in every release's notes; they do not gate publication. Merging to the default branch runs every native quality lane on the exact commit; when all pass, the same workflow tags and publishes the source release with GitHub OIDC build provenance and dispatches `engine-release` to the binding, which embeds those exact release bytes and publishes the extension under the same version. App integration is not part of this task.
+Follow [release verification and automation](releasing.md). Verify immutable source checksums and provenance, then qualify the complete supported tuple before deployment. Roll back the entire known-good deployment tuple.
 
-## Drift check
+## Compatibility and drift
 
-Manifest/corpus locks, ABI header hashes, complete SPDX source inventory and deterministic raw/published archive hashes detect changed inputs. Frozen ABI tests compile from the preserved original client header. Every default-branch commit is qualified on its own; a run never inherits passing status from a predecessor commit, and the release job tags only the commit its lanes tested. Released tags and assets are immutable; corrections require a new release. Owner corpus or API changes are routed through their owning package and a new Engine release.
+Public manifest hashes above remain executable verification inputs. ABI 1 symbols, statuses, layout and lifetime guarantees are frozen. Released tags and assets are immutable; changed source requires a new release.
 
-## Validation recipe and observed local results
+## Validation
 
-Run the frontmatter verification commands and [versioning and releases](docs/releasing.md). Local release builds pass all 23 CTest cases and manifest/ownership checks, including the fixed 295-assertion ABI client, and the release bundle assembled by `tools/release-bundle.sh` builds and passes the same suite from the extracted archive alone. Hosted qualification runs Linux GCC/Clang, ARM64 Clang, fault/consumer, sanitizer/fuzz and thread-sanitizer lanes on every commit. The binding's whole-boundary lane measures all six workload families (176 matrix cases, 48 capacity and 12 allocation probes) against each tested module. The archive CMake consumer and the binding's PIE installation run in network namespaces with networking disabled.
+Run the verification commands above and the complete hosted quality workflow. CI evidence applies only to its tested commit and platform; performance measurements include slower workloads and do not imply production acceleration.

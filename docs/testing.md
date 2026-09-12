@@ -23,8 +23,8 @@ downstream verification remains a separate activity. Foreign fabricated pointers
 C memory preconditions; null, owned, consumed and valid concurrently borrowed handles are tested.
 
 The extension owns Zend marshalling, request lifecycle and cross-layer replay. App retains composition,
-authorization, persistence, provisioning/recovery, acceptance and whole-path performance tests. No
-App implementation or unit test is removed by this package change. Test-only PHP oracles and the
+authorization, persistence, provisioning/recovery, acceptance and whole-path performance tests. Package ownership does not transfer Core
+implementation or acceptance coverage. Test-only PHP oracles and the
 retained benchmark evidence are excluded from the native source archive; the whole-boundary
 benchmark harness is owned by the binding repository.
 
