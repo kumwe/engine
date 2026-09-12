@@ -8,6 +8,6 @@
     "include/kumwe/engine/engine.h": "d7ebdaa0c03bca629a5370ebbcdd6297ea6e99afa0229c9c13c2907676a94b2f",
     "resources/abi-symbols.txt": "62cf59b8d6feb369f0d801b59b69796ea569570177e02b903c0bec6b01e04d21",
     "resources/abi-symbols.map": "da36805ea915bd88a68925c9e936c8975fe73a0f80769f9bec3f9e400020b8e3",
-    "docs/abi.md": "0499c2591cfbc1eb0125e7f4309e8fc7fa2572bda2d6d709703e007a2e2b871c"
+    "docs/abi.md": "8685e6494c38858f12afa3a170c1286f12790735a74f3fd57a571a3620c13d25"
   }
 }

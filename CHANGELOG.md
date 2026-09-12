@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.4
+
+- Standardize linked release, quality, platform and license badges and current Core integration documentation.
+- Replace obsolete migration handoff instructions with a durable release record; preserve public manifest hashes and update the version/manifest gates.
+- Update ABI documentation to reflect the existing frozen ABI and published release process; native runtime semantics and corpus identities are unchanged.
+
 ## 1.0.3
 
 - Declare the next immutable Engine source release so the corrected PHP binding metadata

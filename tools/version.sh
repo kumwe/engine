@@ -6,7 +6,7 @@
 # whatever version the file declares and never asks a person to tag, bump, delete or re-run anything.
 #
 #   version.sh get           print the declared version
-#   version.sh set X.Y.Z     declare a new version and refresh the handoff manifest digest
+#   version.sh set X.Y.Z     declare a new version and refresh the record manifest digest
 #   version.sh next          print the next patch above the declared version and every published vMAJOR.MINOR.* tag
 #   version.sh digest [REV]  print the released-source identity of a commit (exported paths with their blob ids)
 #   version.sh check         pull requests: fail when released source changed without declaring a new version
@@ -16,7 +16,7 @@
 set -euo pipefail
 root="$(cd "$(dirname "$0")/.." && pwd)"
 capabilities="$root/resources/capabilities.json"
-handoff="$root/MIGRATION-HANDOFF.md"
+record="$root/docs/release-record.md"
 repository="${GITHUB_REPOSITORY:-kumwe/engine}"
 semver='^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$'
 
@@ -80,14 +80,14 @@ set_version() {
   temporary="$(mktemp)"
   jq --arg version "$version" '.version = $version | .computation.engine_version = $version' "$capabilities" > "$temporary"
   mv "$temporary" "$capabilities"
-  # The native handoff binds the public manifest digests; keep its capabilities entry truthful.
+  # The native record binds the public manifest digests; keep its capabilities entry truthful.
   digest="$(sha256sum "$capabilities" | cut -d ' ' -f 1)"
   temporary="$(mktemp)"
   awk -v digest="$digest" '
     pending && /sha256: "[0-9a-f]{64}"/ { sub(/sha256: "[0-9a-f]{64}"/, "sha256: \"" digest "\""); pending = 0 }
     /path: "resources\/capabilities.json"/ { pending = 1 }
-    { print }' "$handoff" > "$temporary"
-  mv "$temporary" "$handoff"
+    { print }' "$record" > "$temporary"
+  mv "$temporary" "$record"
   printf 'Declared Engine version %s\n' "$version"
 }
 
@@ -120,7 +120,7 @@ check() {
     printf '%s is published from %s and this change leaves released source untouched; merging publishes nothing new.\n' "$tag" "$published"
   else
     next="$(next_version "$version")"
-    fail "This change alters released source while resources/capabilities.json still declares $version, which is published from $published. Declare the next version in the same change: bash tools/version.sh set $next (or a minor/major version), then commit resources/capabilities.json and MIGRATION-HANDOFF.md. See docs/releasing.md."
+    fail "This change alters released source while resources/capabilities.json still declares $version, which is published from $published. Declare the next version in the same change: bash tools/version.sh set $next (or a minor/major version), then commit resources/capabilities.json and docs/release-record.md. See docs/releasing.md."
   fi
 }
 

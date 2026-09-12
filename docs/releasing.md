@@ -20,12 +20,12 @@ released source; a change to any of them is a new release.
 ```sh
 bash tools/version.sh get           # print the declared version
 bash tools/version.sh next          # next patch above the declared version and every published tag of that line
-bash tools/version.sh set 1.0.2     # declare the version (patch, minor or major), then commit
+bash tools/version.sh set 1.0.4     # declare the version (patch, minor or major), then commit
 bash tools/version.sh check         # what the pull-request check does
 bash tools/version.sh digest [REV]  # released-source identity of a commit (exported paths and blob ids)
 ```
 
-`set` also refreshes the `resources/capabilities.json` digest recorded in `MIGRATION-HANDOFF.md`,
+`set` also refreshes the `resources/capabilities.json` digest recorded in `docs/release-record.md`,
 which `tools/check-manifests.mjs` verifies; commit both files together with the change.
 
 The rule is enforced, not remembered. The `version` job of every pull request runs
@@ -125,4 +125,4 @@ Bash, Git, `jq`, Node and `gh` are the only release-tooling dependencies, and th
 only by the workflow and by `tools/*.sh` and `tools/*.mjs`. `tools/test-version.sh` exercises
 the version policy against a disposable origin and a simulated `gh` in every run. None of these
 tools are needed to build or test the engine from the published archive, and none of the
-published files depend on them. No Python is used anywhere in this repository.
+published files depend on them.

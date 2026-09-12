@@ -1,29 +1,21 @@
-# Native boundary review
+# Native boundary invariants
 
-The candidate implements exact decimal, formula, normalized document/preparation, report and
-canonical kernels behind the owned C ABI. The initial E0/E1 decimal review has been superseded
-by full-kernel corpus, ownership, archive/consumer and Zend boundary checks. This review records
-implementation evidence; it does not freeze ABI 1 or replace independent release acceptance.
+All five kernels use the owned C ABI and the frozen ABI 1 header/client baseline. Native tests
+enforce these behavior and ownership invariants on every tested source.
 
-The original review's ownership refinements remain enforced: repository test/corpus paths reject
-symlinks and noncanonical paths; nonempty buffer slots remain unchanged on refusal; struct-size
-validation precedes output-view clearing; multiplication work covers maximum normalized precision.
+- Repository test/corpus paths reject symlinks and noncanonical paths.
+- Nonempty buffer slots remain unchanged on refusal; struct-size validation precedes output clearing.
+- Multiplication work covers maximum normalized precision, and batch output accounting accepts exact fits.
+- Owned plans and bounded framing avoid duplicated transport trees and enforce source/lifetime budgets.
+- Canonical framing preserves ordered PHP key types, raw string bytes and IEEE-754 bits. Admission
+  charges immediate keys before sorting/children and applies profile budgets before caller-sized allocation.
+- Compiled input/output budgets charge equivalent original JSON envelopes. Malformed, truncated,
+  overflowed and trailing frames refuse without returning a result.
 
-The readiness review corrected exact-fit batch output accounting and long-lived native plan
-exhaustion, removed duplicated transport trees/copies, and introduced bounded internal framing.
-An independent reviewer replayed all 79 expanded canonical corpus cases through KEC1 encode and
-digest (158 operations), plus malformed length/tag/key refusals. The compiled framing review
-compared 120 JSON/KEB1 calls across empty and nonempty batches, Unicode/control characters and
-exact output budgets; 222 malformed/truncated/overflow/trailing frames refused without a result.
-Corresponding corpus, framing, logical byte-budget and malformed-frame tests are committed here;
-Zend owns the public PHP array, NUL-terminated JSON slice and lifetime tests in the binding repo.
+Committed corpus, framing, logical byte-budget and malformed-frame suites exercise these guarantees.
+The fuzzer reaches canonical, compiled, decimal and capabilities calls with valid binary seeds and
+owned-buffer status invariants. Zend owns public PHP arrays, JSON slices and request lifetimes in the
+binding repository.
 
-Framing preserves ordered PHP key types, raw string bytes and IEEE-754 bits. Canonical admission
-charges immediate keys before sorting and children, and applies profile budgets before caller-sized
-allocations. Compiled input/output budgets charge their equivalent original JSON envelopes. The
-fuzzer now reaches canonical and compiled execution as well as decimal and capabilities, with
-valid binary seeds and owned-buffer status invariants.
-
-Current PR CI must pass again after every source change. The candidate still requires independent
-semantic-release verification, an accepted ABI/version and supported deployment matrix, immutable
-release provenance and representative whole-call performance acceptance before stable publication.
+The complete workflow qualifies each changed source independently. Release checksums and provenance
+bind the published artifact; representative Core workload acceptance remains a consumer responsibility.
