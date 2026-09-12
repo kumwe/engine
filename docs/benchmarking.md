@@ -21,7 +21,7 @@ lives in the PHP binding repository (`kumwe/kumwe-engine` `tools/benchmark-runti
 `tools/benchmark/worker.php` and the allocation probes) and runs in that repository's CI. It
 compares all six semantic workload families with unchanged App/PHP methods through the actual
 Zend extension, verifies matching results, and records allocation/RSS, cold versus reused plans,
-bursts and multi-process saturation. [`benchmarks/e2e`](../benchmarks/e2e/README.md) retains
+bursts and multi-process saturation. [`benchmarks/e2e`](https://github.com/kumwe/engine/blob/main/benchmarks/e2e/README.md) retains
 historical evidence only. Neither synthetic suite establishes HTTP/database capacity or
 automatically authorizes native cutover.
 
